@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import HeroSection from "../components/HeroSection.astro";
 import ConsultingServices from "../components/ConsultingServices.astro";
 import FeaturedProjects from "../components/FeaturedProjects.astro";
 import FeaturedArticles from "../components/FeaturedArticles.astro";
@@ -7,16 +8,7 @@ import "../styles/home.css";
 ---
 
 <BaseLayout title="Home">
-  <section class="hero">
-    <div class="container">
-      <h1>Welcome to SiriusBits Consulting</h1>
-      <p class="subtitle">
-        Strategic data and technology consulting services to help organizations
-        leverage their data assets and technology investments for maximum
-        business value.
-      </p>
-    </div>
-  </section>
+  <HeroSection />
 
   <section class="services-section">
     <div class="container">
