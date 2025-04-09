@@ -1,487 +1,377 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import SkillsMatrix from "../components/SkillsMatrix.svelte";
+import EnhancedSkillsMatrix from "../components/EnhancedSkillsMatrix.svelte";
+import EnhancedExperienceTimeline from "../components/EnhancedExperienceTimeline.svelte";
+import EnhancedFilterSkills from "../components/EnhancedFilterSkills.svelte";
+import Button from "../components/Button.astro";
 import Icon from "../components/Icon.astro";
 import { skills } from "../data/skills";
+import { duties } from "../data/duties";
+import { activities } from "../data/activities";
 import { roles } from "../data/roles";
-
-// Define the Role interface to fix TypeScript errors
-interface Role {
-  title: string;
-  company: string;
-  startDate: string;
-  endDate?: string;
-  summary: string;
-  responsibilities?: string[];
-}
-
-// Type assertion to treat roles as an array of Role objects
-const typedRoles = roles as unknown as Role[];
+import { companies } from "../data/companies";
 ---
 
-<BaseLayout title="Skills & Experience">
-  <section class="page-header">
-    <div class="container">
-      <h1>Skills & Experience</h1>
-      <p class="subtitle">
-        A comprehensive overview of my professional expertise and career journey
-      </p>
-    </div>
-  </section>
-
-  <section class="intro-section">
-    <div class="container">
-      <div class="summary-content">
-        <p>
-          With over a decade of experience in data strategy, enterprise
-          architecture, and digital transformation, SiriusBits Consulting
-          provides expert guidance to help organizations leverage their data
-          assets and technology investments for maximum business value.
+<BaseLayout title="Skills & Experience | SiriusBits Consulting">
+  <div class="skills-experience-container">
+    <section class="page-header">
+      <div class="header-content container">
+        <h1>Skills & Experience</h1>
+        <p class="subtitle">
+          Expertise across business strategy, data architecture, and technology
+          leadership
         </p>
-        <p>
-          Specializing in data governance, analytics & insights, and technology
-          strategy, we've helped companies across various industries establish
-          robust data practices, implement modern data stacks, and develop
-          actionable insights that drive business decisions.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <section class="tabs-section">
-    <div class="container">
-      <div class="tabs-container">
-        <div class="tabs">
-          <button class="tab-btn active" id="skills-tab"
-            ><Icon name="data-management" size={18} class="tab-icon" /> Skills</button
+        <div class="header-actions">
+          <Button href="/contact" variant="primary">Discuss Your Project</Button
           >
-          <button class="tab-btn" id="experience-tab"
-            ><Icon name="calendar" size={18} class="tab-icon" /> Experience</button
-          >
+          <Button href="/portfolio" variant="outline">View Portfolio</Button>
         </div>
       </div>
-    </div>
-  </section>
-
-  <section class="skills-section" id="skills-content">
-    <div class="container">
-      <h2>Skills Matrix</h2>
-      <p class="section-intro">
-        Select skills to see relevant experience and projects.
-      </p>
-      <SkillsMatrix skills={skills} client:visible />
-    </div>
-  </section>
-
-  <section class="experience-section hidden" id="experience-content">
-    <div class="container">
-      <h2>Experience Timeline</h2>
-      <p class="section-intro">
-        A chronological view of my professional journey.
-      </p>
-      <div class="timeline">
-        {
-          typedRoles.map((role, index) => (
-            <div class="timeline-item" data-index={index}>
-              <div class="timeline-header">
-                <h3>
-                  <Icon name="user" size={18} class="role-icon" /> {role.title}
-                </h3>
-                <p class="company">
-                  <Icon name="company" size={16} class="company-icon" />{" "}
-                  {role.company}
-                </p>
-                <p class="dates">
-                  <Icon name="calendar" size={14} class="date-icon" />
-                  {new Date(role.startDate || "").toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                  })}{" "}
-                  -
-                  {role.endDate
-                    ? new Date(role.endDate).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                      })
-                    : "Present"}
-                </p>
-                <button class="expand-btn" aria-label="Expand details">
-                  +
-                </button>
-              </div>
-              <div class="timeline-content">
-                <p class="summary">{role.summary}</p>
-                <ul class="responsibilities">
-                  {role.responsibilities &&
-                    Array.isArray(role.responsibilities) &&
-                    role.responsibilities.map((item: string) => (
-                      <li>{item}</li>
-                    ))}
-                </ul>
-              </div>
-            </div>
-          ))
-        }
+      <div class="header-background">
+        <div class="gradient-overlay"></div>
+        <div class="animated-shapes">
+          <div class="shape shape-1"></div>
+          <div class="shape shape-2"></div>
+          <div class="shape shape-3"></div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="hire-cta">
-    <div class="container">
-      <h2>Ready to Work Together?</h2>
-      <p>
-        Let's discuss how my skills and experience can help with your next
-        project.
-      </p>
-      <a href="/contact" class="cta-button"
-        ><Icon name="email" size={18} class="cta-icon" /> Hire Me</a
-      >
-    </div>
-  </section>
+    <section class="intro-section">
+      <div class="container">
+        <div class="summary-content">
+          <p>
+            With over a decade of experience in data strategy, enterprise
+            architecture, and digital transformation, SiriusBits Consulting
+            provides expert guidance to help organizations leverage their data
+            assets and technology investments for maximum business value.
+          </p>
+          <p>
+            Specializing in data governance, analytics & insights, and
+            technology strategy, we've helped companies across various
+            industries establish robust data practices, implement modern data
+            stacks, and develop actionable insights that drive business
+            decisions.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="skills-section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Core Skills & Proficiency</h2>
+          <p class="section-description">
+            Specialized expertise developed over years of consulting and
+            enterprise experience
+          </p>
+        </div>
+        <EnhancedSkillsMatrix client:load skills={skills} />
+      </div>
+    </section>
+
+    <section class="experience-section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Professional Journey</h2>
+          <p class="section-description">
+            Career highlights and key roles across consulting and corporate
+            environments
+          </p>
+        </div>
+        <EnhancedExperienceTimeline
+          client:load
+          roles={roles}
+          companies={companies}
+        />
+      </div>
+    </section>
+
+    <section class="filter-section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Experience Explorer</h2>
+          <p class="section-description">
+            Filter professional experience by specific skills to see relevant
+            projects and responsibilities
+          </p>
+        </div>
+        <EnhancedFilterSkills
+          client:load
+          skills={skills}
+          duties={duties}
+          activities={activities}
+        />
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-content">
+          <h2>Ready to collaborate?</h2>
+          <p>
+            Let's discuss how my skills and experience can help your
+            organization achieve its goals.
+          </p>
+          <div class="cta-buttons">
+            <Button href="/contact" variant="primary">Contact Me</Button>
+            <Button href="/services" variant="secondary">View Services</Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 </BaseLayout>
 
-<script>
-  // Tab switching functionality
-  document.addEventListener("DOMContentLoaded", () => {
-    const skillsTab = document.getElementById("skills-tab");
-    const experienceTab = document.getElementById("experience-tab");
-    const skillsContent = document.getElementById("skills-content");
-    const experienceContent = document.getElementById("experience-content");
-
-    if (skillsTab && experienceTab && skillsContent && experienceContent) {
-      skillsTab.addEventListener("click", () => {
-        skillsTab.classList.add("active");
-        experienceTab.classList.remove("active");
-        skillsContent.classList.remove("hidden");
-        experienceContent.classList.add("hidden");
-      });
-
-      experienceTab.addEventListener("click", () => {
-        experienceTab.classList.add("active");
-        skillsTab.classList.remove("active");
-        experienceContent.classList.remove("hidden");
-        skillsContent.classList.add("hidden");
-      });
-    }
-
-    // Timeline expand/collapse functionality
-    const expandButtons = document.querySelectorAll(".expand-btn");
-    expandButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const timelineItem = btn.closest(".timeline-item");
-        if (timelineItem) {
-          timelineItem.classList.toggle("expanded");
-          btn.textContent = timelineItem.classList.contains("expanded")
-            ? "−"
-            : "+";
-        }
-      });
-    });
-
-    // Sticky tabs on scroll
-    const tabsContainer = document.querySelector(".tabs-container");
-    if (tabsContainer) {
-      const tabsOffset =
-        tabsContainer.getBoundingClientRect().top + window.scrollY;
-
-      window.addEventListener("scroll", () => {
-        if (window.pageYOffset >= tabsOffset) {
-          tabsContainer.classList.add("sticky");
-        } else {
-          tabsContainer.classList.remove("sticky");
-        }
-      });
-    }
-  });
-</script>
-
 <style>
+  :root {
+    --color-primary: var(--primary-purple, #9b51e0);
+    --color-accent: var(--accent-color, #3498db);
+    --neutral-black: #333;
+    --neutral-gray: #666;
+  }
+
+  .skills-experience-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem 4rem;
+  }
+
   .page-header {
-    background-color: #f9f9f9;
-    padding: 4rem 0;
+    position: relative;
+    padding: 6rem 0 4rem;
+    margin-bottom: 4rem;
+    overflow: hidden;
+    border-radius: 0 0 30px 30px;
+  }
+
+  .header-content {
+    position: relative;
+    z-index: 2;
     text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .header-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    background-color: #f9f9f9;
+  }
+
+  .gradient-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(155, 81, 224, 0.1) 0%,
+      rgba(52, 152, 219, 0.1) 100%
+    );
+  }
+
+  .animated-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+  }
+
+  .shape {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(
+      135deg,
+      rgba(155, 81, 224, 0.2),
+      rgba(52, 152, 219, 0.2)
+    );
+    animation: float 15s infinite ease-in-out;
+  }
+
+  .shape-1 {
+    width: 300px;
+    height: 300px;
+    top: -150px;
+    right: -100px;
+    animation-delay: 0s;
+  }
+
+  .shape-2 {
+    width: 200px;
+    height: 200px;
+    bottom: -100px;
+    left: -50px;
+    animation-delay: 5s;
+  }
+
+  .shape-3 {
+    width: 150px;
+    height: 150px;
+    bottom: 50px;
+    right: 30%;
+    animation-delay: 2s;
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-20px) rotate(5deg);
+    }
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
   }
 
   h1 {
-    font-size: 2.8rem;
-    color: var(--primary-purple);
+    color: var(--color-primary);
     margin-bottom: 1rem;
+    font-size: 3rem;
+    font-weight: 700;
   }
 
   .subtitle {
+    color: var(--neutral-gray);
     font-size: 1.25rem;
-    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 2rem;
+  }
+
+  .header-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .intro-section {
+    padding: 2rem 0 4rem;
+  }
+
+  .summary-content {
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.8;
+  }
+
+  .summary-content p {
+    margin-bottom: 1.5rem;
+    color: var(--neutral-black);
+    font-size: 1.1rem;
+  }
+
+  section {
+    margin-bottom: 5rem;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  h2 {
+    color: var(--color-primary);
+    margin-bottom: 0.75rem;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .section-description {
+    color: var(--neutral-gray);
+    font-size: 1.1rem;
     max-width: 700px;
     margin: 0 auto;
   }
 
-  .intro-section {
-    padding: 3rem 0;
+  .skills-section,
+  .experience-section,
+  .filter-section {
+    padding: 2rem 0;
   }
 
-  .summary-content {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .summary-content p {
-    font-size: 1.1rem;
-    line-height: 1.6;
-  }
-
-  .tabs-container {
-    background-color: white;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    padding: 0.5rem 0;
-    z-index: 100;
-  }
-
-  .tabs-container.sticky {
-    position: sticky;
-    top: 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .tabs {
-    display: flex;
-    gap: 2rem;
-  }
-
-  .tab-btn {
-    background: none;
-    border: none;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--color-text-secondary);
-    padding: 0.75rem 0;
-    cursor: pointer;
+  .cta-section {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
     position: relative;
-    transition: color 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    overflow: hidden;
   }
 
-  .tab-icon {
-    color: var(--color-primary);
-  }
-
-  .tab-btn:hover {
-    color: var(--color-primary);
-  }
-
-  .tab-btn.active {
-    color: var(--color-primary);
-  }
-
-  .tab-btn.active::after {
+  .cta-section::before {
     content: "";
     position: absolute;
-    bottom: -1px;
+    top: 0;
     left: 0;
-    width: 100%;
-    height: 3px;
-    background-color: var(--color-primary);
+    right: 0;
+    height: 5px;
+    background: linear-gradient(
+      90deg,
+      var(--color-primary),
+      var(--color-accent)
+    );
   }
 
-  .skills-section,
-  .experience-section {
-    padding: 3rem 0;
+  .cta-content {
+    max-width: 700px;
+    margin: 0 auto;
   }
 
-  .hidden {
-    display: none;
-  }
-
-  h2 {
-    font-size: 2.2rem;
-    color: var(--color-primary);
+  .cta-section h2 {
     margin-bottom: 1rem;
   }
 
-  .section-intro {
+  .cta-section p {
+    color: var(--neutral-gray);
     font-size: 1.1rem;
-    color: var(--color-text-secondary);
     margin-bottom: 2rem;
   }
 
-  .timeline {
-    margin-top: 2rem;
-    border-left: 3px solid var(--color-primary);
-    padding-left: 2rem;
-    position: relative;
-  }
-
-  .timeline-item {
-    margin-bottom: 2.5rem;
-    position: relative;
-  }
-
-  .timeline-item::before {
-    content: "";
-    position: absolute;
-    left: -2.5rem;
-    top: 0.5rem;
-    width: 1rem;
-    height: 1rem;
-    background-color: var(--color-primary);
-    border-radius: 50%;
-  }
-
-  .timeline-header {
+  .cta-buttons {
     display: flex;
-    flex-direction: column;
-    background-color: #f9f9f9;
-    padding: 1.5rem;
-    border-radius: 8px;
-    position: relative;
-    cursor: pointer;
-  }
-
-  .timeline-header h3 {
-    font-size: 1.3rem;
-    color: var(--color-primary);
-    margin-bottom: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .role-icon {
-    color: var(--color-primary);
-  }
-
-  .company {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .company-icon {
-    color: var(--color-primary);
-    opacity: 0.8;
-  }
-
-  .dates {
-    font-size: 0.9rem;
-    color: var(--color-text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .date-icon {
-    color: var(--color-primary);
-    opacity: 0.7;
-  }
-
-  .expand-btn {
-    position: absolute;
-    right: 1.5rem;
-    top: 1.5rem;
-    background: none;
-    border: 1px solid var(--color-primary);
-    color: var(--color-primary);
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  .expand-btn:hover {
-    background-color: var(--color-primary);
-    color: white;
-  }
-
-  .timeline-content {
-    padding: 0;
-    max-height: 0;
-    overflow: hidden;
-    transition: all 0.5s ease;
-  }
-
-  .timeline-item.expanded .timeline-content {
-    padding: 1.5rem;
-    max-height: 500px;
-    background-color: #f9f9f9;
-    margin-top: 0.5rem;
-    border-radius: 8px;
-  }
-
-  .summary {
-    margin-bottom: 1rem;
-    line-height: 1.6;
-  }
-
-  .responsibilities {
-    padding-left: 1.5rem;
-  }
-
-  .responsibilities li {
-    margin-bottom: 0.5rem;
-    line-height: 1.5;
-  }
-
-  .hire-cta {
-    text-align: center;
-    padding: 4rem 0;
-    background-color: #f9f9f9;
-    margin-top: 3rem;
-  }
-
-  .cta-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 1.5rem;
-    padding: 0.75rem 2rem;
-    background-color: var(--color-primary);
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-  }
-
-  .cta-icon {
-    color: white;
-  }
-
-  .cta-button:hover {
-    background-color: var(--color-primary-dark);
+    gap: 1rem;
+    flex-wrap: wrap;
   }
 
   @media (max-width: 768px) {
+    .page-header {
+      padding: 4rem 0 3rem;
+      margin-bottom: 3rem;
+    }
+
     h1 {
-      font-size: 2.2rem;
+      font-size: 2.25rem;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+    }
+
+    section {
+      margin-bottom: 3rem;
     }
 
     h2 {
-      font-size: 1.8rem;
+      font-size: 1.75rem;
     }
 
-    .tabs {
-      gap: 1rem;
-    }
-
-    .tab-btn {
+    .section-description {
       font-size: 1rem;
     }
 
-    .timeline {
-      padding-left: 1.5rem;
-    }
-
-    .timeline-item::before {
-      left: -2rem;
+    .cta-section {
+      padding: 2rem 1.5rem;
     }
   }
 </style>
