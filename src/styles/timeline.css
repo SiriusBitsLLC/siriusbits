@@ -1,0 +1,131 @@
+/* Timeline page specific styles */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+h1 {
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-primary);
+}
+
+.subtitle {
+  color: var(--color-text-secondary);
+  margin-bottom: 2rem;
+}
+
+.timeline-container {
+  background-color: var(--color-bg-secondary);
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 3rem;
+}
+
+/* Timeline entry styles */
+.timeline-entry {
+  border-left: 3px solid var(--color-primary);
+  padding-left: 1.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.timeline-entry::before {
+  content: '';
+  position: absolute;
+  left: -9px;
+  top: 0;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+}
+
+.timeline-header {
+  background-color: var(--color-bg);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: none;
+  text-align: left;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.timeline-header:hover {
+  background-color: var(--color-primary-light);
+}
+
+.timeline-header h3 {
+  margin-bottom: 0.5rem;
+  color: var(--color-primary);
+}
+
+.timeline-header .company {
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.timeline-header .dates {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.timeline-header .summary {
+  line-height: 1.5;
+}
+
+.timeline-content {
+  margin-top: 1rem;
+  padding-left: 1rem;
+}
+
+.duties-list {
+  margin-bottom: 1.5rem;
+}
+
+.duty-item {
+  background-color: var(--color-bg);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.duty-item h4 {
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+}
+
+.activity-list {
+  margin-top: 0.75rem;
+  margin-left: 1.5rem;
+}
+
+.activity-item {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .timeline-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .timeline-entry {
+    padding-left: 1rem;
+  }
+  
+  .timeline-content {
+    padding-left: 0.5rem;
+  }
+}

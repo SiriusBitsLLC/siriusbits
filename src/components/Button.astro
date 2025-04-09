@@ -1,0 +1,189 @@
+---
+// Button.astro - Reusable button component with variants
+
+interface Props {
+  variant?: 'primary' | 'secondary' | 'outline' | 'text';
+  size?: 'small' | 'medium' | 'large';
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  fullWidth?: boolean;
+  class?: string;
+  ariaLabel?: string;
+  id?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'medium',
+  href,
+  type = 'button',
+  fullWidth = false,
+  class: className = '',
+  ariaLabel,
+  id,
+  ...rest
+} = Astro.props;
+
+// Determine the element type based on whether href is provided
+const Element = href ? 'a' : 'button';
+
+// Combine all classes
+const classes = [
+  'btn',
+  `btn-${variant}`,
+  `btn-${size}`,
+  fullWidth ? 'btn-full-width' : '',
+  className
+].filter(Boolean).join(' ');
+---
+
+{href ? (
+  <a
+    href={href}
+    class={classes}
+    aria-label={ariaLabel}
+    id={id}
+    {...rest}
+  >
+    <slot />
+    <div class="btn-background"></div>
+  </a>
+) : (
+  <button
+    type={type}
+    class={classes}
+    aria-label={ariaLabel}
+    id={id}
+    {...rest}
+  >
+    <slot />
+    <div class="btn-background"></div>
+  </button>
+)}
+
+<style>
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .btn-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    transition: all 0.3s ease;
+    border-radius: inherit;
+  }
+
+  /* Size variants */
+  .btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    gap: 0.5rem;
+  }
+
+  .btn-medium {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    gap: 0.75rem;
+  }
+
+  .btn-large {
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+    gap: 1rem;
+  }
+
+  /* Full width */
+  .btn-full-width {
+    width: 100%;
+  }
+
+  /* Primary button */
+  .btn-primary {
+    color: white;
+  }
+
+  .btn-primary .btn-background {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  }
+
+  .btn-primary:hover .btn-background {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(155, 81, 224, 0.4);
+  }
+
+  .btn-primary:active .btn-background {
+    transform: scale(0.98);
+  }
+
+  /* Secondary button */
+  .btn-secondary {
+    color: var(--color-primary);
+  }
+
+  .btn-secondary .btn-background {
+    background: rgba(155, 81, 224, 0.1);
+  }
+
+  .btn-secondary:hover .btn-background {
+    background: rgba(155, 81, 224, 0.2);
+  }
+
+  /* Outline button */
+  .btn-outline {
+    color: var(--color-primary);
+    border: 2px solid transparent;
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+  }
+
+  .btn-outline .btn-background {
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%) border-box;
+  }
+
+  .btn-outline:hover .btn-background {
+    box-shadow: 0 5px 15px rgba(155, 81, 224, 0.2);
+  }
+
+  /* Text button */
+  .btn-text {
+    color: var(--color-primary);
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .btn-text .btn-background {
+    background: transparent;
+  }
+
+  .btn-text:hover {
+    text-decoration: underline;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .btn-medium {
+      padding: 0.6rem 1.2rem;
+    }
+
+    .btn-large {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+    }
+  }
+</style>

@@ -1,0 +1,97 @@
+---
+import '../styles/global.css';
+import EnhancedHeader from '../components/EnhancedHeader.astro';
+import EnhancedFooter from '../components/EnhancedFooter.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  canonicalURL?: string;
+}
+
+const { 
+  title, 
+  description = 'SiriusBits Consulting - Strategic data and technology consulting services', 
+  image = '/siriusbits-og-image.png',
+  canonicalURL
+} = Astro.props;
+
+// Get the current URL for canonical link and OG tags
+// Handle both absolute URLs and relative paths
+let pageURL;
+try {
+  // If a canonicalURL is provided or we can construct one from Astro.site
+  if (canonicalURL) {
+    pageURL = canonicalURL.toString();
+  } else if (Astro.site) {
+    pageURL = new URL(Astro.url.pathname, Astro.site).toString();
+  } else {
+    // Fallback to relative path if no site URL is available
+    pageURL = Astro.url.pathname;
+  }
+} catch (error) {
+  // Fallback to pathname if URL construction fails
+  pageURL = Astro.url.pathname;
+}
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Basic Meta Tags -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title} | SiriusBits</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href={pageURL} />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={pageURL} />
+    <meta property="og:title" content={`${title} | SiriusBits`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={pageURL} />
+    <meta property="twitter:title" content={`${title} | SiriusBits`} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={image} />
+  </head>
+  <body>
+    <EnhancedHeader />
+
+    <main>
+      <slot />
+    </main>
+
+    <EnhancedFooter />
+
+    <style>
+      /* Base layout specific styles */
+
+      main {
+        min-height: calc(100vh - 160px);
+        padding: 2rem 0;
+        margin-top: 70px; /* Add margin to account for fixed header */
+      }
+
+      footer {
+        padding: 2rem 0;
+        background-color: #f9f9f9;
+        text-align: center;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+
+    </style>
+  </body>
+</html>

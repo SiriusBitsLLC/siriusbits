@@ -1,0 +1,33 @@
+/* Global styles */
+
+:root {
+  --primary-purple: #9B51E0;
+  --accent-blue: #3498DB;
+  --neutral-black: #111111;
+  --neutral-white: #FFFFFF;
+  --color-primary: var(--primary-purple);
+  --color-primary-dark: #8A41D0;
+  --color-accent: var(--accent-blue);
+  --color-text-secondary: #666666;
+  --color-bg-secondary: #f9f9f9;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', 'Poppins', 'Montserrat', sans-serif;
+  color: var(--neutral-black);
+  background-color: var(--neutral-white);
+  line-height: 1.6;
+}
+
+/* Global container class */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}

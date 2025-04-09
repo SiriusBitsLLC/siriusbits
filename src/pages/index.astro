@@ -1,0 +1,154 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroSection from '../components/HeroSection.astro';
+import ConsultingServices from '../components/ConsultingServices.astro';
+import FeaturedProjects from '../components/FeaturedProjects.astro';
+import FeaturedArticles from '../components/FeaturedArticles.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import '../styles/home.css';
+---
+
+<BaseLayout title="Home">
+  <HeroSection />
+
+  <section class="services-section">
+    <div class="container">
+      <h2>Consulting Services</h2>
+      <p class="section-intro">Our expertise spans across various domains of data and technology consulting, helping businesses transform their operations and achieve strategic goals.</p>
+      <ConsultingServices />
+      <div class="section-cta">
+        <Button href="/services" variant="secondary" size="medium">
+          View All Services <Icon name="arrow-right" size={16} />
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured-projects">
+    <div class="container">
+      <h2>Featured Projects</h2>
+      <p class="section-intro">Explore some of our recent projects and success stories that showcase our expertise and approach.</p>
+      <FeaturedProjects />
+      <div class="section-cta">
+        <Button href="/projects" variant="secondary" size="medium">
+          View All Projects <Icon name="arrow-right" size={16} />
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured-articles">
+    <div class="container">
+      <h2>Featured Articles</h2>
+      <p class="section-intro">Stay updated with our latest insights, guides, and thought leadership on data strategy and technology trends.</p>
+      <FeaturedArticles />
+      <div class="section-cta">
+        <Button href="/blog" variant="secondary" size="medium">
+          View All Articles <Icon name="arrow-right" size={16} />
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-cta">
+    <div class="container">
+      <h2>Get in Touch</h2>
+      <p>Ready to transform your data strategy? Let's discuss how SiriusBits can help with your next project.</p>
+      <Button href="/contact" variant="primary" size="large">
+        <Icon name="email" size={18} /> Contact Now
+      </Button>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    text-align: center;
+    padding: 5rem 0;
+    background-color: #f9f9f9;
+  }
+
+  h1 {
+    font-size: 2.8rem;
+    color: var(--primary-purple);
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    font-size: 1.25rem;
+    color: var(--neutral-black);
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  section {
+    margin-bottom: 5rem;
+    padding: 2rem 0;
+  }
+
+  h2 {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    color: var(--primary-purple);
+  }
+
+  .section-intro {
+    font-size: 1.1rem;
+    color: var(--color-text-secondary);
+    max-width: 800px;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .section-cta {
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  .section-cta {
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  .contact-cta {
+    text-align: center;
+    padding: 4rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+
+
+
+  .services-section {
+    background-color: white;
+  }
+
+  .featured-projects {
+    background-color: #f9f9f9;
+  }
+
+  .featured-articles {
+    background-color: white;
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2.2rem;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+    }
+
+    .section-intro {
+      font-size: 1rem;
+    }
+
+    .hero {
+      padding: 3rem 0;
+    }
+  }
+</style>

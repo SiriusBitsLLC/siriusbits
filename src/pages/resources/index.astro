@@ -1,0 +1,134 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+---
+
+<BaseLayout title="Resources | SiriusBits">
+  <section class="resources-header">
+    <div class="container">
+      <h1>Resources</h1>
+      <p class="subtitle">Explore projects, blog posts, guides, and talks from SiriusBits</p>
+    </div>
+  </section>
+  
+  <section class="container">
+    <div class="resource-grid">
+      <a href="/resources/projects" class="resource-card">
+        <Icon name="folder" size={24} class="resource-icon" />
+        <h3>Projects</h3>
+        <p>Explore case studies and projects I've worked on</p>
+      </a>
+      
+      <a href="/resources/blog" class="resource-card">
+        <Icon name="edit" size={24} class="resource-icon" />
+        <h3>Blog</h3>
+        <p>Articles and insights on data, technology, and consulting</p>
+      </a>
+      
+      <a href="/resources/guides" class="resource-card">
+        <Icon name="book" size={24} class="resource-icon" />
+        <h3>Guides</h3>
+        <p>Step-by-step tutorials and how-to guides</p>
+      </a>
+      
+      <a href="/resources/talks" class="resource-card">
+        <Icon name="mic" size={24} class="resource-icon" />
+        <h3>Talks</h3>
+        <p>Presentations and speaking engagements</p>
+      </a>
+      
+      <a href="/resources/uses" class="resource-card">
+        <Icon name="web-dev" size={24} class="resource-icon" />
+        <h3>Uses</h3>
+        <p>Tools, software, and hardware I use daily</p>
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .resources-header {
+    background-color: #f9f9f9;
+    padding: 4rem 0 2rem;
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .resources-header h1 {
+    color: var(--color-primary);
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .resources-header .subtitle {
+    font-size: 1.2rem;
+    color: var(--color-text-secondary);
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .resource-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+  }
+  
+  .resource-card {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: var(--color-text);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .resource-icon {
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+    background-color: rgba(155, 81, 224, 0.1);
+    padding: 0.75rem;
+    border-radius: 50%;
+  }
+  
+  .resource-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border-color: var(--color-primary);
+  }
+  
+  .resource-card:hover .resource-icon {
+    transform: scale(1.1);
+    background-color: rgba(155, 81, 224, 0.2);
+  }
+  
+  .resource-card h3 {
+    color: var(--color-primary);
+    margin-bottom: 0.75rem;
+    font-size: 1.5rem;
+  }
+  
+  .resource-card p {
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+  
+  @media (max-width: 768px) {
+    .resource-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .resources-header {
+      padding: 3rem 0 1.5rem;
+    }
+    
+    .resources-header h1 {
+      font-size: 2rem;
+    }
+  }
+</style>

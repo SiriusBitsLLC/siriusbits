@@ -1,0 +1,150 @@
+---
+// EnhancedFooter.astro
+import Icon from './Icon.astro';
+---
+
+<footer class="enhanced-footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>SiriusBits</h3>
+        <p>Strategic data and technology consulting services to help organizations leverage their data assets and technology investments.</p>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Site Links</h3>
+        <ul class="footer-links">
+          <li><a href="/"><Icon name="arrow-right" size={12} class="footer-icon" /> Home</a></li>
+          <li><a href="/skills-experience"><Icon name="arrow-right" size={12} class="footer-icon" /> Skills & Experience</a></li>
+          <li><a href="/services"><Icon name="arrow-right" size={12} class="footer-icon" /> Consulting Services</a></li>
+          <li><a href="/resources"><Icon name="arrow-right" size={12} class="footer-icon" /> Resources</a></li>
+          <li><a href="/contact"><Icon name="arrow-right" size={12} class="footer-icon" /> Contact</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Resources</h3>
+        <ul class="footer-links">
+          <li><a href="/resources/projects"><Icon name="arrow-right" size={12} class="footer-icon" /> Projects</a></li>
+          <li><a href="/resources/blog"><Icon name="arrow-right" size={12} class="footer-icon" /> Blog</a></li>
+          <li><a href="/resources/guides"><Icon name="arrow-right" size={12} class="footer-icon" /> Guides</a></li>
+          <li><a href="/resources/talks"><Icon name="arrow-right" size={12} class="footer-icon" /> Talks</a></li>
+          <li><a href="/resources/uses"><Icon name="arrow-right" size={12} class="footer-icon" /> Uses</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Connect</h3>
+        <div class="social-links">
+          <a href="https://twitter.com/siriusbits" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+            <Icon name="twitter" />
+          </a>
+          <a href="https://linkedin.com/company/siriusbits" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            <Icon name="linkedin" />
+          </a>
+          <a href="https://github.com/siriusbits" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+            <Icon name="github" />
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; {new Date().getFullYear()} SiriusBits LLC. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .enhanced-footer {
+    background-color: #f9f9f9;
+    padding: 3rem 0 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .footer-section h3 {
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+  
+  .footer-section p {
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    font-size: 0.95rem;
+  }
+  
+  .footer-links {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .footer-links li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .footer-links a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .footer-icon {
+    opacity: 0;
+    transform: translateX(-5px);
+    transition: all 0.2s ease;
+  }
+  
+  .footer-links a:hover {
+    color: var(--color-primary);
+  }
+  
+  .footer-links a:hover .footer-icon {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .social-links {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .social-links a {
+    color: var(--color-text-secondary);
+    transition: color 0.2s ease;
+  }
+  
+  .social-links a:hover {
+    color: var(--color-primary);
+  }
+  
+  .footer-bottom {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+  }
+  
+  @media (max-width: 768px) {
+    .footer-content {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    .enhanced-footer {
+      padding: 2rem 0 1rem;
+    }
+  }
+</style>

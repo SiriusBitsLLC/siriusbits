@@ -1,0 +1,205 @@
+---
+// FeaturedProjects.astro
+import Icon from './Icon.astro';
+---
+
+<script>
+  // Add animation on scroll using Intersection Observer
+  document.addEventListener('DOMContentLoaded', () => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          // Add a staggered delay based on the index
+          setTimeout(() => {
+            entry.target.classList.add('animate-in');
+          }, index * 150); // 150ms stagger between each card
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    
+    // Observe all project cards
+    document.querySelectorAll('.project-card').forEach((card) => {
+      observer.observe(card);
+    });
+  });
+</script>
+
+<div class="projects-grid">
+  <div class="project-card">
+    <div class="project-image">
+      <img src="/images/projects/data-platform.jpg" alt="Enterprise Data Platform" />
+    </div>
+    <div class="project-content">
+      <h3>Enterprise Data Platform</h3>
+      <p class="project-category"><Icon name="project" size={16} class="inline-icon" /> Data Architecture</p>
+      <p class="project-description">Designed and implemented a scalable data platform for a Fortune 500 company, resulting in 40% faster insights delivery.</p>
+      <a href="/projects/enterprise-data-platform" class="project-link">View Project →</a>
+    </div>
+  </div>
+
+  <div class="project-card">
+    <div class="project-image">
+      <img src="/images/projects/ai-analytics.jpg" alt="AI-Powered Customer Analytics" />
+    </div>
+    <div class="project-content">
+      <h3>AI-Powered Customer Analytics</h3>
+      <p class="project-category"><Icon name="project" size={16} class="inline-icon" /> Machine Learning</p>
+      <p class="project-description">Developed predictive models for customer behavior analysis, increasing conversion rates by 25%.</p>
+      <a href="/projects/ai-customer-analytics" class="project-link">View Project →</a>
+    </div>
+  </div>
+
+  <div class="project-card">
+    <div class="project-image">
+      <img src="/images/projects/data-governance.jpg" alt="Data Governance Framework" />
+    </div>
+    <div class="project-content">
+      <h3>Data Governance Framework</h3>
+      <p class="project-category"><Icon name="project" size={16} class="inline-icon" /> Data Governance</p>
+      <p class="project-description">Established comprehensive data governance policies for a healthcare provider, ensuring HIPAA compliance.</p>
+      <a href="/projects/data-governance-framework" class="project-link">View Project →</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .project-card {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background-color: white;
+    position: relative;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  
+  /* Animation class added by Intersection Observer */
+  .project-card.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Add a gradient overlay to the image on hover */
+  .project-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(155, 81, 224, 0.3), transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 1;
+  }
+
+  .project-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(155, 81, 224, 0.2);
+  }
+  
+  .project-card:hover .project-image::after {
+    opacity: 1;
+  }
+
+  .project-image {
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .project-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .project-card:hover .project-image img {
+    transform: scale(1.08);
+    filter: brightness(1.05);
+  }
+
+  .project-content {
+    padding: 1.5rem;
+  }
+
+  .project-content h3 {
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+  }
+
+  .project-category {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(90deg, rgba(155, 81, 224, 0.1), rgba(52, 152, 219, 0.1));
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+  }
+  
+  .project-card:hover .project-category {
+    background: linear-gradient(90deg, rgba(155, 81, 224, 0.2), rgba(52, 152, 219, 0.2));
+  }
+  
+  .inline-icon {
+    color: var(--color-primary);
+  }
+
+  .project-description {
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+
+  .project-link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    padding-bottom: 2px;
+  }
+  
+  .project-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--color-primary), var(--color-accent));
+    transition: width 0.3s ease;
+  }
+
+  .project-link:hover {
+    color: var(--color-primary-dark);
+    transform: translateX(3px);
+  }
+  
+  .project-link:hover::after {
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

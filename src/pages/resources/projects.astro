@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Projects | SiriusBits">
+  <section class="projects-header">
+    <div class="container">
+      <h1>Projects</h1>
+      <p class="subtitle">Explore projects and case studies</p>
+    </div>
+  </section>
+  
+  <section class="container">
+    <div class="projects-content">
+      <p class="coming-soon">Projects content coming soon. Check back later for updates!</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .projects-content {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 3rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    text-align: center;
+  }
+  
+  .coming-soon {
+    font-size: 1.2rem;
+    color: var(--color-text-secondary);
+  }
+</style>
