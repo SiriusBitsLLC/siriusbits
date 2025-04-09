@@ -1,64 +1,56 @@
 ---
 // FeaturedArticles.astro
-import Icon from './Icon.astro';
 ---
-
-<script>
-  // Add animation on scroll using Intersection Observer
-  document.addEventListener('DOMContentLoaded', () => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry, index) => {
-        if (entry.isIntersecting) {
-          // Add a staggered delay based on the index
-          setTimeout(() => {
-            entry.target.classList.add('animate-in');
-          }, index * 150); // 150ms stagger between each card
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1 });
-    
-    // Observe all article cards
-    document.querySelectorAll('.article-card').forEach((card) => {
-      observer.observe(card);
-    });
-  });
-</script>
 
 <div class="articles-grid">
   <div class="article-card">
     <div class="article-image">
-      <img src="/images/articles/data-strategy.jpg" alt="The Future of Data Strategy in 2025" />
+      <img src="/placeholder-article.jpg" alt="Article 1" />
     </div>
     <div class="article-content">
-      <p class="article-date"><Icon name="calendar" size={16} class="inline-icon" /> April 2, 2025</p>
+      <p class="article-date">April 2, 2025</p>
       <h3>The Future of Data Strategy in 2025</h3>
-      <p class="article-excerpt">Explore emerging trends in data strategy and how organizations can prepare for the evolving data landscape.</p>
-      <a href="/blog/future-of-data-strategy" class="article-link">Read More <Icon name="arrow-right" size={16} class="link-icon" /></a>
+      <p class="article-excerpt">
+        Explore emerging trends in data strategy and how organizations can
+        prepare for the evolving data landscape.
+      </p>
+      <a href="/blog/future-of-data-strategy" class="article-link"
+        >Read More u2192</a
+      >
     </div>
   </div>
 
   <div class="article-card">
     <div class="article-image">
-      <img src="/images/articles/data-governance.jpg" alt="Building Effective Data Governance Frameworks" />
+      <img src="/placeholder-article.jpg" alt="Article 2" />
     </div>
     <div class="article-content">
-      <p class="article-date"><Icon name="calendar" size={16} class="inline-icon" /> March 15, 2025</p>
+      <p class="article-date">March 15, 2025</p>
       <h3>Building Effective Data Governance Frameworks</h3>
-      <p class="article-excerpt">Learn how to establish data governance policies that balance compliance requirements with business agility.</p>
-      <a href="/blog/data-governance-frameworks" class="article-link">Read More <Icon name="arrow-right" size={16} class="link-icon" /></a>
+      <p class="article-excerpt">
+        Learn how to establish data governance policies that balance compliance
+        requirements with business agility.
+      </p>
+      <a href="/blog/data-governance-frameworks" class="article-link"
+        >Read More u2192</a
+      >
     </div>
   </div>
 
   <div class="article-card">
     <div class="article-image">
-      <img src="/images/articles/ai-implementation.jpg" alt="AI Implementation: Practical Strategies for Business" />
+      <img src="/placeholder-article.jpg" alt="Article 3" />
     </div>
     <div class="article-content">
-      <p class="article-date"><Icon name="calendar" size={16} class="inline-icon" /> February 28, 2025</p>
+      <p class="article-date">February 28, 2025</p>
       <h3>AI Implementation: Practical Strategies for Business</h3>
-      <p class="article-excerpt">Discover practical approaches to implementing AI solutions that deliver measurable business value.</p>
-      <a href="/blog/ai-implementation-strategies" class="article-link">Read More <Icon name="arrow-right" size={16} class="link-icon" /></a>
+      <p class="article-excerpt">
+        Discover practical approaches to implementing AI solutions that deliver
+        measurable business value.
+      </p>
+      <a href="/blog/ai-implementation-strategies" class="article-link"
+        >Read More u2192</a
+      >
     </div>
   </div>
 </div>
@@ -75,46 +67,20 @@ import Icon from './Icon.astro';
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
     background-color: white;
-    position: relative;
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  
-  /* Animation class added by Intersection Observer */
-  .article-card.animate-in {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  
-  /* Add a gradient overlay to the image on hover */
-  .article-image::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to top, rgba(155, 81, 224, 0.3), transparent);
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    z-index: 1;
   }
 
   .article-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 15px 30px rgba(155, 81, 224, 0.2);
-  }
-  
-  .article-card:hover .article-image::after {
-    opacity: 1;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
   }
 
   .article-image {
     height: 180px;
     overflow: hidden;
-    position: relative;
   }
 
   .article-image img {
@@ -125,8 +91,7 @@ import Icon from './Icon.astro';
   }
 
   .article-card:hover .article-image img {
-    transform: scale(1.08);
-    filter: brightness(1.05);
+    transform: scale(1.05);
   }
 
   .article-content {
@@ -137,21 +102,6 @@ import Icon from './Icon.astro';
     font-size: 0.85rem;
     color: var(--color-text-secondary);
     margin-bottom: 0.5rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: linear-gradient(90deg, rgba(155, 81, 224, 0.1), rgba(52, 152, 219, 0.1));
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
-    transition: all 0.3s ease;
-  }
-  
-  .article-card:hover .article-date {
-    background: linear-gradient(90deg, rgba(155, 81, 224, 0.2), rgba(52, 152, 219, 0.2));
-  }
-  
-  .inline-icon {
-    color: var(--color-primary);
   }
 
   .article-content h3 {
@@ -168,44 +118,15 @@ import Icon from './Icon.astro';
   }
 
   .article-link {
-    display: inline-flex;
-    align-items: center;
+    display: inline-block;
     color: var(--color-primary);
     text-decoration: none;
     font-weight: 500;
-    transition: all 0.3s ease;
-    position: relative;
-    padding-bottom: 2px;
-  }
-  
-  .article-link::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(to right, var(--color-primary), var(--color-accent));
-    transition: width 0.3s ease;
+    transition: color 0.2s ease;
   }
 
   .article-link:hover {
     color: var(--color-primary-dark);
-  }
-  
-  .article-link:hover::after {
-    width: 100%;
-  }
-  
-  .link-icon {
-    display: inline-block;
-    vertical-align: middle;
-    margin-left: 0.25rem;
-    transition: transform 0.2s ease;
-  }
-  
-  .article-link:hover .link-icon {
-    transform: translateX(3px);
   }
 
   @media (max-width: 768px) {
