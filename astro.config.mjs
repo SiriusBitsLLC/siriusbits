@@ -7,5 +7,8 @@ export default defineConfig({
   site: 'https://siriusbits.vercel.app',
   integrations: [svelte()],
   output: 'static',
-  adapter: vercel()
+  adapter: vercel(),
+  server: {
+    port: 4337
+  }
 });
