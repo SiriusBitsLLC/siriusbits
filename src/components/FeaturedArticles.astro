@@ -1,5 +1,6 @@
 ---
 // FeaturedArticles.astro
+import Icon from "./Icon.astro";
 ---
 
 <div class="articles-grid">
@@ -8,14 +9,16 @@
       <img src="/placeholder-article.jpg" alt="Article 1" />
     </div>
     <div class="article-content">
-      <p class="article-date">April 2, 2025</p>
+      <p class="article-date">
+        <Icon name="calendar" size={16} class="inline-icon" /> April 2, 2025
+      </p>
       <h3>The Future of Data Strategy in 2025</h3>
       <p class="article-excerpt">
         Explore emerging trends in data strategy and how organizations can
         prepare for the evolving data landscape.
       </p>
       <a href="/blog/future-of-data-strategy" class="article-link"
-        >Read More u2192</a
+        >Read More <Icon name="arrow-right" size={16} class="link-icon" /></a
       >
     </div>
   </div>
@@ -25,14 +28,16 @@
       <img src="/placeholder-article.jpg" alt="Article 2" />
     </div>
     <div class="article-content">
-      <p class="article-date">March 15, 2025</p>
+      <p class="article-date">
+        <Icon name="calendar" size={16} class="inline-icon" /> March 15, 2025
+      </p>
       <h3>Building Effective Data Governance Frameworks</h3>
       <p class="article-excerpt">
         Learn how to establish data governance policies that balance compliance
         requirements with business agility.
       </p>
       <a href="/blog/data-governance-frameworks" class="article-link"
-        >Read More u2192</a
+        >Read More <Icon name="arrow-right" size={16} class="link-icon" /></a
       >
     </div>
   </div>
@@ -42,14 +47,16 @@
       <img src="/placeholder-article.jpg" alt="Article 3" />
     </div>
     <div class="article-content">
-      <p class="article-date">February 28, 2025</p>
+      <p class="article-date">
+        <Icon name="calendar" size={16} class="inline-icon" /> February 28, 2025
+      </p>
       <h3>AI Implementation: Practical Strategies for Business</h3>
       <p class="article-excerpt">
         Discover practical approaches to implementing AI solutions that deliver
         measurable business value.
       </p>
       <a href="/blog/ai-implementation-strategies" class="article-link"
-        >Read More u2192</a
+        >Read More <Icon name="arrow-right" size={16} class="link-icon" /></a
       >
     </div>
   </div>
@@ -102,6 +109,13 @@
     font-size: 0.85rem;
     color: var(--color-text-secondary);
     margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .inline-icon {
+    color: var(--color-primary);
   }
 
   .article-content h3 {
@@ -127,6 +141,17 @@
 
   .article-link:hover {
     color: var(--color-primary-dark);
+  }
+
+  .link-icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 0.25rem;
+    transition: transform 0.2s ease;
+  }
+
+  .article-link:hover .link-icon {
+    transform: translateX(3px);
   }
 
   @media (max-width: 768px) {

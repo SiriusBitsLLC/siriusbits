@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import EnhancedFooter from "../components/EnhancedFooter.astro";
+import Icon from "../components/Icon.astro";
 
 interface Props {
   title: string;
@@ -84,12 +85,31 @@ try {
             </a>
           </div>
           <ul class="nav-links">
-            <li><a href="/">Home</a></li>
-            <li><a href="/skills-experience">Skills & Experience</a></li>
-            <li><a href="/services">Services</a></li>
-            <li><a href="/resources">Resources</a></li>
-            <li><a href="/uses">Uses</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/" class="nav-item"
+                ><Icon name="arrow-right" size={16} class="nav-icon" /> Home</a>
+            </li>
+            <li>
+              <a href="/skills-experience" class="nav-item"
+                ><Icon name="data-management" size={16} class="nav-icon" /> Skills
+                & Experience</a>
+            </li>
+            <li>
+              <a href="/services" class="nav-item"
+                ><Icon name="strategy" size={16} class="nav-icon" /> Services</a>
+            </li>
+            <li>
+              <a href="/resources" class="nav-item"
+                ><Icon name="article" size={16} class="nav-icon" /> Resources</a>
+            </li>
+            <li>
+              <a href="/uses" class="nav-item"
+                ><Icon name="web-dev" size={16} class="nav-icon" /> Uses</a>
+            </li>
+            <li>
+              <a href="/contact" class="nav-item"
+                ><Icon name="email" size={16} class="nav-icon" /> Contact</a>
+            </li>
           </ul>
         </nav>
       </div>
@@ -143,10 +163,25 @@ try {
         color: var(--neutral-black);
         font-weight: 500;
         transition: color 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .nav-icon {
+        opacity: 0;
+        transform: translateX(-5px);
+        transition: all 0.2s ease;
+        color: var(--primary-purple);
       }
 
       .nav-links a:hover {
         color: var(--primary-purple);
+      }
+
+      .nav-links a:hover .nav-icon {
+        opacity: 1;
+        transform: translateX(0);
       }
 
       main {

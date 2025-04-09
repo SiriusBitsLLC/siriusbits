@@ -1,5 +1,6 @@
 ---
 // FeaturedProjects.astro
+import Icon from "./Icon.astro";
 ---
 
 <div class="projects-grid">
@@ -9,7 +10,9 @@
     </div>
     <div class="project-content">
       <h3>Enterprise Data Platform</h3>
-      <p class="project-category">Data Architecture</p>
+      <p class="project-category">
+        <Icon name="project" size={16} class="inline-icon" /> Data Architecture
+      </p>
       <p class="project-description">
         Designed and implemented a scalable data platform for a Fortune 500
         company, resulting in 40% faster insights delivery.
@@ -26,7 +29,9 @@
     </div>
     <div class="project-content">
       <h3>AI-Powered Customer Analytics</h3>
-      <p class="project-category">Machine Learning</p>
+      <p class="project-category">
+        <Icon name="project" size={16} class="inline-icon" /> Machine Learning
+      </p>
       <p class="project-description">
         Developed predictive models for customer behavior analysis, increasing
         conversion rates by 25%.
@@ -43,7 +48,9 @@
     </div>
     <div class="project-content">
       <h3>Data Governance Framework</h3>
-      <p class="project-category">Data Governance</p>
+      <p class="project-category">
+        <Icon name="project" size={16} class="inline-icon" /> Data Governance
+      </p>
       <p class="project-description">
         Established comprehensive data governance policies for a healthcare
         provider, ensuring HIPAA compliance.
@@ -109,6 +116,13 @@
     font-size: 0.9rem;
     margin-bottom: 1rem;
     font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .inline-icon {
+    color: var(--color-primary);
   }
 
   .project-description {

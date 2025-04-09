@@ -1,8 +1,22 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SkillsMatrix from "../components/SkillsMatrix.svelte";
+import Icon from "../components/Icon.astro";
 import { skills } from "../data/skills";
 import { roles } from "../data/roles";
+
+// Define the Role interface to fix TypeScript errors
+interface Role {
+  title: string;
+  company: string;
+  startDate: string;
+  endDate?: string;
+  summary: string;
+  responsibilities?: string[];
+}
+
+// Type assertion to treat roles as an array of Role objects
+const typedRoles = roles as unknown as Role[];
 ---
 
 <BaseLayout title="Skills & Experience">
@@ -38,8 +52,12 @@ import { roles } from "../data/roles";
     <div class="container">
       <div class="tabs-container">
         <div class="tabs">
-          <button class="tab-btn active" id="skills-tab">Skills</button>
-          <button class="tab-btn" id="experience-tab">Experience</button>
+          <button class="tab-btn active" id="skills-tab"
+            ><Icon name="data-management" size={18} class="tab-icon" /> Skills</button
+          >
+          <button class="tab-btn" id="experience-tab"
+            ><Icon name="calendar" size={18} class="tab-icon" /> Experience</button
+          >
         </div>
       </div>
     </div>
@@ -63,12 +81,18 @@ import { roles } from "../data/roles";
       </p>
       <div class="timeline">
         {
-          roles.map((role, index) => (
+          typedRoles.map((role, index) => (
             <div class="timeline-item" data-index={index}>
               <div class="timeline-header">
-                <h3>{role.title}</h3>
-                <p class="company">{role.company}</p>
+                <h3>
+                  <Icon name="user" size={18} class="role-icon" /> {role.title}
+                </h3>
+                <p class="company">
+                  <Icon name="company" size={16} class="company-icon" />{" "}
+                  {role.company}
+                </p>
                 <p class="dates">
+                  <Icon name="calendar" size={14} class="date-icon" />
                   {new Date(role.startDate || "").toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "short",
@@ -89,7 +113,10 @@ import { roles } from "../data/roles";
                 <p class="summary">{role.summary}</p>
                 <ul class="responsibilities">
                   {role.responsibilities &&
-                    role.responsibilities.map((item) => <li>{item}</li>)}
+                    Array.isArray(role.responsibilities) &&
+                    role.responsibilities.map((item: string) => (
+                      <li>{item}</li>
+                    ))}
                 </ul>
               </div>
             </div>
@@ -106,7 +133,9 @@ import { roles } from "../data/roles";
         Let's discuss how my skills and experience can help with your next
         project.
       </p>
-      <a href="/contact" class="cta-button">Hire Me</a>
+      <a href="/contact" class="cta-button"
+        ><Icon name="email" size={18} class="cta-icon" /> Hire Me</a
+      >
     </div>
   </section>
 </BaseLayout>
@@ -119,43 +148,50 @@ import { roles } from "../data/roles";
     const skillsContent = document.getElementById("skills-content");
     const experienceContent = document.getElementById("experience-content");
 
-    skillsTab.addEventListener("click", () => {
-      skillsTab.classList.add("active");
-      experienceTab.classList.remove("active");
-      skillsContent.classList.remove("hidden");
-      experienceContent.classList.add("hidden");
-    });
+    if (skillsTab && experienceTab && skillsContent && experienceContent) {
+      skillsTab.addEventListener("click", () => {
+        skillsTab.classList.add("active");
+        experienceTab.classList.remove("active");
+        skillsContent.classList.remove("hidden");
+        experienceContent.classList.add("hidden");
+      });
 
-    experienceTab.addEventListener("click", () => {
-      experienceTab.classList.add("active");
-      skillsTab.classList.remove("active");
-      experienceContent.classList.remove("hidden");
-      skillsContent.classList.add("hidden");
-    });
+      experienceTab.addEventListener("click", () => {
+        experienceTab.classList.add("active");
+        skillsTab.classList.remove("active");
+        experienceContent.classList.remove("hidden");
+        skillsContent.classList.add("hidden");
+      });
+    }
 
     // Timeline expand/collapse functionality
     const expandButtons = document.querySelectorAll(".expand-btn");
     expandButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
         const timelineItem = btn.closest(".timeline-item");
-        timelineItem.classList.toggle("expanded");
-        btn.textContent = timelineItem.classList.contains("expanded")
-          ? "−"
-          : "+";
+        if (timelineItem) {
+          timelineItem.classList.toggle("expanded");
+          btn.textContent = timelineItem.classList.contains("expanded")
+            ? "−"
+            : "+";
+        }
       });
     });
 
     // Sticky tabs on scroll
     const tabsContainer = document.querySelector(".tabs-container");
-    const tabsOffset = tabsContainer.offsetTop;
+    if (tabsContainer) {
+      const tabsOffset =
+        tabsContainer.getBoundingClientRect().top + window.scrollY;
 
-    window.addEventListener("scroll", () => {
-      if (window.pageYOffset >= tabsOffset) {
-        tabsContainer.classList.add("sticky");
-      } else {
-        tabsContainer.classList.remove("sticky");
-      }
-    });
+      window.addEventListener("scroll", () => {
+        if (window.pageYOffset >= tabsOffset) {
+          tabsContainer.classList.add("sticky");
+        } else {
+          tabsContainer.classList.remove("sticky");
+        }
+      });
+    }
   });
 </script>
 
@@ -222,6 +258,13 @@ import { roles } from "../data/roles";
     cursor: pointer;
     position: relative;
     transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .tab-icon {
+    color: var(--color-primary);
   }
 
   .tab-btn:hover {
@@ -300,16 +343,39 @@ import { roles } from "../data/roles";
     font-size: 1.3rem;
     color: var(--color-primary);
     margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .role-icon {
+    color: var(--color-primary);
   }
 
   .company {
     font-weight: 600;
     margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .company-icon {
+    color: var(--color-primary);
+    opacity: 0.8;
   }
 
   .dates {
     font-size: 0.9rem;
     color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .date-icon {
+    color: var(--color-primary);
+    opacity: 0.7;
   }
 
   .expand-btn {
@@ -372,7 +438,9 @@ import { roles } from "../data/roles";
   }
 
   .cta-button {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     margin-top: 1.5rem;
     padding: 0.75rem 2rem;
     background-color: var(--color-primary);
@@ -381,6 +449,10 @@ import { roles } from "../data/roles";
     border-radius: 4px;
     font-weight: 600;
     transition: background-color 0.3s ease;
+  }
+
+  .cta-icon {
+    color: white;
   }
 
   .cta-button:hover {
