@@ -1,8 +1,4 @@
 ---
-import '../styles/global.css';
-import EnhancedHeader from '../components/EnhancedHeader.astro';
-import EnhancedFooter from '../components/EnhancedFooter.astro';
-
 interface Props {
   title: string;
   description?: string;
@@ -10,11 +6,11 @@ interface Props {
   canonicalURL?: string;
 }
 
-const { 
-  title, 
-  description = 'SiriusBits Consulting - Strategic data and technology consulting services', 
-  image = '/siriusbits-og-image.png',
-  canonicalURL
+const {
+  title,
+  description = "SiriusBits Consulting - Strategic data and technology consulting services",
+  image = "/siriusbits-og-image.png",
+  canonicalURL,
 } = Astro.props;
 
 // Get the current URL for canonical link and OG tags
@@ -36,7 +32,7 @@ try {
 }
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <!-- Basic Meta Tags -->
@@ -44,21 +40,21 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <title>{title} | SiriusBits</title>
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    
+
     <!-- Canonical URL -->
     <link rel="canonical" href={pageURL} />
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={pageURL} />
     <meta property="og:title" content={`${title} | SiriusBits`} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={image} />
-    
+
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content={pageURL} />
@@ -67,21 +63,121 @@ try {
     <meta property="twitter:image" content={image} />
   </head>
   <body>
-    <EnhancedHeader />
+    <header>
+      <div class="container">
+        <nav>
+          <div class="logo">
+            <a href="/">
+              <img
+                src="/siriusbits-logo-name.png"
+                alt="SiriusBits"
+                class="logo-full"
+              />
+              <img
+                src="/siriusbits-brand-mark.png"
+                alt="SiriusBits"
+                class="logo-mark"
+              />
+            </a>
+          </div>
+          <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/skills">Skills</a></li>
+            <li><a href="/timeline">Timeline</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
 
     <main>
       <slot />
     </main>
 
-    <EnhancedFooter />
+    <footer>
+      <div class="container">
+        <p>
+          &copy; {new Date().getFullYear()} SiriusBits. All rights reserved.
+        </p>
+      </div>
+    </footer>
 
     <style>
-      /* Base layout specific styles */
+      :root {
+        --primary-purple: #9b51e0;
+        --accent-blue: #3498db;
+        --neutral-black: #111111;
+        --neutral-white: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Inter", "Poppins", "Montserrat", sans-serif;
+        color: var(--neutral-black);
+        background-color: var(--neutral-white);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+
+      header {
+        padding: 1.5rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo a {
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo-full {
+        height: 40px;
+        width: auto;
+      }
+
+      .logo-mark {
+        display: none;
+        height: 40px;
+        width: auto;
+      }
+
+      .nav-links {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: var(--neutral-black);
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      .nav-links a:hover {
+        color: var(--primary-purple);
+      }
 
       main {
         min-height: calc(100vh - 160px);
         padding: 2rem 0;
-        margin-top: 70px; /* Add margin to account for fixed header */
       }
 
       footer {
@@ -91,7 +187,19 @@ try {
         border-top: 1px solid rgba(0, 0, 0, 0.1);
       }
 
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
 
+        .logo-full {
+          display: none;
+        }
+
+        .logo-mark {
+          display: block;
+        }
+      }
     </style>
   </body>
 </html>

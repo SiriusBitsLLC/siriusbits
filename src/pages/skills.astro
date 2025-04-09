@@ -1,19 +1,24 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import FilterSkills from '../components/FilterSkills.svelte';
-import { skills } from '../data/skills';
-import { duties } from '../data/duties';
-import { activities } from '../data/activities';
-import '../styles/skills.css';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FilterSkills from "../components/FilterSkills.svelte";
+import { skills } from "../data/skills";
+import { duties } from "../data/duties";
+import { activities } from "../data/activities";
+import "../styles/skills.css";
 ---
 
 <BaseLayout title="Skills">
   <div class="container">
     <h1>Skills & Experience</h1>
     <p class="subtitle">Filter by skills to see relevant experience</p>
-    
+
     <div class="skills-container">
-      <FilterSkills skills={skills} duties={duties} activities={activities} client:load />
+      <FilterSkills
+        skills={skills}
+        duties={duties}
+        activities={activities}
+        client:load
+      />
     </div>
   </div>
 </BaseLayout>

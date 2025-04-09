@@ -1,18 +1,23 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import TimelineComponent from '../components/Timeline.svelte';
-import { roles } from '../data/roles';
-import { duties } from '../data/duties';
-import { activities } from '../data/activities';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TimelineComponent from "../components/Timeline.svelte";
+import { roles } from "../data/roles";
+import { duties } from "../data/duties";
+import { activities } from "../data/activities";
 ---
 
 <BaseLayout title="Timeline">
   <div class="container">
     <h1>Experience Timeline</h1>
     <p class="subtitle">Professional journey and career highlights</p>
-    
+
     <div class="timeline-container">
-      <TimelineComponent roles={roles} duties={duties} activities={activities} client:load />
+      <TimelineComponent
+        roles={roles}
+        duties={duties}
+        activities={activities}
+        client:load
+      />
     </div>
   </div>
 </BaseLayout>

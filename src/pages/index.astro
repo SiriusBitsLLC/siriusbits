@@ -1,154 +1,132 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import HeroSection from '../components/HeroSection.astro';
-import ConsultingServices from '../components/ConsultingServices.astro';
-import FeaturedProjects from '../components/FeaturedProjects.astro';
-import FeaturedArticles from '../components/FeaturedArticles.astro';
-import Button from '../components/Button.astro';
-import Icon from '../components/Icon.astro';
-import '../styles/home.css';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SkillsMatrix from "../components/SkillsMatrix.svelte";
+import { skills } from "../data/skills";
+import { roles } from "../data/roles";
+import "../styles/home.css";
 ---
 
 <BaseLayout title="Home">
-  <HeroSection />
+  <div class="container">
+    <section class="hero">
+      <h1>Welcome to SiriusBits Consulting</h1>
+      <p class="subtitle">Strategic data and technology consulting services</p>
+    </section>
 
-  <section class="services-section">
-    <div class="container">
-      <h2>Consulting Services</h2>
-      <p class="section-intro">Our expertise spans across various domains of data and technology consulting, helping businesses transform their operations and achieve strategic goals.</p>
-      <ConsultingServices />
-      <div class="section-cta">
-        <Button href="/services" variant="secondary" size="medium">
-          View All Services <Icon name="arrow-right" size={16} />
-        </Button>
+    <section class="career-summary">
+      <h2>Career Summary</h2>
+      <div class="summary-content">
+        <p>
+          With over a decade of experience in data strategy, enterprise
+          architecture, and digital transformation, SiriusBits Consulting
+          provides expert guidance to help organizations leverage their data
+          assets and technology investments for maximum business value.
+        </p>
+        <p>
+          Specializing in data governance, analytics & insights, and technology
+          strategy, we've helped companies across various industries establish
+          robust data practices, implement modern data stacks, and develop
+          actionable insights that drive business decisions.
+        </p>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="featured-projects">
-    <div class="container">
-      <h2>Featured Projects</h2>
-      <p class="section-intro">Explore some of our recent projects and success stories that showcase our expertise and approach.</p>
-      <FeaturedProjects />
-      <div class="section-cta">
-        <Button href="/projects" variant="secondary" size="medium">
-          View All Projects <Icon name="arrow-right" size={16} />
-        </Button>
+    <section class="skills-section">
+      <h2>Skills Matrix</h2>
+      <SkillsMatrix skills={skills} client:visible />
+    </section>
+
+    <section class="featured-experience">
+      <h2>Featured Experience</h2>
+      <div class="experience-cards">
+        {
+          roles.map((role) => (
+            <div class="experience-card">
+              <h3>{role.title}</h3>
+              <p class="company">{role.company}</p>
+              <p class="dates">
+                {new Date(role.startDate || "").toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                })}{" "}
+                -
+                {role.endDate
+                  ? new Date(role.endDate).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                    })
+                  : "Present"}
+              </p>
+              <p class="summary">{role.summary}</p>
+              <a href="/timeline" class="learn-more">
+                View Full Timeline →
+              </a>
+            </div>
+          ))
+        }
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="featured-articles">
-    <div class="container">
-      <h2>Featured Articles</h2>
-      <p class="section-intro">Stay updated with our latest insights, guides, and thought leadership on data strategy and technology trends.</p>
-      <FeaturedArticles />
-      <div class="section-cta">
-        <Button href="/blog" variant="secondary" size="medium">
-          View All Articles <Icon name="arrow-right" size={16} />
-        </Button>
-      </div>
-    </div>
-  </section>
-
-  <section class="contact-cta">
-    <div class="container">
+    <section class="contact-cta">
       <h2>Get in Touch</h2>
-      <p>Ready to transform your data strategy? Let's discuss how SiriusBits can help with your next project.</p>
-      <Button href="/contact" variant="primary" size="large">
-        <Icon name="email" size={18} /> Contact Now
-      </Button>
-    </div>
-  </section>
+      <p>
+        Ready to transform your data strategy? Let's discuss how SiriusBits can
+        help with your next project.
+      </p>
+      <a href="/contact" class="cta-button">Contact Now</a>
+    </section>
+  </div>
 </BaseLayout>
 
 <style>
   .hero {
     text-align: center;
-    padding: 5rem 0;
-    background-color: #f9f9f9;
+    padding: 4rem 0;
   }
 
   h1 {
-    font-size: 2.8rem;
+    font-size: 2.5rem;
     color: var(--primary-purple);
-    margin-bottom: 1.5rem;
-    line-height: 1.2;
+    margin-bottom: 1rem;
   }
 
   .subtitle {
     font-size: 1.25rem;
     color: var(--neutral-black);
-    max-width: 800px;
+    max-width: 600px;
     margin: 0 auto;
-    line-height: 1.6;
   }
 
   section {
-    margin-bottom: 5rem;
-    padding: 2rem 0;
+    margin-bottom: 4rem;
   }
 
   h2 {
-    font-size: 2.2rem;
-    margin-bottom: 1rem;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
     color: var(--primary-purple);
-  }
-
-  .section-intro {
-    font-size: 1.1rem;
-    color: var(--color-text-secondary);
-    max-width: 800px;
-    margin-bottom: 2rem;
-    line-height: 1.6;
-  }
-
-  .section-cta {
-    margin-top: 2rem;
-    text-align: center;
-  }
-
-  .section-cta {
-    margin-top: 2rem;
-    text-align: center;
   }
 
   .contact-cta {
     text-align: center;
-    padding: 4rem;
+    padding: 3rem;
     background-color: #f9f9f9;
     border-radius: 8px;
   }
 
-
-
-  .services-section {
-    background-color: white;
+  .cta-button {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0.75rem 2rem;
+    background-color: var(--primary-purple);
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
   }
 
-  .featured-projects {
-    background-color: #f9f9f9;
-  }
-
-  .featured-articles {
-    background-color: white;
-  }
-
-  @media (max-width: 768px) {
-    h1 {
-      font-size: 2.2rem;
-    }
-
-    h2 {
-      font-size: 1.8rem;
-    }
-
-    .section-intro {
-      font-size: 1rem;
-    }
-
-    .hero {
-      padding: 3rem 0;
-    }
+  .cta-button:hover {
+    background-color: #8a41d0;
   }
 </style>
