@@ -1,5 +1,7 @@
 ---
 // HeroSection.astro - Enhanced hero section with animations and gradient background
+import Button from "./Button.astro";
+import Icon from "./Icon.astro";
 ---
 
 <section class="hero">
@@ -21,8 +23,12 @@
       value.
     </p>
     <div class="hero-cta">
-      <a href="/services" class="cta-button primary">Our Services</a>
-      <a href="/contact" class="cta-button secondary">Get in Touch</a>
+      <Button href="/services" variant="primary" size="large">
+        <Icon name="strategy" size={18} /> Our Services
+      </Button>
+      <Button href="/contact" variant="outline" size="large">
+        <Icon name="email" size={18} /> Get in Touch
+      </Button>
     </div>
   </div>
 </section>
@@ -209,42 +215,6 @@
     transform: translateY(0);
   }
 
-  .cta-button {
-    display: inline-block;
-    padding: 0.9rem 2rem;
-    border-radius: 30px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .cta-button.primary {
-    background: linear-gradient(
-      135deg,
-      var(--color-primary),
-      var(--color-primary-dark)
-    );
-    color: white;
-  }
-
-  .cta-button.secondary {
-    background: white;
-    color: var(--color-primary);
-    border: 2px solid var(--color-primary);
-  }
-
-  .cta-button.primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(155, 81, 224, 0.3);
-  }
-
-  .cta-button.secondary:hover {
-    background: rgba(155, 81, 224, 0.05);
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(155, 81, 224, 0.1);
-  }
-
   @media (max-width: 768px) {
     .hero {
       padding: 6rem 0 4rem;
@@ -261,11 +231,6 @@
     .hero-cta {
       flex-direction: column;
       align-items: center;
-    }
-
-    .cta-button {
-      width: 80%;
-      margin-bottom: 0.5rem;
     }
   }
 </style>

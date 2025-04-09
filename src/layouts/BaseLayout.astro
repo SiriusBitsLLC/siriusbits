@@ -1,7 +1,7 @@
 ---
 import "../styles/global.css";
+import EnhancedHeader from "../components/EnhancedHeader.astro";
 import EnhancedFooter from "../components/EnhancedFooter.astro";
-import Icon from "../components/Icon.astro";
 
 interface Props {
   title: string;
@@ -67,53 +67,7 @@ try {
     <meta property="twitter:image" content={image} />
   </head>
   <body>
-    <header>
-      <div class="container">
-        <nav>
-          <div class="logo">
-            <a href="/">
-              <img
-                src="/siriusbits-logo-name.png"
-                alt="SiriusBits"
-                class="logo-full"
-              />
-              <img
-                src="/siriusbits-brand-mark.png"
-                alt="SiriusBits"
-                class="logo-mark"
-              />
-            </a>
-          </div>
-          <ul class="nav-links">
-            <li>
-              <a href="/" class="nav-item"
-                ><Icon name="arrow-right" size={16} class="nav-icon" /> Home</a>
-            </li>
-            <li>
-              <a href="/skills-experience" class="nav-item"
-                ><Icon name="data-management" size={16} class="nav-icon" /> Skills
-                & Experience</a>
-            </li>
-            <li>
-              <a href="/services" class="nav-item"
-                ><Icon name="strategy" size={16} class="nav-icon" /> Services</a>
-            </li>
-            <li>
-              <a href="/resources" class="nav-item"
-                ><Icon name="article" size={16} class="nav-icon" /> Resources</a>
-            </li>
-            <li>
-              <a href="/uses" class="nav-item"
-                ><Icon name="web-dev" size={16} class="nav-icon" /> Uses</a>
-            </li>
-            <li>
-              <a href="/contact" class="nav-item"
-                ><Icon name="email" size={16} class="nav-icon" /> Contact</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+    <EnhancedHeader />
 
     <main>
       <slot />
@@ -124,69 +78,10 @@ try {
     <style>
       /* Base layout specific styles */
 
-      header {
-        padding: 1.5rem 0;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-      }
-
-      nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .logo a {
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-      }
-
-      .logo-full {
-        height: 40px;
-        width: auto;
-      }
-
-      .logo-mark {
-        display: none;
-        height: 40px;
-        width: auto;
-      }
-
-      .nav-links {
-        display: flex;
-        list-style: none;
-        gap: 2rem;
-      }
-
-      .nav-links a {
-        text-decoration: none;
-        color: var(--neutral-black);
-        font-weight: 500;
-        transition: color 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-
-      .nav-icon {
-        opacity: 0;
-        transform: translateX(-5px);
-        transition: all 0.2s ease;
-        color: var(--primary-purple);
-      }
-
-      .nav-links a:hover {
-        color: var(--primary-purple);
-      }
-
-      .nav-links a:hover .nav-icon {
-        opacity: 1;
-        transform: translateX(0);
-      }
-
       main {
         min-height: calc(100vh - 160px);
         padding: 2rem 0;
+        margin-top: 70px; /* Add margin to account for fixed header */
       }
 
       footer {
@@ -194,20 +89,6 @@ try {
         background-color: #f9f9f9;
         text-align: center;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
-      }
-
-      @media (max-width: 768px) {
-        .nav-links {
-          display: none;
-        }
-
-        .logo-full {
-          display: none;
-        }
-
-        .logo-mark {
-          display: block;
-        }
       }
     </style>
   </body>
