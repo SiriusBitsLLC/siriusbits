@@ -1,4 +1,7 @@
 ---
+import "../styles/global.css";
+import EnhancedFooter from "../components/EnhancedFooter.astro";
+
 interface Props {
   title: string;
   description?: string;
@@ -82,9 +85,10 @@ try {
           </div>
           <ul class="nav-links">
             <li><a href="/">Home</a></li>
-            <li><a href="/skills">Skills</a></li>
-            <li><a href="/timeline">Timeline</a></li>
-            <li><a href="/blog">Blog</a></li>
+            <li><a href="/skills-experience">Skills & Experience</a></li>
+            <li><a href="/services">Services</a></li>
+            <li><a href="/resources">Resources</a></li>
+            <li><a href="/uses">Uses</a></li>
             <li><a href="/contact">Contact</a></li>
           </ul>
         </nav>
@@ -95,40 +99,10 @@ try {
       <slot />
     </main>
 
-    <footer>
-      <div class="container">
-        <p>
-          &copy; {new Date().getFullYear()} SiriusBits. All rights reserved.
-        </p>
-      </div>
-    </footer>
+    <EnhancedFooter />
 
     <style>
-      :root {
-        --primary-purple: #9b51e0;
-        --accent-blue: #3498db;
-        --neutral-black: #111111;
-        --neutral-white: #ffffff;
-      }
-
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      body {
-        font-family: "Inter", "Poppins", "Montserrat", sans-serif;
-        color: var(--neutral-black);
-        background-color: var(--neutral-white);
-        line-height: 1.6;
-      }
-
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 1rem;
-      }
+      /* Base layout specific styles */
 
       header {
         padding: 1.5rem 0;
