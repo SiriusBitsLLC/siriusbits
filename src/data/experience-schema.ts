@@ -22,6 +22,8 @@ export interface Duties {
   roleId: number;
   // Zero or more related comma-separated skill ids
   relevantSkills: string | null;
+  // Concise summary of the duty based on related activities
+  summary?: string;
 }
 
 export interface Roles {
@@ -45,4 +47,8 @@ export interface Skills {
   name: string | null;
   // Skill short description
   description: string | null;
+  // Skill category ID (strategy, data, tech, leadership)
+  category?: string;
+  // Proficiency level (1-5)
+  proficiency?: number;
 }
