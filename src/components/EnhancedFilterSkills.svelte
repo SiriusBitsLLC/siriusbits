@@ -1,88 +1,247 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import type { Skills, Duties, Activities } from '../data/experience-schema';
+  // Import necessary Svelte functions and types
+  import { onMount } from "svelte";
+  import type { Snippet } from 'svelte';
+  import type { Skills, Duties, Activities } from "../data/experience-schema";
+  import AnimateOnScroll from "./AnimateOnScroll.svelte";
+  // import { filterSkillsState, updateFilterSkillsState } from "../lib/stores/skillsStore.svelte.ts"; // TEMP: Debugging hydration
+
+  // Export the component for compatibility with existing imports
+  export const EnhancedFilterSkills = {};
+  export { EnhancedFilterSkills as default };
+
+  // --- Props ---
+  // Define prop types using Svelte 5's $props rune
+  type Props = {
+    skills?: Skills[];
+    duties?: Duties[];
+    activities?: Activities[];
+  };
   
-  export let skills: Skills[] = [];
-  export let duties: Duties[] = [];
-  export let activities: Activities[] = [];
-  
-  let selectedSkillIds: number[] = [];
-  let isFilterVisible = false;
-  let resultsVisible = false;
-  
+  // Use $props() to get props and set defaults
+  const { skills = [], duties = [], activities = [] }: Props = $props();
+
+  // --- State Management ---
+  // Define the type for the filter state to avoid TypeScript errors
+  type FilterSkillsStateType = {
+    selectedSkillIds: number[];
+    filteredRoles: any[];
+    showFilterResults: boolean;
+    isFilterVisible: boolean;
+    viewMode: 'detailed' | 'concise';
+    resultsVisible: boolean;
+  };
+
+  // --- Store Interaction Temporarily Disabled for Debugging ---
+  // let initialFilterState = $state.snapshot(filterSkillsState) as unknown as FilterSkillsState; // Use the defined interface
+  // let currentFilterState = $state<FilterSkillsState>(initialFilterState); // This would normally use the snapshot
+
+  // Provide default values directly to the $state for debugging, using 'as' for empty arrays
+  let localFilterState = $state({
+    selectedSkillIds: [] as number[],
+    filteredRoles: [] as any[], // Placeholder - TODO: Replace any with Role[] type if defined
+    showFilterResults: false,
+    isFilterVisible: false,
+    viewMode: 'detailed' as 'detailed' | 'concise',
+    resultsVisible: false
+  });
+
+  // --- Store Subscription and Initialization Effects Temporarily Disabled ---
+  // $effect(() => {
+  //   const unsubscribe = filterSkillsState.subscribe(storeValue => {
+  //     localFilterState = storeValue; // Renamed variable
+  //   });
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // });
+  // $effect(() => {
+  //   if (!localFilterState || Object.keys(localFilterState).length === 0 || !localFilterState.selectedSkillIds) {
+  //     // updateFilterSkillsState({...}); // Disabled
+  //   }
+  // });
+
+  // Access state properties directly, removed intermediate derived variables
+
+  // --- Computed Properties (Derived) ---
+  const allDutiesMap = $derived(() => {
+    const map = new Map<number, Duties>();
+    duties.forEach(duty => map.set(duty.id, duty));
+    return map;
+  });
+
+  // Create a map of activities by duty ID that can be accessed directly
+  let allActivitiesMap = $state(new Map<number, Activities[]>());
+
+  // Update the activities map whenever the activities prop changes
+  $effect(() => {
+    const map = new Map<number, Activities[]>();
+    if (activities && activities.length > 0) {
+      activities.forEach(activity => {
+        if (activity && activity.dutyId && !map.has(activity.dutyId)) {
+          map.set(activity.dutyId, []);
+        }
+        if (activity && activity.dutyId) {
+          map.get(activity.dutyId)?.push(activity);
+        }
+      });
+    }
+    allActivitiesMap = map;
+  });
+
+  // Create a map of skills by ID that can be accessed directly
+  let allSkillsMap = $state(new Map<number, Skills>());
+
+  // Update the skills map whenever the skills prop changes
+  $effect(() => {
+    const map = new Map<number, Skills>();
+    if (skills && skills.length > 0) {
+      skills.forEach(skill => skill && skill.id && map.set(skill.id, skill));
+    }
+    allSkillsMap = map;
+  });
+
   // Filtered data based on selected skills
-  $: filteredDuties = selectedSkillIds.length > 0 
-    ? duties.filter(duty => {
-        if (!duty.relevantSkills) return false;
-        const skillIdStrings = duty.relevantSkills.split(',');
-        return selectedSkillIds.some(id => 
-          skillIdStrings.includes(id.toString())
-        );
-      })
-    : duties;
-    
-  $: filteredActivities = selectedSkillIds.length > 0
-    ? activities.filter(activity => {
-        const duty = duties.find(d => d.id === activity.dutyId);
-        if (!duty || !duty.relevantSkills) return false;
-        const skillIdStrings = duty.relevantSkills.split(',');
-        return selectedSkillIds.some(id => 
-          skillIdStrings.includes(id.toString())
-        );
-      })
-    : activities;
-  
-  // Toggle skill selection
+  const filteredDuties = $derived(
+    localFilterState.selectedSkillIds && localFilterState.selectedSkillIds.length > 0 && duties && duties.length > 0
+      ? duties.filter((duty: Duties) => {
+          if (!duty || !duty.relevantSkills) return false;
+          const skillIds = duty.relevantSkills.split(",").map(id => parseInt(id.trim()));
+          return localFilterState.selectedSkillIds.some(id => skillIds.includes(id));
+        })
+      : duties || []
+  );
+
+  const filteredActivities = $derived(
+    localFilterState.selectedSkillIds && localFilterState.selectedSkillIds.length > 0 && activities && activities.length > 0
+      ? activities.filter((activity: Activities) => {
+          if (!activity || !activity.dutyId) return false;
+          const duty = duties && duties.length > 0
+            ? duties.find((d: Duties) => d && d.id === activity.dutyId)
+            : undefined;
+          if (!duty || !duty.relevantSkills) return false;
+          const skillIds = duty.relevantSkills.split(",").map(id => parseInt(id.trim()));
+          return localFilterState.selectedSkillIds.some(id => skillIds.includes(id));
+        })
+      : activities || []
+  );
+
+  // --- Event Handlers ---
   function toggleSkill(skillId: number) {
+    const currentIds = localFilterState.selectedSkillIds; // Use the renamed reactive state
+    const newSelectedSkillIds = currentIds.includes(skillId)
+      ? currentIds.filter(id => id !== skillId)
+      : [...currentIds, skillId];
+
     // Animate out results before changing
-    resultsVisible = false;
-    
+    // updateFilterSkillsState({ resultsVisible: false }); // Disabled
+    localFilterState.resultsVisible = false; // Direct assignment for $state
+
     // Short delay for exit animation
     setTimeout(() => {
-      if (selectedSkillIds.includes(skillId)) {
-        selectedSkillIds = selectedSkillIds.filter(id => id !== skillId);
-      } else {
-        selectedSkillIds = [...selectedSkillIds, skillId];
-      }
-      
+      // Update the local state (store update disabled)
+      const newRoles = calculateFilteredRoles(newSelectedSkillIds);
+      // Use direct assignment for $state
+      localFilterState.selectedSkillIds = newSelectedSkillIds;
+      localFilterState.filteredRoles = newRoles;
+      localFilterState.showFilterResults = newSelectedSkillIds.length > 0;
+      // updateFilterSkillsState({ selectedSkillIds: newSelectedSkillIds, filteredRoles: newRoles, showFilterResults: newSelectedSkillIds.length > 0 }); // Disabled
+
       // Trigger entrance animation for new results
       setTimeout(() => {
-        resultsVisible = true;
+        // updateFilterSkillsState({ resultsVisible: true }); // Disabled
+        localFilterState.resultsVisible = true; // Direct assignment for $state
       }, 50);
     }, 300);
   }
-  
-  // Check if skill is selected
-  function isSkillSelected(skillId: number) {
-    return selectedSkillIds.includes(skillId);
+
+  // This function calculates filtered roles/duties based on selected skills
+  function calculateFilteredRoles(selectedIds: number[]): any[] {
+    if (!selectedIds || selectedIds.length === 0 || !duties || duties.length === 0) return [];
+
+    // Using duties as a placeholder for roles/experience entries
+    return duties.filter(duty => {
+      if (!duty || !duty.relevantSkills) return false;
+      const skillIds = duty.relevantSkills.split(',').map(id => parseInt(id.trim()));
+      return selectedIds.some(id => skillIds.includes(id));
+    });
   }
-  
-  // Clear all selected skills
+
+  function toggleViewMode(mode: "detailed" | "concise") {
+    if (localFilterState.viewMode === mode) return; // Access directly from renamed state
+    
+    // Animate out results before changing
+    // updateFilterSkillsState({ resultsVisible: false }); // Disabled
+    localFilterState.resultsVisible = false; // Direct assignment for $state
+
+    // Short delay for exit animation
+    setTimeout(() => {
+      // Update local state (store update disabled)
+      // Use direct assignment for $state
+      localFilterState.viewMode = mode;
+      localFilterState.resultsVisible = false; // Keep it false during mode change
+      // updateFilterSkillsState({ viewMode: mode, resultsVisible: false }); // Disabled
+
+      // Trigger entrance animation for new results
+      setTimeout(() => {
+        // updateFilterSkillsState({ resultsVisible: true }); // Disabled
+        localFilterState.resultsVisible = true; // Direct assignment for $state
+      }, 50);
+    }, 300);
+  }
+
   function clearFilters() {
-    // Animate out results before clearing
-    resultsVisible = false;
-    
-    // Short delay for exit animation
-    setTimeout(() => {
-      selectedSkillIds = [];
-      
-      // Trigger entrance animation for new results
-      setTimeout(() => {
-        resultsVisible = true;
-      }, 50);
-    }, 300);
+    // Update local state (store update disabled) using direct assignment for $state
+    localFilterState.selectedSkillIds = [];
+    localFilterState.filteredRoles = [];
+    localFilterState.showFilterResults = false;
+    localFilterState.resultsVisible = false;
+    // updateFilterSkillsState({ selectedSkillIds: [], filteredRoles: [], showFilterResults: false, resultsVisible: false }); // Disabled
   }
-  
+
   // Toggle filter visibility on mobile
   function toggleFilterVisibility() {
-    isFilterVisible = !isFilterVisible;
+    // Update local state (store update disabled)
+    // We update the isFilterVisible property directly
+    localFilterState.isFilterVisible = !localFilterState.isFilterVisible; // Direct assignment for $state
+    // updateFilterSkillsState({ isFilterVisible: !isFilterVisible }); // Disabled
   }
-  
-  // Initialize animations on mount
+
+  // --- Helper Functions ---
+  function getSkillName(skillId: number): string {
+    if (!allSkillsMap) return 'Unknown Skill';
+    return allSkillsMap.get(skillId)?.name ?? 'Unknown Skill';
+  }
+
+  function getActivitiesForDuty(dutyId: number): Activities[] {
+    if (!allActivitiesMap || !dutyId) return [];
+    return allActivitiesMap.get(dutyId) ?? [];
+  }
+
+  // Initialize on mount
   onMount(() => {
-    // Trigger initial animation
+    // Ensure we have proper default values in the store (Store update disabled)
+    // updateFilterSkillsState({
+    //   selectedSkillIds: [],
+    //   filteredRoles: [],
+    //   showFilterResults: false,
+    //   isFilterVisible: false,
+    //   viewMode: "detailed",
+    //   resultsVisible: false
+    // });
+    // Local state is already initialized with defaults
+    
+    // Process initial data
+    if (skills && skills.length > 0) {
+      const map = new Map<number, Skills>();
+      skills.forEach(skill => skill && skill.id && map.set(skill.id, skill));
+      allSkillsMap = map;
+    }
+    
+    // Trigger initial animation after a delay
     setTimeout(() => {
-      resultsVisible = true;
+      // updateFilterSkillsState({ resultsVisible: true }); // Store update disabled onMount
+      localFilterState.resultsVisible = true; // Update local state instead
     }, 500);
   });
 </script>
@@ -90,109 +249,204 @@
 <div class="enhanced-filter-skills">
   <div class="filter-header">
     <h2>Filter Experience by Skills</h2>
-    <button class="mobile-filter-toggle" on:click={toggleFilterVisibility}>
+    <button class="mobile-filter-toggle" onclick={toggleFilterVisibility}>
       <span>Filter</span>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path
+          d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
       </svg>
     </button>
   </div>
-  
+
   <div class="filter-skills-container">
-    <div class="skills-sidebar {isFilterVisible ? 'visible' : ''}">
+    <div
+      class="skills-sidebar {localFilterState.isFilterVisible ? 'visible' : ''}"
+    >
       <div class="sidebar-header">
         <h3>Skills</h3>
-        {#if selectedSkillIds.length > 0}
-          <button class="clear-filters" on:click={clearFilters}>
+        {#if localFilterState.selectedSkillIds.length > 0}
+          <button class="clear-all-btn" onclick={clearFilters}>
             Clear All
           </button>
         {/if}
       </div>
-      
-      <div class="skill-filters">
-        {#each skills as skill}
-          <button 
-            class="skill-filter-btn {isSkillSelected(skill.id) ? 'selected' : ''}"
-            on:click={() => toggleSkill(skill.id)}
-          >
-            <span class="skill-name">{skill.name}</span>
-            <span class="skill-check">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </span>
-          </button>
+
+      <div class="skills-list">
+        {#each skills as skill (skill.id)}
+          {#if skill.id !== undefined}
+            <button
+              class="skill-btn {localFilterState.selectedSkillIds.includes(skill.id) ? 'selected' : ''}"
+              onclick={() => toggleSkill(skill.id)}
+              aria-pressed={localFilterState.selectedSkillIds.includes(skill.id)}
+            >
+              <span class="skill-name">{skill.name}</span>
+              {#if localFilterState.selectedSkillIds.includes(skill.id)}
+                <span class="skill-check">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </span>
+              {/if}
+            </button>
+          {/if}
         {/each}
       </div>
-      
+
       <div class="close-filter-mobile">
-        <button on:click={toggleFilterVisibility}>
+        <button onclick={toggleFilterVisibility}>
           <span>Close Filters</span>
         </button>
       </div>
     </div>
-    
+
     <div class="filtered-content">
       <div class="results-header">
         <h3>
-          {#if selectedSkillIds.length === 0}
+          {#if localFilterState.selectedSkillIds.length === 0}
             All Experience
           {:else}
-            Filtered Experience ({filteredDuties.length} results)
+            Filtered Experience ({filteredDuties.length} items)
           {/if}
         </h3>
+
+        <div class="view-mode-toggle">
+          <button
+            class="view-mode-btn {localFilterState.viewMode === 'detailed'
+              ? 'active'
+              : ''}"
+            onclick={() => toggleViewMode("detailed")}
+            aria-pressed={localFilterState.viewMode === "detailed"}
+          >
+            Detailed
+          </button>
+          <button
+            class="view-mode-btn {localFilterState.viewMode === 'concise'
+              ? 'active'
+              : ''}"
+            onclick={() => toggleViewMode("concise")}
+            aria-pressed={localFilterState.viewMode === "concise"}
+          >
+            Concise
+          </button>
+        </div>
       </div>
-      
-      <div class="results-container {resultsVisible ? 'visible' : ''}">
-        {#if selectedSkillIds.length === 0}
+
+      <div class="results-container {localFilterState.resultsVisible ? 'visible' : ''}">
+        {#if !localFilterState.selectedSkillIds || localFilterState.selectedSkillIds.length === 0}
           <div class="instruction-card">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z" />
             </svg>
-            <p>Select one or more skills from the sidebar to filter experience</p>
+            <p>
+              Select one or more skills from the sidebar to filter experience
+            </p>
           </div>
-        {:else if filteredDuties.length === 0}
+        {:else if !filteredDuties || filteredDuties.length === 0}
           <div class="no-results-card">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M10 3H3v7M21 14v7h-7M3.51 9A9 9 0 0 0 5.64 19M18.36 5a9 9 0 0 1 2.13 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M16 16s-1.5-2-4-2-4 2-4 2" />
+              <line x1="9" y1="9" x2="9.01" y2="9" />
+              <line x1="15" y1="9" x2="15.01" y2="9" />
             </svg>
             <p>No experience found matching the selected skills</p>
-            <button class="try-again-btn" on:click={clearFilters}>
+            <button class="try-again-btn" onclick={clearFilters}>
               Clear Filters & Try Again
             </button>
           </div>
         {:else}
-          {#each filteredDuties as duty, index}
-            <div 
-              class="duty-card" 
-              style="--delay: {index * 0.1}s"
-            >
-              <h4>{duty.duties}</h4>
-              <div class="activities-list">
-                {#each filteredActivities.filter(a => a.dutyId === duty.id) as activity}
-                  <div class="activity-item">
-                    <div class="activity-bullet"></div>
-                    <p>{activity.activity}</p>
-                  </div>
-                {/each}
-              </div>
-              
-              <div class="related-skills">
-                <div class="related-skills-label">Related Skills:</div>
-                <div class="skill-tags">
-                  {#if duty.relevantSkills}
-                    {#each duty.relevantSkills.split(',') as skillId}
-                      {@const skill = skills.find(s => s.id === parseInt(skillId))}
-                      {#if skill}
-                        <div class="skill-tag">{skill.name}</div>
-                      {/if}
-                    {/each}
+          <div class="duties-grid">
+            {#each filteredDuties as duty, i (duty.id)}
+              <div
+                class="duty-card"
+                style="--delay: {i * 0.05}s"
+              >
+                <h4>{duty.duties}</h4>
+                <div class="content-container">
+                  {#if localFilterState.viewMode === "detailed"}
+                    <p class="duty-summary">{duty.summary}</p>
+                    <div class="activities-list">
+                      {#each getActivitiesForDuty(duty.id) as activity (activity.id)}
+                        <div class="activity-item">
+                          <div class="activity-bullet"></div>
+                          <p>{activity.activity}</p>
+                        </div>
+                      {/each}
+                    </div>
+                    {#if duty.relevantSkills}
+                      <div class="related-skills">
+                        <span class="related-skills-label">Related Skills:</span>
+                        <div class="skill-tags">
+                          {#each duty.relevantSkills.split(',') as skillIdStr}
+                            {@const skillId = parseInt(skillIdStr.trim())}
+                            {#if !isNaN(skillId)}
+                              <span class="skill-tag">{getSkillName(skillId)}</span>
+                            {/if}
+                          {/each}
+                        </div>
+                      </div>
+                    {/if}
+                  {:else}
+                    <p>{duty.summary ?? "Details available in detailed view."}</p>
+                    {#if duty.relevantSkills}
+                      <div class="related-skills">
+                        <span class="related-skills-label">Skills:</span>
+                        <div class="skill-tags">
+                          {#each duty.relevantSkills.split(',') as skillIdStr}
+                            {@const skillId = parseInt(skillIdStr.trim())}
+                            {#if !isNaN(skillId)}
+                              <span class="skill-tag">{getSkillName(skillId)}</span>
+                            {/if}
+                          {/each}
+                        </div>
+                      </div>
+                    {/if}
                   {/if}
                 </div>
               </div>
-            </div>
-          {/each}
+            {/each}
+          </div>
         {/if}
       </div>
     </div>
@@ -200,194 +454,226 @@
 </div>
 
 <style>
+  /* Component styles */
   .enhanced-filter-skills {
-    margin: 2rem 0;
+    background-color: var(--neutral-white);
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
   }
-  
+
   .filter-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
   }
-  
+
   .filter-header h2 {
-    font-size: 1.75rem;
+    font-size: 1.8rem;
     color: var(--color-primary);
     margin: 0;
   }
-  
+
   .mobile-filter-toggle {
     display: none;
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    background: linear-gradient(
+      135deg,
+      var(--color-primary),
+      var(--color-accent)
+    );
     color: white;
     border: none;
     border-radius: 25px;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
   }
-  
+
   .filter-skills-container {
     display: grid;
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: 250px 1fr;
     gap: 2rem;
   }
-  
+
   .skills-sidebar {
-    background: white;
+    background-color: white;
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     height: fit-content;
-    position: sticky;
-    top: 100px;
   }
-  
+
   .sidebar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
   }
-  
+
   .sidebar-header h3 {
     font-size: 1.2rem;
     color: var(--color-primary);
     margin: 0;
   }
-  
-  .clear-filters {
+
+  .clear-all-btn {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--color-error);
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+    padding: 0;
     transition: all 0.2s ease;
   }
-  
-  .clear-filters:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-    color: var(--color-primary);
+
+  .clear-all-btn:hover {
+    text-decoration: underline;
   }
-  
-  .skill-filters {
+
+  .skills-list {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
   }
-  
-  .skill-filter-btn {
+
+  .skills-list::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .skills-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  .skills-list::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 10px;
+  }
+
+  .skills-list::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+  }
+
+  .skill-btn {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem 1rem;
     background-color: #f9f9f9;
-    border: 1px solid transparent;
+    border: 1px solid #eee;
     border-radius: 8px;
-    text-align: left;
     cursor: pointer;
     transition: all 0.2s ease;
+    text-align: left;
   }
-  
-  .skill-filter-btn:hover {
+
+  .skill-btn:hover {
     background-color: #f0f0f0;
-    transform: translateX(3px);
   }
-  
-  .skill-filter-btn.selected {
-    background: linear-gradient(135deg, rgba(155, 81, 224, 0.1) 0%, rgba(52, 152, 219, 0.1) 100%);
-    border: 1px solid transparent;
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-    position: relative;
-    transform: translateX(5px);
-  }
-  
-  .skill-filter-btn.selected::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 7px;
-    padding: 1px;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-  }
-  
-  .skill-name {
-    font-weight: 500;
-    transition: color 0.2s ease;
-  }
-  
-  .skill-filter-btn.selected .skill-name {
+
+  .skill-btn.selected {
+    background: linear-gradient(
+      135deg,
+      rgba(155, 81, 224, 0.1) 0%,
+      rgba(52, 152, 219, 0.1) 100%
+    );
+    border-color: var(--color-primary-light);
     color: var(--color-primary);
-    font-weight: 600;
   }
-  
+
   .skill-check {
-    opacity: 0;
-    transition: all 0.2s ease;
     color: var(--color-primary);
   }
-  
-  .skill-filter-btn.selected .skill-check {
-    opacity: 1;
-  }
-  
+
   .close-filter-mobile {
     display: none;
     margin-top: 1.5rem;
     text-align: center;
   }
-  
+
   .close-filter-mobile button {
     width: 100%;
     padding: 0.75rem;
     background-color: #f0f0f0;
     border: none;
     border-radius: 8px;
-    font-weight: 500;
     cursor: pointer;
+    font-weight: 500;
   }
-  
+
   .filtered-content {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    flex: 1;
   }
-  
+
+  .results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
   .results-header h3 {
-    font-size: 1.2rem;
-    color: var(--color-primary);
+    font-size: 1.4rem;
+    color: var(--neutral-black);
     margin: 0;
   }
-  
-  .results-container {
+
+  .view-mode-toggle {
     display: flex;
-    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .view-mode-btn {
+    padding: 0.5rem 1rem;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+  }
+
+  .view-mode-btn:hover {
+    background-color: #f0f0f0;
+  }
+
+  .view-mode-btn.active {
+    background: linear-gradient(
+      135deg,
+      var(--color-primary),
+      var(--color-accent)
+    );
+    color: white;
+    border-color: transparent;
+  }
+
+  .duties-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
+  }
+
+  .results-container {
     opacity: 0;
     transform: translateY(20px);
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
-  
+
   .results-container.visible {
     opacity: 1;
     transform: translateY(0);
   }
-  
-  .instruction-card, .no-results-card {
+
+  .instruction-card,
+  .no-results-card {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -400,16 +686,21 @@
     color: #666;
     gap: 1rem;
   }
-  
-  .instruction-card svg, .no-results-card svg {
+
+  .instruction-card svg,
+  .no-results-card svg {
     color: var(--color-primary);
     opacity: 0.7;
   }
-  
+
   .try-again-btn {
     margin-top: 1rem;
     padding: 0.5rem 1.5rem;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    background: linear-gradient(
+      135deg,
+      var(--color-primary),
+      var(--color-accent)
+    );
     color: white;
     border: none;
     border-radius: 25px;
@@ -417,12 +708,12 @@
     cursor: pointer;
     transition: all 0.2s ease;
   }
-  
+
   .try-again-btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(155, 81, 224, 0.2);
   }
-  
+
   .duty-card {
     background: white;
     border-radius: 12px;
@@ -434,54 +725,87 @@
     animation: fadeIn 0.5s forwards;
     animation-delay: var(--delay, 0s);
   }
-  
+
   @keyframes fadeIn {
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
-  
+
   .duty-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 30px rgba(155, 81, 224, 0.1);
   }
-  
+
   .duty-card h4 {
     font-size: 1.1rem;
     color: var(--neutral-black);
     margin: 0 0 1.25rem 0;
   }
-  
+
+  .content-container {
+    min-height: 80px; /* Ensures consistent card height during transitions */
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .duty-summary {
+    color: var(--neutral-black);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0 0 1.5rem 0;
+    font-style: italic;
+    opacity: 0.9;
+    animation: fadeIn 0.4s ease forwards;
+  }
+
   .activities-list {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
     margin-bottom: 1.5rem;
+    animation: fadeIn 0.4s ease forwards;
   }
-  
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   .activity-item {
     display: flex;
     gap: 0.75rem;
     align-items: flex-start;
   }
-  
+
   .activity-bullet {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    background: linear-gradient(
+      135deg,
+      var(--color-primary),
+      var(--color-accent)
+    );
     margin-top: 0.5rem;
     flex-shrink: 0;
   }
-  
+
   .activity-item p {
     margin: 0;
     font-size: 0.95rem;
     line-height: 1.5;
     color: var(--neutral-black);
   }
-  
+
   .related-skills {
     display: flex;
     flex-direction: column;
@@ -489,40 +813,50 @@
     border-top: 1px solid #f0f0f0;
     padding-top: 1rem;
   }
-  
+
   .related-skills-label {
     font-size: 0.85rem;
     color: #666;
   }
-  
+
   .skill-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
   }
-  
+
   .skill-tag {
     font-size: 0.8rem;
     padding: 0.25rem 0.75rem;
-    background: linear-gradient(135deg, rgba(155, 81, 224, 0.1) 0%, rgba(52, 152, 219, 0.1) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(155, 81, 224, 0.1) 0%,
+      rgba(52, 152, 219, 0.1) 100%
+    );
     color: var(--color-primary);
     border-radius: 20px;
     font-weight: 500;
   }
-  
+
   @media (max-width: 768px) {
     .filter-header h2 {
       font-size: 1.5rem;
     }
-    
+
     .mobile-filter-toggle {
       display: flex;
     }
-    
+
+    .results-header {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
     .filter-skills-container {
       grid-template-columns: 1fr;
     }
-    
+
     .skills-sidebar {
       position: fixed;
       top: 0;
@@ -535,11 +869,11 @@
       transition: transform 0.3s ease;
       overflow-y: auto;
     }
-    
+
     .skills-sidebar.visible {
       transform: translateX(0);
     }
-    
+
     .close-filter-mobile {
       display: block;
     }

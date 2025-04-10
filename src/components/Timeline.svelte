@@ -2,11 +2,22 @@
   import type { Roles, Duties, Activities } from '../data/experience-schema';
   import { slide } from 'svelte/transition';
   
-  export let roles: Roles[] = [];
-  export let duties: Duties[] = [];
-  export let activities: Activities[] = [];
+  // Export the component for compatibility with existing imports
+  export const Timeline = {};
+  export { Timeline as default };
+
+  // Define prop types using Svelte 5's $props rune
+  type Props = {
+    roles?: Roles[];
+    duties?: Duties[];
+    activities?: Activities[];
+  };
   
-  let expandedRoles: number[] = [];
+  // Use $props() to get props and set defaults
+  const { roles = [], duties = [], activities = [] }: Props = $props();
+  
+  // Use $state for reactive variables
+  let expandedRoles = $state<number[]>([]);
   
   function toggleRole(roleId: number) {
     if (expandedRoles.includes(roleId)) {
@@ -27,11 +38,11 @@
   }
   
   // Sort roles by startDate in descending order (most recent first)
-  $: sortedRoles = [...roles].sort((a, b) => {
+  const sortedRoles = $derived([...roles].sort((a, b) => {
     const dateA = a.startDate ? new Date(a.startDate).getTime() : 0;
     const dateB = b.startDate ? new Date(b.startDate).getTime() : 0;
     return dateB - dateA;
-  });
+  }));
   
   function getDutiesForRole(roleId: number) {
     return duties.filter(duty => duty.roleId === roleId);
@@ -50,8 +61,8 @@
       <div class="timeline-item {isRoleExpanded(role.id) ? 'expanded' : ''}">
         <button 
           class="timeline-header" 
-          on:click={() => toggleRole(role.id)}
-          on:keydown={(e) => e.key === 'Enter' && toggleRole(role.id)}
+          onclick={() => toggleRole(role.id)}
+          onkeydown={(e) => e.key === 'Enter' && toggleRole(role.id)}
           aria-expanded={isRoleExpanded(role.id)}
           aria-controls="content-{role.id}"
         >

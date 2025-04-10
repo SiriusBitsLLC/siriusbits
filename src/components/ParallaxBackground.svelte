@@ -1,10 +1,28 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import type { Snippet } from 'svelte';
   
-  export let speed = 0.2; // Parallax speed factor (0-1)
-  export let direction = 'vertical'; // vertical or horizontal
-  export let reverse = false; // reverse the direction
-  export let maxOffset = 100; // maximum offset in pixels
+  // Using Svelte 5 runes API for props
+  const props = $props<{
+    speed?: number; // Parallax speed factor (0-1)
+    direction?: 'vertical' | 'horizontal'; // vertical or horizontal
+    reverse?: boolean; // reverse the direction
+    maxOffset?: number; // maximum offset in pixels
+    children?: Snippet; // Content to render
+  }>();
+  
+  // Get props with defaults using local derived variables
+  let speed = $derived(props.speed ?? 0.2);
+  let direction = $derived(props.direction ?? 'vertical');
+  let reverse = $derived(props.reverse ?? false);
+  let maxOffset = $derived(props.maxOffset ?? 100);
+  
+  // Helper function to render content
+  function renderContent() {
+    // If children prop is provided, use it, otherwise return an empty function
+    // This allows both slot-based and snippet-based usage
+    return props.children ? props.children : () => '';
+  }
   
   let container: HTMLElement;
   let initialY = 0;
@@ -62,7 +80,7 @@
 </script>
 
 <div bind:this={container} class="parallax-container">
-  <slot></slot>
+  {@render renderContent()}
 </div>
 
 <style>

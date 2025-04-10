@@ -2,11 +2,20 @@
   // Icon component for consistent iconography throughout the site
   // Uses Feather icons (https://feathericons.com/) for a clean, minimal look
   
-  export let name: string; // Icon name
-  export let size = 24; // Icon size in pixels
-  export let color = 'currentColor'; // Icon color
-  export let strokeWidth = 2; // Icon stroke width
-  export let className = ''; // Additional classes
+  // Using Svelte 5 runes API for props
+  const props = $props<{
+    name: string; // Icon name
+    size?: number; // Icon size in pixels
+    color?: string; // Icon color
+    strokeWidth?: number; // Icon stroke width
+    className?: string; // Additional classes
+  }>();
+  
+  // Get props with defaults using local derived variables
+  let size = $derived(props.size ?? 24);
+  let color = $derived(props.color ?? 'currentColor');
+  let strokeWidth = $derived(props.strokeWidth ?? 2);
+  let className = $derived(props.className ?? '');
   
   // Icon paths mapping
   const icons: { [key: string]: string } = {
@@ -64,8 +73,8 @@
   };
   
   // Check if the icon exists
-  const iconExists = name in icons;
-  const iconPath = iconExists ? icons[name] : '';
+  const iconExists = props.name in icons;
+  const iconPath = iconExists ? icons[props.name] : '';
   
   // Determine if the icon is a path or a complex SVG with multiple elements
   const isComplexIcon = iconPath.includes('<path') || iconPath.includes('<line') || 

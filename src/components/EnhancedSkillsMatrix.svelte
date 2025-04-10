@@ -1,62 +1,135 @@
 <script lang="ts">
+  import { get } from 'svelte/store';
   import { onMount } from "svelte";
   import type { Skills, Duties, Activities } from "../data/experience-schema";
-  import { skillCategories, skillCategoryMap } from "../data/skill-categories";
-  import { duties } from "../data/duties";
-  import { activities } from "../data/activities";
   import AnimateOnScroll from "./AnimateOnScroll.svelte";
-  import Icon from "./Icon.svelte";
+  import {
+    skillsMatrixState,
+    updateSkillsMatrixState,
+  } from "../lib/stores/skillsStore.svelte.ts";
 
-  export let skills: Skills[] = [];
+  // Export the component for compatibility with existing imports
+  export const EnhancedSkillsMatrix = {};
+  export { EnhancedSkillsMatrix as default };
 
-  // Group skills by category
-  let groupedSkills: Record<string, Skills[]> = {};
+  // Using Svelte 5 runes API for props
+  type Props = {
+    skills?: Skills[];
+    duties?: Duties[];
+    activities?: Activities[];
+  };
+  
+  // Use $props() to get props and set defaults
+  const { skills = [], duties = [], activities = [] }: Props = $props();
 
-  // Active category
-  let activeCategory = "strategy";
+  // --- State Management ---
+  // Define the type for the store state to avoid TypeScript errors
+  type SkillsMatrixStateType = {
+    groupedSkills: Record<string, Skills[]>;
+    activeCategory: string;
+    selectedSkill: Skills | null;
+    relatedDuties: Duties[];
+    dutyActivitiesMap: Record<number, Activities[]>;
+    skillsVisible: boolean;
+    dutiesVisible: boolean;
+  };
 
-  // Selected skill
-  let selectedSkill: Skills | null = null;
+  // Create a local reactive variable initialized with the store's current value
+  // and keep it synchronized using an effect below.
+  let currentMatrixState = $state<SkillsMatrixStateType>(get(skillsMatrixState));
 
-  // Related duties and activities
-  let relatedDuties: Duties[] = [];
-  let dutyActivitiesMap: Record<number, Activities[]> = {};
-
-  // Animation flags
-  let skillsVisible = false;
-  let dutiesVisible = false;
-
-  // Process skills into groups
-  function processSkills() {
-    groupedSkills = {};
-
-    // Initialize categories
-    skillCategories.forEach((cat) => {
-      groupedSkills[cat.id] = [];
+  // Use $effect to subscribe to the external store and update the local state
+  $effect(() => {
+    const unsubscribe = skillsMatrixState.subscribe(storeValue => {
+      // Update the local reactive state when the store changes
+      currentMatrixState = storeValue;
     });
 
-    // Group skills by category
-    skills.forEach((skill) => {
-      const categoryId =
-        skill.category || skillCategoryMap[skill.id] || "strategy";
+    // The return function from $effect serves as the cleanup
+    return () => {
+      unsubscribe();
+    };
+  });
+  
+  // Add initialization effect to ensure we have default values
+  $effect(() => {
+    // Initialize the component with default values if the store is empty or missing properties
+    if (!currentMatrixState || Object.keys(currentMatrixState).length === 0 || !currentMatrixState.groupedSkills) {
+      updateSkillsMatrixState({
+        groupedSkills: {},
+        activeCategory: "strategy",
+        selectedSkill: null,
+        relatedDuties: [],
+        dutyActivitiesMap: {},
+        skillsVisible: false,
+        dutiesVisible: false
+      });
+    }
+  });
 
-      groupedSkills[categoryId].push(skill);
+  // Use $derived runes to reactively compute values based on the synchronized state
+  let groupedSkills = $derived(currentMatrixState.groupedSkills);
+  let activeCategory = $derived(currentMatrixState.activeCategory);
+  let selectedSkill = $derived(currentMatrixState.selectedSkill);
+  let relatedDuties = $derived(currentMatrixState.relatedDuties);
+  let dutyActivitiesMap = $derived(currentMatrixState.dutyActivitiesMap);
+  let skillsVisible = $derived(currentMatrixState.skillsVisible);
+  let dutiesVisible = $derived(currentMatrixState.dutiesVisible);
+
+  // Skill categories for the navigation
+  const skillCategories = [
+    { id: "strategy", name: "Strategy" },
+    { id: "data", name: "Data" },
+    { id: "tech", name: "Technology" },
+    { id: "leadership", name: "Leadership" },
+  ];
+
+  // Process and group skills by category
+  function processSkills(): void {
+    // Group skills by category
+    const newGroupedSkills: Record<string, Skills[]> = {};
+    
+    // Initialize categories
+    skillCategories.forEach(category => {
+      newGroupedSkills[category.id] = [];
+    });
+    
+    // Group skills by their category - with null checks
+    if (skills && skills.length > 0) {
+      skills.forEach(skill => {
+        if (skill && skill.category && newGroupedSkills[skill.category]) {
+          newGroupedSkills[skill.category].push(skill);
+        }
+      });
+    }
+    
+    // Update the state using the update function
+    updateSkillsMatrixState({
+      groupedSkills: newGroupedSkills
     });
   }
 
   // Handle category change
   function setActiveCategory(categoryId: string): void {
-    skillsVisible = false;
-    dutiesVisible = false;
-    selectedSkill = null;
+    // Update state properties using the update function
+    updateSkillsMatrixState({
+      skillsVisible: false,
+      dutiesVisible: false,
+      selectedSkill: null
+    });
 
     // Short delay for exit animation
     setTimeout(() => {
-      activeCategory = categoryId;
+      // Update the active category
+      updateSkillsMatrixState({
+        activeCategory: categoryId
+      });
 
       // Trigger entrance animation
       setTimeout(() => {
-        skillsVisible = true;
+        updateSkillsMatrixState({
+          skillsVisible: true
+        });
       }, 50);
     }, 300);
   }
@@ -66,11 +139,15 @@
     // Toggle selection if already selected
     if (selectedSkill && selectedSkill.id === skill.id) {
       // First hide duties with animation
-      dutiesVisible = false;
+      updateSkillsMatrixState({
+        dutiesVisible: false
+      });
       
       // Then clear selection after animation completes
       setTimeout(() => {
-        selectedSkill = null;
+        updateSkillsMatrixState({
+          selectedSkill: null
+        });
       }, 300);
       return;
     }
@@ -80,17 +157,21 @@
     
     // Always hide duties first with animation
     if (isDutiesVisible) {
-      dutiesVisible = false;
+      updateSkillsMatrixState({
+        dutiesVisible: false
+      });
       
       // After animation completes, update selection and show new duties
       setTimeout(() => {
         // Update selected skill
-        selectedSkill = skill;
+        updateSkillsMatrixState({
+          selectedSkill: skill
+        });
         
         // Find related duties
         if (skill.id) {
           // Get duties that have this skill in their relevantSkills
-          relatedDuties = duties.filter((duty) => {
+          const filteredDuties = duties.filter((duty) => {
             if (!duty.relevantSkills) return false;
             const skillIds = duty.relevantSkills
               .split(",")
@@ -99,27 +180,37 @@
           });
 
           // Map duties to their activities
-          dutyActivitiesMap = {};
-          relatedDuties.forEach((duty) => {
-            dutyActivitiesMap[duty.id] = activities.filter(
+          const newDutyActivitiesMap: Record<number, Activities[]> = {};
+          filteredDuties.forEach((duty: Duties) => {
+            newDutyActivitiesMap[duty.id] = activities.filter(
               (activity) => activity.dutyId === duty.id
             );
           });
           
+          // Update state with new duties and activities map
+          updateSkillsMatrixState({
+            relatedDuties: filteredDuties,
+            dutyActivitiesMap: newDutyActivitiesMap
+          });
+          
           // Show new duties with animation
           setTimeout(() => {
-            dutiesVisible = true;
+            updateSkillsMatrixState({
+              dutiesVisible: true
+            });
           }, 50);
         }
       }, 300);
     } else {
       // If no duties are visible, just update immediately
-      selectedSkill = skill;
+      updateSkillsMatrixState({
+        selectedSkill: skill
+      });
       
       // Find related duties
       if (skill.id) {
         // Get duties that have this skill in their relevantSkills
-        relatedDuties = duties.filter((duty) => {
+        const filteredDuties = duties.filter((duty) => {
           if (!duty.relevantSkills) return false;
           const skillIds = duty.relevantSkills
             .split(",")
@@ -128,16 +219,23 @@
         });
 
         // Map duties to their activities
-        dutyActivitiesMap = {};
-        relatedDuties.forEach((duty) => {
-          dutyActivitiesMap[duty.id] = activities.filter(
+        const newDutyActivitiesMap: Record<number, Activities[]> = {};
+        filteredDuties.forEach((duty: Duties) => {
+          newDutyActivitiesMap[duty.id] = activities.filter(
             (activity) => activity.dutyId === duty.id
           );
         });
         
+        updateSkillsMatrixState({
+          relatedDuties: filteredDuties,
+          dutyActivitiesMap: newDutyActivitiesMap
+        });
+        
         // Show duties with animation delay
         setTimeout(() => {
-          dutiesVisible = true;
+          updateSkillsMatrixState({
+            dutiesVisible: true
+          });
         }, 300);
       }
     }
@@ -145,21 +243,28 @@
   
   // Close duties section
   function closeDuties(): void {
-    dutiesVisible = false;
+    updateSkillsMatrixState({
+      dutiesVisible: false
+    });
     
     // Short delay before removing selection
     setTimeout(() => {
-      selectedSkill = null;
+      updateSkillsMatrixState({
+        selectedSkill: null
+      });
     }, 300);
   }
 
   // Initialize on mount
   onMount(() => {
+    // Process skills when component mounts
     processSkills();
 
     // Trigger initial animation
     setTimeout(() => {
-      skillsVisible = true;
+      updateSkillsMatrixState({
+        skillsVisible: true
+      });
     }, 500);
   });
 </script>
@@ -168,23 +273,17 @@
   <AnimateOnScroll animation="fade-up" duration={800} delay={200}>
     <div class="categories-nav">
       {#each skillCategories as category, i}
-        <AnimateOnScroll
-          animation="fade-up"
-          duration={600}
-          delay={200 + i * 100}
-        >
+        <div class="animate-item" style="animation-delay: {200 + i * 100}ms">
           <button
             class="category-btn {activeCategory === category.id
               ? 'active'
               : ''}"
-            on:click={() => setActiveCategory(category.id)}
+            onclick={() => setActiveCategory(category.id)}
+            aria-pressed={activeCategory === category.id}
           >
-            <span class="category-icon">
-              <Icon name={category.icon} size={24} />
-            </span>
             <span class="category-name">{category.name}</span>
           </button>
-        </AnimateOnScroll>
+        </div>
       {/each}
     </div>
   </AnimateOnScroll>
@@ -192,20 +291,16 @@
   <div class="skills-container">
     <AnimateOnScroll animation="fade-up" duration={800} delay={400}>
       <div class="skills-grid {skillsVisible ? 'visible' : ''}">
-        {#if groupedSkills[activeCategory]}
+        {#if groupedSkills && activeCategory && groupedSkills[activeCategory]}
           {#each groupedSkills[activeCategory] as skill, i}
-            <AnimateOnScroll
-              animation="fade-up"
-              duration={600}
-              delay={400 + i * 100}
-            >
+            <div class="animate-item" style="animation-delay: {400 + i * 100}ms">
               <div
                 class="skill-card {selectedSkill &&
                 selectedSkill.id === skill.id
                   ? 'selected'
                   : ''}"
-                on:click={() => handleSkillClick(skill)}
-                on:keydown={(e) => e.key === "Enter" && handleSkillClick(skill)}
+                onclick={() => handleSkillClick(skill)}
+                onkeydown={(e) => e.key === 'Enter' && handleSkillClick(skill)}
                 tabindex="0"
                 role="button"
                 aria-pressed={selectedSkill && selectedSkill.id === skill.id
@@ -214,61 +309,46 @@
                 aria-label="View related duties for {skill.name}"
               >
                 <div class="skill-card-indicator"></div>
-                <div class="skill-header">
-                  <h3>{skill.name}</h3>
-                  <div class="proficiency-meter">
-                    {#each Array(5) as _, i}
-                      <div
-                        class="proficiency-dot {i < (skill.proficiency || 3)
-                          ? 'filled'
-                          : ''}"
-                      ></div>
-                    {/each}
-                  </div>
-                </div>
+                <h3 class="skill-name">{skill.name}</h3>
                 <p class="skill-description">{skill.description}</p>
+                <div class="skill-proficiency">
+                  <div
+                    class="proficiency-bar"
+                    style="width: {((skill.proficiency || 0) / 5) * 100}%"
+                  ></div>
+                </div>
                 <div class="skill-proficiency-label">
-                  {#if skill.proficiency === 5}
-                    Expert
-                  {:else if skill.proficiency === 4}
-                    Advanced
-                  {:else if skill.proficiency === 3}
-                    Intermediate
-                  {:else if skill.proficiency === 2}
-                    Basic
-                  {:else}
-                    Beginner
-                  {/if}
+                  Proficiency: {skill.proficiency || 0}/5
                 </div>
               </div>
-            </AnimateOnScroll>
+            </div>
           {/each}
+        {:else}
+          <div class="no-skills-message">
+            <p>No skills found in this category.</p>
+          </div>
         {/if}
       </div>
     </AnimateOnScroll>
   </div>
 
-  {#if selectedSkill && relatedDuties.length > 0}
+  {#if selectedSkill && relatedDuties && relatedDuties.length > 0}
     <div class="duties-section {dutiesVisible ? 'visible' : ''}">
       <AnimateOnScroll animation="fade-up" duration={800} delay={200}>
         <div
           class="duties-container"
-          data-skill="Related to {selectedSkill.name}"
+          data-skill="Related to {selectedSkill.name || 'selected skill'}"
         >
           <button
             class="close-duties-btn"
-            on:click={closeDuties}
+            onclick={closeDuties}
             aria-label="Close related duties"
           >
             <span aria-hidden="true">×</span>
           </button>
           <div class="duties-grid">
             {#each relatedDuties as duty, i}
-              <AnimateOnScroll
-                animation="fade-up"
-                duration={600}
-                delay={300 + i * 100}
-              >
+              <AnimateOnScroll animation="fade-up" duration={600} delay={300 + i * 100}>
                 <div class="duty-card">
                   <div class="duty-header">
                     <h4>{duty.duties}</h4>
@@ -301,28 +381,29 @@
 
   .category-btn {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
-    padding: 1rem;
-    background: white;
-    border: 2px solid transparent;
-    border-radius: 12px;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    background-color: white;
+    border: 1px solid var(--neutral-light-gray);
     cursor: pointer;
     transition: all 0.3s ease;
-    min-width: 100px;
+    font-weight: 500;
+    color: var(--neutral-dark-gray);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   }
 
   .category-btn:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 15px rgba(155, 81, 224, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
   }
 
   .category-btn.active {
     background: linear-gradient(
-      135deg,
-      rgba(155, 81, 224, 0.1) 0%,
-      rgba(52, 152, 219, 0.1) 100%
+      to bottom right,
+      white,
+      white
     );
     border: 2px solid transparent;
     background-origin: border-box;
@@ -346,38 +427,18 @@
       var(--color-primary),
       var(--color-accent)
     );
-    -webkit-mask:
-      linear-gradient(#fff 0 0) content-box,
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    mask: 
+      linear-gradient(#fff 0 0) content-box, 
       linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
-    mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
     mask-composite: exclude;
   }
 
-  .category-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background-color: #f5f5f5;
-    color: var(--color-primary);
-    transition: all 0.3s ease;
-  }
-
-  .category-btn.active .category-icon {
-    background: linear-gradient(
-      135deg,
-      var(--color-primary),
-      var(--color-accent)
-    );
-    color: white;
-  }
-
   .category-name {
+    font-size: 1rem;
     font-weight: 600;
     transition: color 0.3s ease;
   }
@@ -404,29 +465,34 @@
     width: 100%;
   }
 
-  /* All categories use the same grid layout regardless of item count */
-
-  /* Set a minimum width for skill cards */
-  .skill-card {
-    min-width: 280px;
-  }
-
   .skills-grid.visible {
     opacity: 1;
     transform: translateY(0);
   }
 
   .skill-card {
-    background: white;
+    background-color: white;
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
+    cursor: pointer;
     position: relative;
     overflow: hidden;
-    cursor: pointer;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--neutral-light-gray);
+  }
+
+  .skill-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(155, 81, 224, 0.1);
+  }
+
+  .skill-card.selected {
+    border-color: var(--color-primary);
+    box-shadow: 0 15px 30px rgba(155, 81, 224, 0.15);
   }
 
   .skill-card-indicator {
@@ -434,9 +500,9 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%) scale(0);
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+    width: 50px;
+    height: 5px;
+    border-radius: 5px 5px 0 0;
     background: linear-gradient(
       90deg,
       var(--color-primary),
@@ -462,51 +528,35 @@
       var(--color-accent)
     );
     opacity: 0.7;
-    transition: height 0.3s ease;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
   }
 
-  .skill-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(155, 81, 224, 0.1);
+  .skill-card:hover::before,
+  .skill-card.selected::before {
+    transform: scaleX(1);
   }
 
-  .skill-card.selected {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(155, 81, 224, 0.2);
-    border: 1px solid rgba(155, 81, 224, 0.3);
-  }
-
-  .skill-card:hover::before {
-    height: 7px;
-  }
-
-  .skill-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-  }
-
-  .skill-card h3 {
-    font-size: 1.2rem;
+  .skill-name {
+    font-size: 1.1rem;
     color: var(--color-primary);
-    margin: 0;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
   }
 
-  .proficiency-meter {
-    display: flex;
-    gap: 3px;
+  .skill-proficiency {
+    height: 5px;
+    background-color: var(--neutral-light-gray);
+    border-radius: 10px;
+    margin-top: auto;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
   }
 
-  .proficiency-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #e0e0e0;
-    transition: all 0.3s ease;
-  }
-
-  .proficiency-dot.filled {
+  .proficiency-bar {
+    height: 100%;
+    border-radius: 10px;
     background: linear-gradient(
       135deg,
       var(--color-primary),
@@ -536,7 +586,6 @@
     opacity: 0;
     transform: translateY(20px);
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    width: 100%;
   }
 
   .duties-section.visible {
@@ -545,31 +594,27 @@
   }
 
   .duties-container {
-    position: relative;
-    background-color: rgba(155, 81, 224, 0.03);
+    background-color: white;
     border-radius: 16px;
-    padding: 1.25rem 1.5rem;
-    border-left: 3px solid var(--color-primary);
-    max-width: 1200px;
-    margin: 0 auto;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    position: relative;
+    border: 1px solid var(--neutral-light-gray);
   }
-  
+
   .close-duties-btn {
     position: absolute;
-    top: -10px;
-    right: 15px;
-    background: white;
-    border: none;
-    color: var(--color-primary);
-    font-size: 1.25rem;
-    line-height: 1;
-    width: 28px;
-    height: 28px;
+    top: 1rem;
+    right: 1rem;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
+    background-color: white;
+    border: 1px solid var(--neutral-light-gray);
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.2rem;
     cursor: pointer;
     transition: all 0.2s ease;
     opacity: 0.8;
@@ -597,43 +642,28 @@
   .duties-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
-    width: 100%;
-    justify-content: center;
-  }
-
-  /* All categories use the same grid layout regardless of item count */
-
-  /* Set a minimum width for duty cards */
-  .duty-card {
-    min-width: 280px;
+    gap: 1.5rem;
+    margin-top: 1rem;
   }
 
   .duty-card {
-    background: rgba(255, 255, 255, 0.8);
+    background-color: var(--neutral-light-gray-background);
     border-radius: 10px;
     padding: 1.25rem;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-    border-left: 3px solid var(--color-accent);
-    height: 100%;
   }
-  
+
   .duty-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 15px rgba(52, 152, 219, 0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
   }
 
   .duty-header {
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
   }
 
   .duty-header h4 {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--color-accent);
     margin: 0;
     font-weight: 600;
@@ -647,7 +677,6 @@
     font-style: italic;
     opacity: 0.9;
   }
-
 
 
   @media (max-width: 992px) {
@@ -665,65 +694,51 @@
   }
   
   @media (max-width: 768px) {
-    .enhanced-skills-matrix {
-      gap: 1.25rem;
-    }
-    
-    .categories-nav {
-      gap: 0.5rem;
-    }
-
-    .category-btn {
-      min-width: 80px;
-      padding: 0.75rem;
-    }
-
-    .category-icon {
-      width: 36px;
-      height: 36px;
-    }
-
-    .category-name {
-      font-size: 0.9rem;
-    }
-
     .skills-grid {
       grid-template-columns: 1fr;
-      gap: 1rem;
     }
-
+    
     .duties-grid {
       grid-template-columns: 1fr;
-      gap: 1rem;
     }
     
-    .skill-card,
-    .duty-card {
-      min-width: unset;
-      width: 100%;
-    }
-    
-    .duty-card {
-      padding: 1rem;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .enhanced-skills-matrix {
-      gap: 1rem;
-    }
-    
-    .skills-grid {
-      grid-template-columns: 1fr;
-    }
-    
-    .duties-container {
-      padding: 1rem;
-      border-radius: 12px;
+    .category-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
     }
     
     .skill-card {
       padding: 1.25rem;
+    }
+    
+    .skill-name {
+      font-size: 1rem;
+    }
+    
+    .skill-description {
+      font-size: 0.9rem;
+    }
+  }
+
+  .no-skills-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem;
+    color: var(--neutral-gray);
+    font-style: italic;
+  }
+
+  /* Animation styles for animated items */
+  .animate-item {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease forwards;
+  }
+  
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 </style>

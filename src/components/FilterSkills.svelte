@@ -1,44 +1,62 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import type { Skills, Duties, Activities } from '../data/experience-schema';
   
-  export let skills: Skills[] = [];
-  export let duties: Duties[] = [];
-  export let activities: Activities[] = [];
+  // Using Svelte 5 runes API for props
+  const props = $props<{
+    skills?: Skills[];
+    duties?: Duties[];
+    activities?: Activities[];
+  }>();
   
-  let selectedSkillIds: number[] = [];
+  // Access props with defaults
+  const skills = $derived(props.skills ?? []);
+  const duties = $derived(props.duties ?? []);
+  const activities = $derived(props.activities ?? []);
   
-  $: filteredDuties = selectedSkillIds.length > 0 
-    ? duties.filter(duty => {
-        if (!duty.relevantSkills) return false;
-        const skillIdStrings = duty.relevantSkills.split(',');
-        return selectedSkillIds.some(id => 
-          skillIdStrings.includes(id.toString())
-        );
-      })
-    : duties;
+  const selectedSkillIds = $state<number[]>([]);
+  
+  const filteredDuties = $derived(
+    selectedSkillIds.length > 0 
+      ? duties.filter((duty: Duties) => {
+          if (!duty.relevantSkills) return false;
+          const skillIdStrings = duty.relevantSkills.split(',');
+          return selectedSkillIds.some(id => 
+            skillIdStrings.includes(id.toString())
+          );
+        })
+      : duties
+  );
     
-  $: filteredActivities = selectedSkillIds.length > 0
-    ? activities.filter(activity => {
-        const duty = duties.find(d => d.id === activity.dutyId);
-        if (!duty || !duty.relevantSkills) return false;
-        const skillIdStrings = duty.relevantSkills.split(',');
-        return selectedSkillIds.some(id => 
-          skillIdStrings.includes(id.toString())
-        );
-      })
-    : activities;
+  const filteredActivities = $derived(
+    selectedSkillIds.length > 0
+      ? activities.filter((activity: Activities) => {
+          const duty = duties.find((d: Duties) => d.id === activity.dutyId);
+          if (!duty || !duty.relevantSkills) return false;
+          const skillIdStrings = duty.relevantSkills.split(',');
+          return selectedSkillIds.some(id => 
+            skillIdStrings.includes(id.toString())
+          );
+        })
+      : activities
+  );
     
   function toggleSkill(skillId: number) {
     if (selectedSkillIds.includes(skillId)) {
-      selectedSkillIds = selectedSkillIds.filter(id => id !== skillId);
+      // With $state, we can directly mutate the array
+      selectedSkillIds.splice(selectedSkillIds.indexOf(skillId), 1);
     } else {
-      selectedSkillIds = [...selectedSkillIds, skillId];
+      // Or we can use push to add items
+      selectedSkillIds.push(skillId);
     }
   }
   
   function isSkillSelected(skillId: number) {
     return selectedSkillIds.includes(skillId);
   }
+  
+  // Type for filtered activities to avoid implicit any
+  type FilteredActivity = Activities;
 </script>
 
 <div class="filter-skills-container">
@@ -48,7 +66,7 @@
       {#each skills as skill}
         <button 
           class="skill-filter-btn {isSkillSelected(skill.id) ? 'selected' : ''}"
-          on:click={() => toggleSkill(skill.id)}
+          onclick={() => toggleSkill(skill.id)}
         >
           {skill.name}
         </button>
@@ -67,7 +85,7 @@
         <div class="duty-item">
           <h3>{duty.duties}</h3>
           <div class="activities">
-            {#each filteredActivities.filter(a => a.dutyId === duty.id) as activity}
+            {#each filteredActivities.filter((a: FilteredActivity) => a.dutyId === duty.id) as activity}
               <div class="activity-item">
                 <p>{activity.activity}</p>
               </div>

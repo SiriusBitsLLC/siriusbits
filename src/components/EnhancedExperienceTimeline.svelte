@@ -5,14 +5,26 @@
   import ParallaxBackground from './ParallaxBackground.svelte';
   import Icon from './Icon.svelte';
   
-  export let roles: Roles[] = [];
-  export let companies: Companies[] = [];
-  export let duties: Duties[] = [];
-  export let activities: Activities[] = [];
+  // Export the component for compatibility with existing imports
+  export const EnhancedExperienceTimeline = {};
+  export { EnhancedExperienceTimeline as default };
+
+  // Using Svelte 5 runes API for props
+  const props = $props<{
+    roles?: Roles[];
+    companies?: Companies[];
+    duties?: Duties[];
+    activities?: Activities[];
+  }>();
   
-  let timelineVisible = false;
-  let expandedRoles: number[] = [];
-  let viewMode: 'condensed' | 'expanded' = 'condensed';
+  // Set default values
+  props.roles ??= [];
+  props.companies ??= [];
+  props.duties ??= [];
+  props.activities ??= [];
+  
+  // Import the shared state from the store
+  import { timelineState, updateTimelineState } from '../lib/stores/skillsStore.svelte.ts';
   
   // Format date to display month and year
   function formatDate(dateString: string | null): string {
@@ -50,38 +62,69 @@
   
   // Get company details by ID
   function getCompany(companyId: number): Companies {
-    return companies.find(company => company.id === companyId) || {} as Companies;
+    return props.companies.find((company: Companies) => company.id === companyId) || {} as Companies;
   }
   
   // Get duties for a role
   function getDutiesForRole(roleId: number): Duties[] {
-    return duties.filter(duty => duty.roleId === roleId);
+    return props.duties.filter((duty: Duties) => duty.roleId === roleId);
   }
   
   // Get activities for a duty
   function getActivitiesForDuty(dutyId: number): Activities[] {
-    return activities.filter(activity => activity.dutyId === dutyId);
+    return props.activities.filter((activity: Activities) => activity.dutyId === dutyId);
   }
+  
+  // Create a local variable to store the current state
+  let currentTimelineState: {
+    timelineVisible: boolean;
+    expandedRoles: number[];
+    viewMode: 'condensed' | 'expanded';
+  };
+  
+  // Subscribe to the store to keep the local state updated
+  const unsubscribe = timelineState.subscribe((value: {
+    timelineVisible: boolean;
+    expandedRoles: number[];
+    viewMode: 'condensed' | 'expanded';
+  }) => {
+    currentTimelineState = value;
+  });
+  
+  // Clean up subscription when component is destroyed
+  onMount(() => {
+    return () => {
+      unsubscribe();
+    };
+  });
   
   // Toggle expanded state for a role
   function toggleRoleExpanded(roleId: number): void {
-    if (expandedRoles.includes(roleId)) {
-      expandedRoles = expandedRoles.filter(id => id !== roleId);
+    if (currentTimelineState.expandedRoles.includes(roleId)) {
+      updateTimelineState({
+        expandedRoles: currentTimelineState.expandedRoles.filter((id: number) => id !== roleId)
+      });
     } else {
-      expandedRoles = [...expandedRoles, roleId];
+      updateTimelineState({
+        expandedRoles: [...currentTimelineState.expandedRoles, roleId]
+      });
     }
   }
   
   // Expand all roles
   function expandAllRoles(): void {
-    viewMode = 'expanded';
-    expandedRoles = roles.map(role => role.id);
+    updateTimelineState({
+      viewMode: 'expanded',
+      expandedRoles: props.roles.map((role: Roles) => role.id)
+    });
   }
   
   // Collapse all roles
   function collapseAllRoles(): void {
-    viewMode = 'condensed';
-    expandedRoles = [];
+    updateTimelineState({
+      viewMode: 'condensed',
+      expandedRoles: []
+    });
   }
   
   // Initialize animations on mount
@@ -90,7 +133,7 @@
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          timelineVisible = true;
+          updateTimelineState({ timelineVisible: true });
           observer.disconnect();
         }
       });
@@ -118,16 +161,16 @@
       <h2>Professional Journey</h2>
       <div class="view-mode-controls">
         <button 
-          class="view-mode-btn {viewMode === 'condensed' ? 'active' : ''}" 
-          on:click={collapseAllRoles}
-          aria-pressed={viewMode === 'condensed'}
+          class="view-mode-btn {$timelineState.viewMode === 'condensed' ? 'active' : ''}" 
+          onclick={collapseAllRoles}
+          aria-pressed={$timelineState.viewMode === 'condensed'}
         >
           Condensed
         </button>
         <button 
-          class="view-mode-btn {viewMode === 'expanded' ? 'active' : ''}" 
-          on:click={expandAllRoles}
-          aria-pressed={viewMode === 'expanded'}
+          class="view-mode-btn {$timelineState.viewMode === 'expanded' ? 'active' : ''}" 
+          onclick={expandAllRoles}
+          aria-pressed={$timelineState.viewMode === 'expanded'}
         >
           Expanded
         </button>
@@ -145,10 +188,10 @@
     </div>
   </AnimateOnScroll>
   
-  <div class="experience-timeline {timelineVisible ? 'visible' : ''}">
+  <div class="experience-timeline {$timelineState.timelineVisible ? 'visible' : ''}">
     <div class="timeline-line"></div>
     
-    {#each roles as role, index}
+    {#each props.roles as role, index}
       {@const company = getCompany(role.companyId)}
       <AnimateOnScroll animation="fade-left" duration={800} delay={300 + (index * 150)}>
         <div class="timeline-item">
@@ -160,7 +203,7 @@
               <span class="duration">{calculateDuration(role.startDate, role.endDate)}</span>
             </div>
             
-            <div class="timeline-card" on:click={() => toggleRoleExpanded(role.id)} on:keydown={(e) => e.key === 'Enter' && toggleRoleExpanded(role.id)} tabindex="0" role="button" aria-expanded={expandedRoles.includes(role.id)}>
+            <div class="timeline-card" onclick={() => toggleRoleExpanded(role.id)} onkeydown={(e) => e.key === 'Enter' && toggleRoleExpanded(role.id)} tabindex="0" role="button" aria-expanded={$timelineState.expandedRoles.includes(role.id)}>
               <div class="timeline-card-content">
                 <div class="timeline-card-left">
                   <h3 class="timeline-title">{role.title}</h3>
@@ -179,7 +222,7 @@
                 </div>
               </div>
               
-              <div class="timeline-details" class:expanded={expandedRoles.includes(role.id)}>
+              <div class="timeline-details" class:expanded={$timelineState.expandedRoles.includes(role.id)}>
                 <div class="timeline-details-content">
                   {#each getDutiesForRole(role.id) as duty}
                     <div class="duty-section">
@@ -196,8 +239,8 @@
               
               <div class="timeline-card-footer">
                 <div class="details-indicator">
-                  <span>{expandedRoles.includes(role.id) ? 'Hide Details' : 'View Details'}</span>
-                  {#if expandedRoles.includes(role.id)}
+                  <span>{$timelineState.expandedRoles.includes(role.id) ? 'Hide Details' : 'View Details'}</span>
+                  {#if $timelineState.expandedRoles.includes(role.id)}
                     <Icon name="arrow-down" size={16} />
                   {:else}
                     <Icon name="arrow-right" size={16} />
