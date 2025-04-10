@@ -35,17 +35,24 @@ import { companies } from '../data/companies';
     
     <section class="intro-section">
       <div class="container">
-        <div class="summary-content">
-          <p>
-            With over a decade of experience in data strategy, enterprise architecture, and digital transformation, 
-            SiriusBits Consulting provides expert guidance to help organizations leverage their data assets and technology 
-            investments for maximum business value.
-          </p>
-          <p>
-            Specializing in data governance, analytics & insights, and technology strategy, we've helped companies 
-            across various industries establish robust data practices, implement modern data stacks, and develop 
-            actionable insights that drive business decisions.
-          </p>
+        <div class="intro-content-wrapper">
+          <div class="profile-image-container">
+            <div class="profile-image-wrapper">
+              <img src="/images/ben-willis-tower.jpeg" alt="Ben at Willis Tower" class="profile-image" />
+            </div>
+          </div>
+          <div class="summary-content">
+            <p>
+              With over a decade of experience in data strategy, enterprise architecture, and digital transformation, 
+              SiriusBits Consulting provides expert guidance to help organizations leverage their data assets and technology 
+              investments for maximum business value.
+            </p>
+            <p>
+              Specializing in data governance, analytics & insights, and technology strategy, we've helped companies 
+              across various industries establish robust data practices, implement modern data stacks, and develop 
+              actionable insights that drive business decisions.
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -66,7 +73,7 @@ import { companies } from '../data/companies';
           <h2>Professional Journey</h2>
           <p class="section-description">Career highlights and key roles across consulting and corporate environments</p>
         </div>
-        <EnhancedExperienceTimeline client:load roles={roles} companies={companies} />
+        <EnhancedExperienceTimeline client:load roles={roles} companies={companies} duties={duties} activities={activities} />
       </div>
     </section>
     
@@ -223,9 +230,41 @@ import { companies } from '../data/companies';
     padding: 2rem 0 4rem;
   }
   
-  .summary-content {
-    max-width: 800px;
+  .intro-content-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    max-width: 1000px;
     margin: 0 auto;
+  }
+  
+  .profile-image-container {
+    flex: 0 0 300px;
+  }
+  
+  .profile-image-wrapper {
+    width: 300px;
+    height: 350px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+  
+  .profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 20%; /* Adjust vertical position to focus on face */
+    transition: transform 0.5s ease;
+  }
+  
+  .profile-image-wrapper:hover .profile-image {
+    transform: scale(1.05);
+  }
+  
+  .summary-content {
+    flex: 1;
     line-height: 1.8;
   }
   
@@ -332,6 +371,22 @@ import { companies } from '../data/companies';
     
     .cta-section {
       padding: 2rem 1.5rem;
+    }
+    
+    .intro-content-wrapper {
+      flex-direction: column;
+      gap: 2rem;
+      text-align: center;
+    }
+    
+    .profile-image-container {
+      flex: 0 0 auto;
+    }
+    
+    .profile-image-wrapper {
+      width: 250px;
+      height: 300px;
+      margin: 0 auto;
     }
   }
 </style>

@@ -1,17 +1,21 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { Roles, Companies } from '../data/experience-schema';
+  import type { Roles, Companies, Duties, Activities } from '../data/experience-schema';
   import AnimateOnScroll from './AnimateOnScroll.svelte';
   import ParallaxBackground from './ParallaxBackground.svelte';
   import Icon from './Icon.svelte';
   
   export let roles: Roles[] = [];
   export let companies: Companies[] = [];
+  export let duties: Duties[] = [];
+  export let activities: Activities[] = [];
   
   let timelineVisible = false;
+  let expandedRoles: number[] = [];
+  let viewMode: 'condensed' | 'expanded' = 'condensed';
   
   // Format date to display month and year
-  function formatDate(dateString) {
+  function formatDate(dateString: string | null): string {
     if (!dateString) return 'Present';
     
     const date = new Date(dateString);
@@ -19,7 +23,7 @@
   }
   
   // Calculate duration between two dates in years and months
-  function calculateDuration(startDate, endDate) {
+  function calculateDuration(startDate: string | null, endDate: string | null): string {
     if (!startDate) return '';
     
     const start = new Date(startDate);
@@ -45,8 +49,39 @@
   }
   
   // Get company details by ID
-  function getCompany(companyId) {
-    return companies.find(company => company.id === companyId) || {};
+  function getCompany(companyId: number): Companies {
+    return companies.find(company => company.id === companyId) || {} as Companies;
+  }
+  
+  // Get duties for a role
+  function getDutiesForRole(roleId: number): Duties[] {
+    return duties.filter(duty => duty.roleId === roleId);
+  }
+  
+  // Get activities for a duty
+  function getActivitiesForDuty(dutyId: number): Activities[] {
+    return activities.filter(activity => activity.dutyId === dutyId);
+  }
+  
+  // Toggle expanded state for a role
+  function toggleRoleExpanded(roleId: number): void {
+    if (expandedRoles.includes(roleId)) {
+      expandedRoles = expandedRoles.filter(id => id !== roleId);
+    } else {
+      expandedRoles = [...expandedRoles, roleId];
+    }
+  }
+  
+  // Expand all roles
+  function expandAllRoles(): void {
+    viewMode = 'expanded';
+    expandedRoles = roles.map(role => role.id);
+  }
+  
+  // Collapse all roles
+  function collapseAllRoles(): void {
+    viewMode = 'condensed';
+    expandedRoles = [];
   }
   
   // Initialize animations on mount
@@ -81,6 +116,22 @@
   <AnimateOnScroll animation="fade-up" duration={800} delay={200}>
     <div class="timeline-header">
       <h2>Professional Journey</h2>
+      <div class="view-mode-controls">
+        <button 
+          class="view-mode-btn {viewMode === 'condensed' ? 'active' : ''}" 
+          on:click={collapseAllRoles}
+          aria-pressed={viewMode === 'condensed'}
+        >
+          Condensed
+        </button>
+        <button 
+          class="view-mode-btn {viewMode === 'expanded' ? 'active' : ''}" 
+          on:click={expandAllRoles}
+          aria-pressed={viewMode === 'expanded'}
+        >
+          Expanded
+        </button>
+      </div>
       <div class="timeline-legend">
         <div class="legend-item">
           <div class="legend-dot consulting"></div>
@@ -109,26 +160,49 @@
               <span class="duration">{calculateDuration(role.startDate, role.endDate)}</span>
             </div>
             
-            <div class="timeline-card">
-              <div class="timeline-card-header">
-                <h3>{role.title}</h3>
-                <div class="company-badge {company.companyType === 'Consulting' ? 'consulting' : 'corporate'}">
-                  {company.company}
+            <div class="timeline-card" on:click={() => toggleRoleExpanded(role.id)} on:keydown={(e) => e.key === 'Enter' && toggleRoleExpanded(role.id)} tabindex="0" role="button" aria-expanded={expandedRoles.includes(role.id)}>
+              <div class="timeline-card-content">
+                <div class="timeline-card-left">
+                  <h3 class="timeline-title">{role.title}</h3>
+                  <p class="timeline-summary">{role.summary}</p>
+                </div>
+                
+                <div class="timeline-card-right">
+                  <div class="company-badge {company.companyType === 'Consulting' ? 'consulting' : 'corporate'}">
+                    {company.company}
+                  </div>
+                  <div class="company-type">{company.companyType}</div>
+                  <div class="timeline-location">
+                    <Icon name="map-pin" size={16} />
+                    <span>{company.location}</span>
+                  </div>
                 </div>
               </div>
               
-              <div class="timeline-location">
-                <Icon name="map-pin" size={16} />
-                <span>{company.location}</span>
+              <div class="timeline-details" class:expanded={expandedRoles.includes(role.id)}>
+                <div class="timeline-details-content">
+                  {#each getDutiesForRole(role.id) as duty}
+                    <div class="duty-section">
+                      <h4 class="duty-title">{duty.duties}</h4>
+                      <ul class="activities-list">
+                        {#each getActivitiesForDuty(duty.id) as activity}
+                          <li>{activity.activity}</li>
+                        {/each}
+                      </ul>
+                    </div>
+                  {/each}
+                </div>
               </div>
               
-              <p class="timeline-summary">{role.summary}</p>
-              
               <div class="timeline-card-footer">
-                <button class="details-btn">
-                  <span>View Details</span>
-                  <Icon name="arrow-right" size={16} />
-                </button>
+                <div class="details-indicator">
+                  <span>{expandedRoles.includes(role.id) ? 'Hide Details' : 'View Details'}</span>
+                  {#if expandedRoles.includes(role.id)}
+                    <Icon name="arrow-down" size={16} />
+                  {:else}
+                    <Icon name="arrow-right" size={16} />
+                  {/if}
+                </div>
               </div>
             </div>
           </div>
@@ -194,6 +268,42 @@
     gap: 1rem;
   }
   
+  .view-mode-controls {
+    display: flex;
+    align-items: center;
+    margin: 0 auto;
+  }
+  
+  .view-mode-btn {
+    background-color: white;
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .view-mode-btn:first-child {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-right: none;
+  }
+  
+  .view-mode-btn:last-child {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+  
+  .view-mode-btn.active {
+    background-color: var(--color-primary);
+    color: white;
+  }
+  
+  .view-mode-btn:hover:not(.active) {
+    background-color: rgba(155, 81, 224, 0.1);
+  }
+  
   .timeline-header h2 {
     font-size: 1.75rem;
     color: var(--color-primary);
@@ -228,6 +338,8 @@
   .experience-timeline {
     position: relative;
     padding-left: 2rem;
+    padding-right: 1rem;
+    max-width: 100%;
   }
   
   .timeline-line {
@@ -297,6 +409,10 @@
     padding: 1.5rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .timeline-card:hover {
@@ -304,18 +420,32 @@
     box-shadow: 0 15px 30px rgba(155, 81, 224, 0.1);
   }
   
-  .timeline-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+  .timeline-card:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
   }
   
-  .timeline-card h3 {
+  .timeline-card-content {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  
+  .timeline-card-left {
+    flex: 1.618;  /* Golden ratio */
+  }
+  
+  .timeline-card-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.75rem;
+  }
+  
+  .timeline-title {
     font-size: 1.2rem;
-    margin: 0;
+    margin: 0 0 0.75rem 0;
     color: var(--neutral-black);
   }
   
@@ -325,6 +455,7 @@
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     color: white;
+    text-align: center;
   }
   
   .company-badge.consulting {
@@ -335,20 +466,26 @@
     background: linear-gradient(135deg, #3498db, #2ecc71);
   }
   
+  .company-type {
+    font-size: 0.85rem;
+    color: #666;
+    text-align: right;
+  }
+  
   .timeline-location {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     color: #666;
     font-size: 0.9rem;
-    margin-bottom: 1rem;
+    margin-top: 0.5rem;
   }
   
   .timeline-summary {
     color: var(--neutral-black);
     font-size: 0.95rem;
     line-height: 1.6;
-    margin: 0 0 1.5rem 0;
+    margin: 0 0 1rem 0;
   }
   
   .timeline-card-footer {
@@ -356,38 +493,103 @@
     justify-content: flex-end;
   }
   
-  .details-btn {
+  .details-indicator {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: none;
-    border: none;
     color: var(--color-primary);
     font-weight: 600;
-    cursor: pointer;
     padding: 0.5rem;
     border-radius: 4px;
     transition: all 0.2s ease;
   }
   
-  .details-btn:hover {
-    background-color: rgba(155, 81, 224, 0.1);
+  .timeline-details {
+    margin-top: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding-top: 0;
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.4s ease-in-out;
+  }
+  
+  .timeline-details.expanded {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    max-height: 2000px; /* Large enough to fit all content */
+    opacity: 1;
+  }
+  
+  .timeline-details-content {
+    max-width: 61.8%;  /* Golden ratio percentage */
+  }
+  
+  .duty-section {
+    margin-bottom: 1.5rem;
+  }
+  
+  .duty-section:last-child {
+    margin-bottom: 0;
+  }
+  
+  .duty-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin: 0 0 0.75rem 0;
+  }
+  
+  .activities-list {
+    margin: 0;
+    padding-left: 1.5rem;
+  }
+  
+  .activities-list li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    color: var(--neutral-black);
   }
   
   @media (max-width: 768px) {
     .timeline-header {
       flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .timeline-header h2 {
+      width: 100%;
+      text-align: center;
+    }
+    
+    .view-mode-controls {
+      margin: 1rem 0;
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .timeline-card-content {
+      flex-direction: column;
+    }
+    
+    .timeline-card-right {
       align-items: flex-start;
     }
     
-    .timeline-card-header {
-      flex-direction: column;
+    .timeline-details-content {
+      max-width: 100%;
     }
     
     .timeline-date {
       flex-direction: column;
       align-items: flex-start;
       gap: 0.25rem;
+    }
+    
+    .company-badge, .company-type {
+      text-align: left;
     }
   }
 </style>
