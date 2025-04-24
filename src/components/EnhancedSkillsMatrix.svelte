@@ -3,6 +3,8 @@
   import { onMount } from "svelte";
   import type { Skills, Duties, Activities } from "../data/experience-schema";
   import AnimateOnScroll from "./AnimateOnScroll.svelte";
+  import Icon from './Icon.svelte'; // Added Icon import
+  import { skillCategories, type SkillCategory } from '../data/skill-categories.ts'; // Corrected path and added type import
   import {
     skillsMatrixState,
     updateSkillsMatrixState,
@@ -76,13 +78,6 @@
   let skillsVisible = $derived(currentMatrixState.skillsVisible);
   let dutiesVisible = $derived(currentMatrixState.dutiesVisible);
 
-  // Skill categories for the navigation
-  const skillCategories = [
-    { id: "strategy", name: "Strategy" },
-    { id: "data", name: "Data" },
-    { id: "tech", name: "Technology" },
-    { id: "leadership", name: "Leadership" },
-  ];
 
   // Process and group skills by category
   function processSkills(): void {
@@ -90,7 +85,7 @@
     const newGroupedSkills: Record<string, Skills[]> = {};
     
     // Initialize categories
-    skillCategories.forEach(category => {
+    skillCategories.forEach((category: SkillCategory) => {
       newGroupedSkills[category.id] = [];
     });
     
@@ -281,6 +276,7 @@
             onclick={() => setActiveCategory(category.id)}
             aria-pressed={activeCategory === category.id}
           >
+            <span class="category-icon {activeCategory === category.id ? 'active' : ''}"><Icon name={category.icon} size="1.2em" /></span>
             <span class="category-name">{category.name}</span>
           </button>
         </div>
@@ -392,6 +388,10 @@
     font-weight: 500;
     color: var(--neutral-dark-gray);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem; /* Spacing between icon and name */
   }
 
   .category-btn:hover {
@@ -437,6 +437,25 @@
     mask-composite: exclude;
   }
 
+.category-icon {
+  width: 44px; /* Adjust size as needed */
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--neutral-light-gray); /* Inactive background */
+  color: var(--color-primary); /* Inactive icon color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+.category-icon.active {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: white; /* Active icon color */
+  box-shadow: 0 3px 6px rgba(155, 81, 224, 0.15);
+}
+
   .category-name {
     font-size: 1rem;
     font-weight: 600;
@@ -456,12 +475,12 @@
 
   .skills-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(6, 1fr);
     gap: 1.25rem;
     opacity: 0;
     transform: translateY(20px);
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    justify-content: center;
+    justify-content: center; /* Restored original line */
     width: 100%;
   }
 
@@ -482,7 +501,24 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    grid-column: span 2; /* Added: Make items span 2 columns */
     border: 1px solid var(--neutral-light-gray);
+  }
+
+  /* Center orphan items in the 6-column grid */
+  /* 2 orphans: Adjust last item */
+  .skill-card:last-child:nth-child(3n - 1) {
+    grid-column-end: -2; /* Span from start to column 6 */
+  }
+  
+  /* 2 orphans: Adjust second-to-last item */
+  .skill-card:nth-last-child(2):nth-child(3n + 1) {
+    grid-column-end: 4; /* Span from start to column 4 */
+  }
+  
+  /* 1 orphan: Adjust last item */
+  .skill-card:last-child:nth-child(3n - 2) {
+    grid-column-end: 5; /* Span from start to column 5 */
   }
 
   .skill-card:hover {

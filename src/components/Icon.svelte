@@ -5,7 +5,7 @@
   // Using Svelte 5 runes API for props
   const props = $props<{
     name: string; // Icon name
-    size?: number; // Icon size in pixels
+    size?: string | number; // Icon size (pixels as number, or string like '1.2em')
     color?: string; // Icon color
     strokeWidth?: number; // Icon stroke width
     className?: string; // Additional classes

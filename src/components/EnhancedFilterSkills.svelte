@@ -4,7 +4,6 @@
   import type { Snippet } from 'svelte';
   import type { Skills, Duties, Activities } from "../data/experience-schema";
   import AnimateOnScroll from "./AnimateOnScroll.svelte";
-  // import { filterSkillsState, updateFilterSkillsState } from "../lib/stores/skillsStore.svelte.ts"; // TEMP: Debugging hydration
 
   // Export the component for compatibility with existing imports
   export const EnhancedFilterSkills = {};

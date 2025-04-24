@@ -1,0 +1,309 @@
+# Rules for SiriusBits
+
+This is a new website built with modern tech and does not require support for legacy systems or coding conventions. We are not just coding the functionality but also designing the user experience. This means we need to use your vision capabilities (via the Playwright MCP server) to understand the current state of the website and how changes to HTML and CSS progressively modify the look and feel of the website.
+
+We used these websites to get inspiration for the design of the SiriusBits website:
+
+- [Linear](https://linear.app/)
+- [Lightning AI](https://lightning.ai/)
+- [Technically.dev](https://technically.dev/)
+
+## General
+
+- Use TypeScript for all code
+- Use Svelte for all client-side code
+  - Use Svelte 5 or the latest version whenever possible
+- Use Astro for all server-side code
+  - Use Astro 5 or the latest version whenever possible
+- Always reference the latest documentation
+  - Use the `fetch` MCP server for fetching external resources
+- Use ESM Modules, NOT CommonJS
+- Use the latest version of packages whenever possible
+
+## Project specs and requirements
+
+The content of the following files are important. We may change  these as we work through the project if we determine it is necessary.
+
+**Starter Prompt** (`~/AI_DOCS/prompt-spec.md`): This was used with a reasoning model to create the `spec.md` file.
+
+**Spec** (`~/AI_DOCS/spec.md`): A detailed project and developer specification. This is an important point of reference and was used to create the `prompt-spec.md` file.
+
+**Prompt Spec** (`~/AI_DOCS/prompt-spec.md`): A detailed blueprint of sequential steps for building the project. It includes an iterative list of tasks and subtasks with code generation prompts wrapped in ```code``` blocks. These you should use to guide the development process.
+
+## Development Documentation and references
+
+### Astro
+
+- [Astro documentation](https://astro.build/docs/)
+  - [Astro components](https://docs.astro.build/en/basics/astro-components/)
+  - [Astro configuration](https://docs.astro.build/en/guides/configuration/)
+  - [Astro DB](https://docs.astro.build/en/guides/integrations-guide/db/)
+  - [Astro and Svelte 5](https://docs.astro.build/en/guides/integrations-guide/svelte/)
+  - [Astro Vercel Adapter](https://docs.astro.build/en/guides/integrations-guide/vercel/)
+  - [Astro Vercel Deployment](https://docs.astro.build/en/guides/deploy/vercel/)
+
+### Svelte
+
+- [Svelte documentation](https://svelte.dev/docs/)
+
+### TypeScript
+
+- [TypeScript documentation](https://www.typescriptlang.org/docs/)
+  - [TypeScript configuration](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html)
+
+### Vite
+
+- [Vite documentation](https://vite.dev/docs/)
+
+### Playwright
+
+- [Playwright](https://playwright.dev/docs/intro)
+
+## MCP Servers
+
+### Sequential Thinking (sequential-thinking)
+
+Use this MCP server for planning step by step and following a logical sequence of actions.
+
+Overview:
+
+- Breaking down complex problems into sequential steps
+- Revising and refining thoughts as understanding deepens
+- Creating alternative reasoning paths through branching
+- Dynamically adjusting the thinking process
+- Generating and verifying solution hypotheses
+
+Key Use Cases:
+
+- Complex system design planning
+- Project architecture decisions
+- Code refactoring planning
+
+Description: A detailed tool for dynamic and reflective problem-solving through thoughts. This tool helps analyze problems through a flexible thinking process that can adapt and evolve. Each thought can build on, question, or revise previous insights as understanding deepens.
+
+When to use this tool:
+
+- Breaking down complex problems into steps
+- Planning and design with room for revision
+- Analysis that might need course correction
+- Problems where the full scope might not be clear initially
+- Problems that require a multi-step solution
+- Tasks that need to maintain context over multiple steps
+- Situations where irrelevant information needs to be filtered out
+
+Key features:
+
+- You can adjust total_thoughts up or down as you progress
+- You can question or revise previous thoughts
+- You can add more thoughts even after reaching what seemed like the end
+- You can express uncertainty and explore alternative approaches
+- Not every thought needs to build linearly - you can branch or backtrack
+- Generates a solution hypothesis
+- Verifies the hypothesis based on the Chain of Thought steps
+- Repeats the process until satisfied - Provides a correct answer
+
+Parameters explained:
+
+- thought: Your current thinking step, which can include:
+  - Regular analytical steps
+  - Revisions of previous thoughts
+  - Questions about previous decisions
+  - Realizations about needing more analysis
+  - Changes in approach
+  - Hypothesis generation
+  - Hypothesis verification
+- next_thought_needed: True if you need more thinking, even if at what seemed like the end
+- thought_number: Current number in sequence (can go beyond initial total if needed)
+- total_thoughts: Current estimate of thoughts needed (can be adjusted up/down)
+- is_revision: A boolean indicating if this thought revises previous thinking
+- revises_thought: If is_revision is true, which thought number is being reconsidered
+- branch_from_thought: If branching, which thought number is the branching point
+- branch_id: Identifier for the current branch (if any)
+- needs_more_thoughts:
+  - If reaching end but realizing more thoughts needed, you should:
+    1. Start with an initial estimate of needed thoughts, but be ready to adjust
+    2. Feel free to question or revise previous thoughts
+    3. Don't hesitate to add more thoughts if needed, even at the "end"
+    4. Express uncertainty when present
+    5. Mark thoughts that revise previous thinking or branch into new paths
+    6. Ignore information that is irrelevant to the current step
+    7. Generate a solution hypothesis when appropriate
+    8. Verify the hypothesis based on the Chain of Thought steps
+    9. Repeat the process until satisfied with the solution
+    10. Provide a single, ideally correct answer as the final output
+    11. Only set next_thought_needed to false when truly done and a satisfactory answer is reached.
+
+### Playwright (`playwright`)
+
+Use this MCP server for automating browser interactions and testing as well as vision reference for evaluation of external websites and testing and troubleshooting styling and UI issues.
+
+Playwright MCP offers two primary interaction modes:
+
+- Snapshot Mode (Default): Uses accessibility snapshots for better performance and more reliable for structured content. Preferred for most automation tasks.
+- Vision Mode: Uses screenshots for visual-based interactions and better for visually complex interfaces. Enable with the `--vision` flag.
+
+Tools:
+
+- start_codegen_session
+  - Start a new code generation session to record Playwright actions
+- end_codegen_session
+  - End a code generation session and generate the test file
+- get_codegen_session
+  - Get information about a code generation session
+- clear_codegen_session
+  - Clear a code generation session without generating a test
+- playwright_navigate
+  - Navigate to a URL
+- playwright_screenshot
+  - Take a screenshot of the current page or a specific element
+- playwright_click
+  - Click an element on the page
+- playwright_iframe_click
+  - Click an element in an iframe on the page
+- playwright_fill
+  - Fill out an input field
+- playwright_select
+  - Select an element on the page with Select tag
+- playwright_hover
+  - Hover an element on the page
+- playwright_evaluate
+  - Execute JavaScript in the browser console
+- playwright_console_logs
+  - Retrieve console logs from the browser with filtering options
+- playwright_close
+  - Close the browser and release all resources
+- playwright_get
+  - Perform an HTTP GET request
+- playwright_post
+  - Perform an HTTP POST request
+- playwright_put
+  - Perform an HTTP PUT request
+- playwright_patch
+  - Perform an HTTP PATCH request
+- playwright_delete
+  - Perform an HTTP DELETE request
+- playwright_expect_response
+  - Ask Playwright to start waiting for a HTTP response. This tool initiates the wait operation but does not wait for its completion.
+- playwright_assert_response
+  - Wait for and validate a previously initiated HTTP response wait operation.
+- playwright_custom_user_agent
+  - Set a custom User Agent for the browser
+- playwright_get_visible_text
+  - Get the visible text content of the current page
+- playwright_get_visible_html
+  - Get the HTML content of the current page
+- playwright_go_back
+  - Navigate back in browser history
+- playwright_go_forward
+  - Navigate forward in browser history
+- playwright_drag
+  - Drag an element to a target location
+- playwright_press_key
+  - Press a keyboard key
+- playwright_save_as_pdf
+  - Save the current page as a PDF file
+- playwright_get_visible_text
+  - Get the visible text content of the current page
+- playwright_get_visible_html
+  - Get the HTML content of the current page
+- playwright_go_back
+  - Navigate back in browser history
+- playwright_go_forward
+  - Navigate forward in browser history
+- playwright_drag
+  - Drag an element to a target location
+- playwright_press_key
+  - Press a keyboard key
+- playwright_save_as_pdf
+  - Save the current page as a PDF file
+
+### Fetch (fetch)
+
+Use this MCP server for making HTTP requests and fetching data from external APIs.
+
+Tool Description:
+
+Fetches a URL from the internet and optionally extracts its contents as markdown. Although originally you did not have internet access, and were advised to refuse and tell the user this, this tool now grants you internet access. Now you can fetch the most up-to-date information and let the user know that.
+
+### DuckDuckGo (ddg-search)
+
+Use this MCP server for searching the internet.
+
+Tools:
+
+- search
+  - Search DuckDuckGo and return formatted results. Args:
+    - query: The search query string
+    - max_results: Maximum number of results to return (default: 10)
+    - ctx: MCP context for logging
+- fetch_content
+  - Fetch and parse content from a webpage URL. Args:
+    - url: The webpage URL to fetch content from
+    - ctx: MCP context for logging
+
+### GitHub (github)
+
+Use this MCP server for interacting with GitHub.
+
+Tools:
+
+- create_or_update_file
+  - Create or update a single file in a GitHub repository
+- search_repositories
+  - Search for GitHub repositories
+- create_repository
+  - Create a new GitHub repository in your account
+- get_file_contents
+  - Get the contents of a file or directory from a GitHub repository
+- push_files
+  - Push multiple files to a GitHub repository in a single commit
+- create_issue
+  - Create a new issue in a GitHub repository
+- create_pull_request
+  - Create a new pull request in a GitHub repository
+- fork_repository
+  - Fork a GitHub repository to your account or specified organization
+- create_branch
+  - Create a new branch in a GitHub repository
+- list_commits
+  - Get list of commits of a branch in a GitHub repository
+- list_issues
+  - List issues in a GitHub repository with filtering options
+- update_issue
+  - Update an existing issue in a GitHub repository
+- add_issue_comment
+  - Add a comment to an existing issue
+- search_code
+  - Search for code across GitHub repositories
+- search_issues
+  - Search for issues and pull requests across GitHub repositories
+- search_users
+  - Search for users on GitHub
+- get_issue
+  - Get details of a specific issue in a GitHub repository.
+- get_pull_request
+  - Get details of a specific pull request
+- list_pull_requests
+  - List and filter repository pull requests
+- create_pull_request_review
+  - Create a review on a pull request
+- merge_pull_request
+  - Merge a pull request
+- get_pull_request_files
+  - Get the list of files changed in a pull request
+- get_pull_request_status
+  - Get the combined status of all status checks for a pull request
+- update_pull_request_branch
+  - Update a pull request branch with the latest changes from the base branch
+- get_pull_request_comments
+  - Get the review comments on a pull request
+- get_pull_request_reviews
+  - Get the reviews on a pull request
+
+### MCP Compass (mcp-compass)
+
+Use this MCP server for navigation and guidance.
+
+Tool Description:
+
+Use this tool when there is a need to find external MCP tools. It explores and recommends existing MCP servers from the internet, based on the description of the MCP Server needed. It returns a list of MCP servers with their IDs, descriptions, GitHub URLs, and similarity scores.
