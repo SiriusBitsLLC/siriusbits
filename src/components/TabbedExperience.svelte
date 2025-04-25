@@ -1,6 +1,7 @@
 <script lang="ts">
   import EnhancedExperienceTimeline from './EnhancedExperienceTimeline.svelte';
   import EnhancedFilterSkills from './EnhancedFilterSkills.svelte';
+  import { fade } from 'svelte/transition';
   let { roles, companies, duties, activities, skills } = $props();
   let selectedTab = $state(1);
 </script>
@@ -10,24 +11,50 @@
     display: flex;
     justify-content: center;
     gap: 1rem;
-    margin-bottom: 1.5rem;
+    /* removed bottom padding */
+    border-bottom: solid 1px var(--color-primary);
   }
   .tab-button {
-    background: none;
-    border: none;
-    font-size: 1.1rem;
-    padding: 0.5rem 1rem;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-text-secondary);
+    border-bottom: none;
+    padding: 0.75rem 1.5rem;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
     cursor: pointer;
     color: var(--neutral-gray);
-    border-bottom: 2px solid transparent;
+    /* inner shadow for inactive tabs */
+    box-shadow: inset 0 -2px 4px -2px rgb(0 0 0 / 5%);
+    /* removed bottom margin for inactive tabs */
+    margin-bottom: 0;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
   }
   .tab-button.active {
-    color: var(--color-primary);
+    background: var(--neutral-white);
     border-color: var(--color-primary);
+    color: var(--color-primary);
     font-weight: bold;
+    /* taller active tab, covers border, subtle white shadow */
+    margin-top: -4px;
+    margin-bottom: -1px;
+    box-shadow: 0 8px 1px -1px #fff;
+  }
+  .tab-button:hover {
+    background: var(--neutral-white);
+  }
+  .tab-subheading {
+    text-align: center;
+    color: var(--color-text-secondary);
+    margin: 0.5rem 0 1rem;
+    font-size: 1.1rem;
   }
   .tab-content {
-    margin-top: 2rem;
+    position: relative;
+    padding: 1rem;
+    /* border removed for cleaner look */
+    background: var(--neutral-white);
+    min-height: 200px;
   }
 </style>
 
@@ -39,24 +66,27 @@
     Experience Explorer
   </button>
 </div>
-
+<p class="tab-subheading">{selectedTab === 1
+  ? 'Career highlights and key roles across consulting and corporate environments'
+  : 'Filter professional experience by specific skills to see relevant projects and responsibilities'
+}</p>
 <div class="tab-content">
   {#if selectedTab === 1}
-    <h2>Professional Journey</h2>
-    <p>Career highlights and key roles across consulting and corporate environments</p>
-    <EnhancedExperienceTimeline
-      {roles}
-      {companies}
-      {duties}
-      {activities}
-    />
+    <div transition:fade>
+      <EnhancedExperienceTimeline
+        {roles}
+        {companies}
+        {duties}
+        {activities}
+      />
+    </div>
   {:else}
-    <h2>Experience Explorer</h2>
-    <p>Filter professional experience by specific skills to see relevant projects and responsibilities</p>
-    <EnhancedFilterSkills
-      {skills}
-      {duties}
-      {activities}
-    />
+    <div transition:fade>
+      <EnhancedFilterSkills
+        {skills}
+        {duties}
+        {activities}
+      />
+    </div>
   {/if}
 </div>

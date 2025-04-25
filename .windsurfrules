@@ -53,6 +53,7 @@ As we make further enhancements and updates to the UX of the website, we will us
 - [Svelte documentation](https://svelte.dev/docs/)
   - [Svelte components](https://svelte.dev/docs/svelte/svelte-files)
   - [Svelte configuration](https://svelte.dev/docs/kit/configuration)
+  - [Svelte reactivity](https://svelte.dev/docs/svelte/svelte-reactivity)
 
 #### Svelte docs for LLMs
 
