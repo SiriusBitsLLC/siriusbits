@@ -2,17 +2,20 @@
   // Import necessary Svelte functions and types
   import { onMount } from "svelte";
   import type { Snippet } from 'svelte';
-  import type { Skills, Duties, Activities } from "../data/experience-schema";
+  import type { Skills as BaseSkill, Duties, Activities } from "../data/experience-schema";
+  // Extend base skill type to include icon for nav
+  type Skill = BaseSkill & { icon: string };
   import AnimateOnScroll from "./AnimateOnScroll.svelte";
+  import Icon from './Icon.svelte';
 
   // Export the component for compatibility with existing imports
   export const EnhancedFilterSkills = {};
   export { EnhancedFilterSkills as default };
 
   // --- Props ---
-  // Define prop types using Svelte 5's $props rune
+  // Define prop types with Skill including icon
   type Props = {
-    skills?: Skills[];
+    skills?: Skill[];
     duties?: Duties[];
     activities?: Activities[];
   };
@@ -89,11 +92,11 @@
   });
 
   // Create a map of skills by ID that can be accessed directly
-  let allSkillsMap = $state(new Map<number, Skills>());
+  let allSkillsMap = $state(new Map<number, Skill>());
 
   // Update the skills map whenever the skills prop changes
   $effect(() => {
-    const map = new Map<number, Skills>();
+    const map = new Map<number, Skill>();
     if (skills && skills.length > 0) {
       skills.forEach(skill => skill && skill.id && map.set(skill.id, skill));
     }
@@ -232,7 +235,7 @@
     
     // Process initial data
     if (skills && skills.length > 0) {
-      const map = new Map<number, Skills>();
+      const map = new Map<number, Skill>();
       skills.forEach(skill => skill && skill.id && map.set(skill.id, skill));
       allSkillsMap = map;
     }
@@ -292,9 +295,8 @@
               onclick={() => toggleSkill(skill.id)}
               aria-pressed={localFilterState.selectedSkillIds.includes(skill.id)}
             >
-              <span class="skill-name">{skill.name}</span>
-              {#if localFilterState.selectedSkillIds.includes(skill.id)}
-                <span class="skill-check">
+              <span class="skill-icon">
+                {#if localFilterState.selectedSkillIds.includes(skill.id)}
                   <svg
                     width="16"
                     height="16"
@@ -307,8 +309,11 @@
                   >
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
-                </span>
-              {/if}
+                {:else}
+                  <Icon name={skill.icon} size="1.2em" />
+                {/if}
+              </span>
+              <span class="skill-name">{skill.name}</span>
             </button>
           {/if}
         {/each}
@@ -395,7 +400,9 @@
             </button>
           </div>
         {:else}
-          <div class="duties-grid">
+          <div class="duties-grid"
+               class:detailed={localFilterState.viewMode === 'detailed'}
+               class:concise={localFilterState.viewMode === 'concise'}>
             {#each filteredDuties as duty, i (duty.id)}
               <div
                 class="duty-card"
@@ -500,6 +507,9 @@
   }
 
   .skills-sidebar {
+    position: sticky;
+    top: 2rem;
+    align-self: start;
     background-color: white;
     border-radius: 12px;
     padding: 1.5rem;
@@ -538,27 +548,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    max-height: 400px;
-    overflow-y: auto;
     padding-right: 0.5rem;
-  }
-
-  .skills-list::-webkit-scrollbar {
-    width: 5px;
-  }
-
-  .skills-list::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-  }
-
-  .skills-list::-webkit-scrollbar-thumb {
-    background: #ddd;
-    border-radius: 10px;
-  }
-
-  .skills-list::-webkit-scrollbar-thumb:hover {
-    background: #ccc;
   }
 
   .skill-btn {
@@ -574,6 +564,12 @@
     text-align: left;
   }
 
+  .skill-icon {
+    display: flex;
+    align-items: center;
+    margin-right: 0.5rem;
+  }
+
   .skill-btn:hover {
     background-color: #f0f0f0;
   }
@@ -585,10 +581,6 @@
       rgba(52, 152, 219, 0.1) 100%
     );
     border-color: var(--color-primary-light);
-    color: var(--color-primary);
-  }
-
-  .skill-check {
     color: var(--color-primary);
   }
 
@@ -656,8 +648,15 @@
 
   .duties-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
+  }
+
+  .duties-grid.detailed {
+    grid-template-columns: 1fr;
+  }
+
+  .duties-grid.concise {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .results-container {
