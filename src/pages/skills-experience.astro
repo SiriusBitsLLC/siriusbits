@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import EnhancedSkillsMatrix from '../components/EnhancedSkillsMatrix.svelte';
-import EnhancedExperienceTimeline from '../components/EnhancedExperienceTimeline.svelte';
 import EnhancedFilterSkills from '../components/EnhancedFilterSkills.svelte';
 import Button from '../components/Button.astro';
 import Icon from '../components/Icon.astro';
@@ -10,6 +9,7 @@ import { duties } from '../data/duties';
 import { activities } from '../data/activities';
 import { roles } from '../data/roles';
 import { companies } from '../data/companies';
+import TabbedExperience from '../components/TabbedExperience.svelte';
 ---
 
 <BaseLayout title="Skills & Experience | SiriusBits Consulting">
@@ -67,23 +67,15 @@ import { companies } from '../data/companies';
       </div>
     </section>
     
-    <section class="experience-section">
+    <section class="tabs-section">
       <div class="container">
-        <div class="section-header">
-          <h2>Professional Journey</h2>
-          <p class="section-description">Career highlights and key roles across consulting and corporate environments</p>
-        </div>
-        <EnhancedExperienceTimeline client:load roles={roles} companies={companies} duties={duties} activities={activities} />
-      </div>
-    </section>
-    
-    <section class="filter-section">
-      <div class="container">
-        <div class="section-header">
-          <h2>Experience Explorer</h2>
-          <p class="section-description">Filter professional experience by specific skills to see relevant projects and responsibilities</p>
-        </div>
-        <EnhancedFilterSkills client:load skills={skills} duties={duties} activities={activities} />
+        <TabbedExperience client:load
+          roles={roles}
+          companies={companies}
+          duties={duties}
+          activities={activities}
+          skills={skills}
+        />
       </div>
     </section>
     

@@ -1,12 +1,6 @@
 # Rules for SiriusBits
 
-This is a new website built with modern tech and does not require support for legacy systems or coding conventions. We are not just coding the functionality but also designing the user experience. This means we need to use your vision capabilities (via the Playwright MCP server) to understand the current state of the website and how changes to HTML and CSS progressively modify the look and feel of the website.
-
-We used these websites to get inspiration for the design of the SiriusBits website:
-
-- [Linear](https://linear.app/)
-- [Lightning AI](https://lightning.ai/)
-- [Technically.dev](https://technically.dev/)
+This is a new website built with modern tech and does not require support for legacy systems or coding conventions.
 
 ## General
 
@@ -30,6 +24,18 @@ The content of the following files are important. We may change  these as we wor
 
 **Prompt Spec** (`~/AI_DOCS/prompt-spec.md`): A detailed blueprint of sequential steps for building the project. It includes an iterative list of tasks and subtasks with code generation prompts wrapped in ```code``` blocks. These you should use to guide the development process.
 
+## UX Design
+
+We are not just coding the functionality of this website but also designing the user experience. This means we need to use your vision capabilities (via the Playwright MCP server) to understand the current state of the website and how changes to HTML and CSS progressively modify the look and feel of the website.
+
+We have already used these websites to get inspiration for the design of the SiriusBits website in its current form:
+
+- [Linear](https://linear.app/)
+- [Lightning AI](https://lightning.ai/)
+- [Technically.dev](https://technically.dev/)
+
+As we make further enhancements and updates to the UX of the website, we will use these sites for reference and inspiration and use Playwright to understand the current state of the website and how changes to HTML and CSS progressively modify the look and feel.
+
 ## Development Documentation and references
 
 ### Astro
@@ -45,6 +51,25 @@ The content of the following files are important. We may change  these as we wor
 ### Svelte
 
 - [Svelte documentation](https://svelte.dev/docs/)
+  - [Svelte components](https://svelte.dev/docs/svelte/svelte-files)
+  - [Svelte configuration](https://svelte.dev/docs/kit/configuration)
+
+#### Svelte docs for LLMs
+
+We support the [llms.txt](https://llmstxt.org/) convention for making documentation available to large language models and the applications that make use of them.
+
+Currently, we have the following root-level files...
+
+- [/llms.txt](https://svelte.dev/llms.txt) — a listing of the available files
+- [/llms-full.txt](https://svelte.dev/llms-full.txt) — complete documentation for Svelte, SvelteKit and the CLI
+- [/llms-medium.txt](https://svelte.dev/llms-medium.txt) — compressed documentation for use with medium context windows
+- [/llms-small.txt](https://svelte.dev/llms-small.txt) — highly compressed documentation for use with smaller context windows
+
+...and package-level documentation:
+
+- [/docs/svelte/llms.txt](https://svelte.dev/docs/svelte/llms.txt) / [/docs/svelte/llms-small.txt](https://svelte.dev/docs/svelte/llms-small.txt)
+- [/docs/kit/llms.txt](https://svelte.dev/docs/kit/llms.txt) / [/docs/kit/llms-small.txt](https://svelte.dev/docs/kit/llms-small.txt)
+- [/docs/cli/llms.txt](https://svelte.dev/docs/cli/llms.txt)
 
 ### TypeScript
 
