@@ -3,17 +3,37 @@
   import { onMount } from "svelte";
   import type { Snippet } from 'svelte';
   import type { Skills as BaseSkill, Duties, Activities } from "../data/experience-schema";
-  // Extend base skill type to include icon for nav
-  type Skill = BaseSkill & { icon: string };
+  // Extend base skill type to include iconName for nav
+  type Skill = BaseSkill & { iconName: string };
   import AnimateOnScroll from "./AnimateOnScroll.svelte";
-  import Icon from './Icon.svelte';
+  // Static Lucide icon imports
+  import IconGlobe from '~icons/lucide/globe';
+  import IconDatabase from '~icons/lucide/database';
+  import IconBarChart3 from '~icons/lucide/bar-chart-3';
+  import IconClipboardCheck from '~icons/lucide/clipboard-check';
+  import IconRefreshCw from '~icons/lucide/refresh-cw';
+  import IconCpu from '~icons/lucide/cpu';
+  import IconLightbulb from '~icons/lucide/lightbulb';
+  import IconLayoutDashboard from '~icons/lucide/layout-dashboard';
+  import IconUsers from '~icons/lucide/users';
+  const iconMap: Record<string, any> = {
+    globe: IconGlobe,
+    database: IconDatabase,
+    'bar-chart-3': IconBarChart3,
+    'clipboard-check': IconClipboardCheck,
+    'refresh-cw': IconRefreshCw,
+    cpu: IconCpu,
+    lightbulb: IconLightbulb,
+    'layout-dashboard': IconLayoutDashboard,
+    users: IconUsers,
+  };
 
   // Export the component for compatibility with existing imports
   export const EnhancedFilterSkills = {};
   export { EnhancedFilterSkills as default };
 
   // --- Props ---
-  // Define prop types with Skill including icon
+  // Define prop types with Skill including iconName
   type Props = {
     skills?: Skill[];
     duties?: Duties[];
@@ -289,6 +309,7 @@
 
       <div class="skills-list">
         {#each skills as skill (skill.id)}
+          {@const IconComponent = iconMap[skill.iconName]}
           {#if skill.id !== undefined}
             <button
               class="skill-btn {localFilterState.selectedSkillIds.includes(skill.id) ? 'selected' : ''}"
@@ -310,7 +331,7 @@
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 {:else}
-                  <Icon name={skill.icon} size="1.2em" />
+                  <IconComponent width="1.2em" height="1.2em" />
                 {/if}
               </span>
               <span class="skill-name">{skill.name}</span>
@@ -553,7 +574,7 @@
 
   .skill-btn {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     padding: 0.75rem 1rem;
     background-color: #f9f9f9;

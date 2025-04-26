@@ -1,14 +1,14 @@
 export interface SkillCategory {
   id: string;
   name: string;
-  icon: string;
+  iconName: string;
 }
 
 export const skillCategories: SkillCategory[] = [
-  { id: 'strategy', name: 'Strategy', icon: 'layers' },
-  { id: 'data', name: 'Data', icon: 'database' },
-  { id: 'tech', name: 'Technology', icon: 'code' },
-  { id: 'leadership', name: 'Leadership', icon: 'users' }
+  { id: 'strategy', name: 'Strategy', iconName: 'layers' },
+  { id: 'data', name: 'Data', iconName: 'database' },
+  { id: 'tech', name: 'Technology', iconName: 'code' },
+  { id: 'leadership', name: 'Leadership', iconName: 'users' }
 ];
 
 // Map skill IDs to category IDs

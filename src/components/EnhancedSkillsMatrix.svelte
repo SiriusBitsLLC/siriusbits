@@ -3,8 +3,19 @@
   import { onMount } from "svelte";
   import type { Skills, Duties, Activities } from "../data/experience-schema";
   import AnimateOnScroll from "./AnimateOnScroll.svelte";
-  import Icon from './Icon.svelte'; // Added Icon import
-  import { skillCategories, type SkillCategory } from '../data/skill-categories.ts'; // Corrected path and added type import
+  // Static Lucide icon imports for categories
+  import IconLayers from '~icons/lucide/layers';
+  import IconDatabase from '~icons/lucide/database';
+  import IconCode from '~icons/lucide/code';
+  import IconUsers from '~icons/lucide/users';
+  // Map category icon names to components
+  const categoryIconMap: Record<string, any> = {
+    layers: IconLayers,
+    database: IconDatabase,
+    code: IconCode,
+    users: IconUsers,
+  };
+  import { skillCategories, type SkillCategory } from '../data/skill-categories.ts'; 
   import {
     skillsMatrixState,
     updateSkillsMatrixState,
@@ -268,6 +279,7 @@
   <AnimateOnScroll animation="fade-up" duration={800} delay={200}>
     <div class="categories-nav">
       {#each skillCategories as category, i}
+        {@const CategoryIcon = categoryIconMap[category.iconName]}
         <div class="animate-item" style="animation-delay: {200 + i * 100}ms">
           <button
             class="category-btn {activeCategory === category.id
@@ -276,7 +288,9 @@
             onclick={() => setActiveCategory(category.id)}
             aria-pressed={activeCategory === category.id}
           >
-            <span class="category-icon {activeCategory === category.id ? 'active' : ''}"><Icon name={category.icon} size="1.2em" /></span>
+            <span class="category-icon {activeCategory === category.id ? 'active' : ''}">
+              <CategoryIcon width="1.2em" height="1.2em" />
+            </span>
             <span class="category-name">{category.name}</span>
           </button>
         </div>

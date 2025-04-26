@@ -1,4 +1,3 @@
-
 export interface Activities {
   id: number;
   // Descriptive task, project, or responsibility for a duty
@@ -51,4 +50,6 @@ export interface Skills {
   category?: string;
   // Proficiency level (1-5)
   proficiency?: number;
+  // Icon name for dynamic skill nav icons
+  iconName?: string;
 }
