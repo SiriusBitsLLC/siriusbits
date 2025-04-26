@@ -89,6 +89,18 @@
   let skillsVisible = $derived(currentMatrixState.skillsVisible);
   let dutiesVisible = $derived(currentMatrixState.dutiesVisible);
 
+  // Derive grid template columns dynamically using state and effect
+  let gridCols = $state('repeat(6, 1fr)');
+  $effect(() => {
+    const len = groupedSkills?.[activeCategory]?.length ?? 0;
+    gridCols = len <= 3
+      ? Array(len + 2).fill('1fr').join(' ')
+      : len === 4
+        ? '0.25fr 1fr 1fr 1fr 1fr 0.25fr'
+        : len === 5
+          ? Array(5).fill('1fr').join(' ')
+          : 'repeat(6, 1fr)';
+  });
 
   // Process and group skills by category
   function processSkills(): void {
@@ -300,7 +312,7 @@
 
   <div class="skills-container">
     <AnimateOnScroll animation="fade-up" duration={800} delay={400}>
-      <div class="skills-grid {skillsVisible ? 'visible' : ''}">
+      <div class="skills-grid {skillsVisible ? 'visible' : ''}" style="grid-template-columns: {gridCols}">
         {#if groupedSkills && activeCategory && groupedSkills[activeCategory]}
           {#each groupedSkills[activeCategory] as skill, i}
             <div class="animate-item" style="animation-delay: {400 + i * 100}ms">
@@ -489,7 +501,6 @@
 
   .skills-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
     gap: 1.25rem;
     opacity: 0;
     transform: translateY(20px);
@@ -515,7 +526,6 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    grid-column: span 2; /* Added: Make items span 2 columns */
     border: 1px solid var(--neutral-light-gray);
   }
 
@@ -790,5 +800,19 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  /* Skip first column to center under nav */
+  .skills-grid .animate-item:first-child {
+    grid-column-start: 2;
+  }
+  /* Center cards in each cell */
+  .animate-item {
+    display: flex;
+    justify-content: center;
+  }
+  .skill-card {
+    max-width: 300px;
+    width: 100%;
   }
 </style>
