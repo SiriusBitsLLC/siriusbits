@@ -5,9 +5,56 @@
   import ParallaxBackground from './ParallaxBackground.svelte';
   import Icon from './Icon.svelte';
   
-  // Export the component for compatibility with existing imports
-  export const EnhancedExperienceTimeline = {};
-  export { EnhancedExperienceTimeline as default };
+  // --- Legend filter state and logic ---
+  import { onDestroy } from 'svelte';
+  import { tick } from 'svelte';
+  // Possible categories
+  const CATEGORIES = ['consulting', 'corporate'] as const;
+  type Category = typeof CATEGORIES[number];
+  // Both selected by default (reactive)
+  let { selectedCategories } = $state({ selectedCategories: [...CATEGORIES] as Category[] });
+
+  // Temporary pointer-disable for hover fix
+  let consultingRef: HTMLDivElement | null = null;
+  let corporateRef: HTMLDivElement | null = null;
+
+  function toggleCategory(category: Category) {
+    if (selectedCategories.length === 2) {
+      // Both selected, clicking one: filter to just that one
+      selectedCategories = [category];
+    } else if (selectedCategories.length === 1) {
+      if (selectedCategories[0] === category) {
+        // Clicking the already active one: reset to both
+        selectedCategories = [...CATEGORIES];
+        // Blur the legend item to force hover state reset
+        if (category === 'consulting' && consultingRef) consultingRef.blur();
+        if (category === 'corporate' && corporateRef) corporateRef.blur();
+      } else {
+        // Clicking the inactive one: switch to that
+        selectedCategories = [category];
+      }
+    }
+  }
+
+  // Keyboard a11y for legend
+  function handleLegendKey(event: KeyboardEvent, category: Category) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggleCategory(category);
+    }
+  }
+
+  // Click outside legend resets filter
+  let legendRef: HTMLDivElement | null = null;
+  function handleClickOutside(event: MouseEvent) {
+    if (legendRef && !legendRef.contains(event.target as Node)) {
+      selectedCategories = [...CATEGORIES];
+    }
+  }
+  onMount(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  });
 
   // Using Svelte 5 runes API for props
   const props = $props<{
@@ -67,12 +114,12 @@
   
   // Get duties for a role
   function getDutiesForRole(roleId: number): Duties[] {
-    return props.duties.filter((duty: Duties) => duty.roleId === roleId);
+    return props.duties.filter((duty: Duties) => Array.isArray(duty.roleIds) && duty.roleIds.includes(roleId));
   }
   
   // Get activities for a duty
-  function getActivitiesForDuty(dutyId: number): Activities[] {
-    return props.activities.filter((activity: Activities) => activity.dutyId === dutyId);
+  function getActivitiesForDuty(dutyId: number, roleId: number): Activities[] {
+    return props.activities.filter((activity: Activities) => activity.dutyId === dutyId && activity.roleId === roleId);
   }
   
   // Create a local variable to store the current state
@@ -175,12 +222,20 @@
           Expanded
         </button>
       </div>
-      <div class="timeline-legend">
-        <div class="legend-item">
+      <div class="timeline-legend" bind:this={legendRef}>
+        <div class="legend-item consulting {selectedCategories.length === 1 && selectedCategories[0] === 'consulting' ? 'active' : selectedCategories.length === 1 ? 'inactive' : ''}"
+          bind:this={consultingRef}
+          tabindex="0" role="button" aria-pressed={selectedCategories.includes('consulting')}
+          onclick={() => toggleCategory('consulting')}
+          onkeydown={(e) => handleLegendKey(e, 'consulting')}>
           <div class="legend-dot consulting"></div>
           <span>Consulting</span>
         </div>
-        <div class="legend-item">
+        <div class="legend-item corporate {selectedCategories.length === 1 && selectedCategories[0] === 'corporate' ? 'active' : selectedCategories.length === 1 ? 'inactive' : ''}"
+          bind:this={corporateRef}
+          tabindex="0" role="button" aria-pressed={selectedCategories.includes('corporate')}
+          onclick={() => toggleCategory('corporate')}
+          onkeydown={(e) => handleLegendKey(e, 'corporate')}>
           <div class="legend-dot corporate"></div>
           <span>Corporate</span>
         </div>
@@ -191,11 +246,14 @@
   <div class="experience-timeline {$timelineState.timelineVisible ? 'visible' : ''}">
     <div class="timeline-line"></div>
     
-    {#each props.roles as role, index}
+    {#each props.roles.filter((role: Roles) => {
+      const company = getCompany(role.companyId);
+      return selectedCategories.includes(company.companyCategory);
+    }) as role, index}
       {@const company = getCompany(role.companyId)}
       <AnimateOnScroll animation="fade-left" duration={800} delay={300 + (index * 150)}>
         <div class="timeline-item">
-          <div class="timeline-dot {company.companyType === 'Consulting' ? 'consulting' : 'corporate'}"></div>
+          <div class="timeline-dot {company.companyCategory === 'consulting' ? 'consulting' : 'corporate'}"></div>
           
           <div class="timeline-content">
             <div class="timeline-date">
@@ -211,10 +269,10 @@
                 </div>
                 
                 <div class="timeline-card-right">
-                  <div class="company-badge {company.companyType === 'Consulting' ? 'consulting' : 'corporate'}">
+                  <div class="company-badge {company.companyCategory === 'consulting' ? 'consulting' : 'corporate'}">
                     {company.company}
                   </div>
-                  <div class="company-type">{company.companyType}</div>
+                  <div class="company-type">{company.companyCategory.charAt(0).toUpperCase() + company.companyCategory.slice(1)}</div>
                   <div class="timeline-location">
                     <Icon name="map-pin" size={16} />
                     <span>{company.location}</span>
@@ -228,7 +286,7 @@
                     <div class="duty-section">
                       <h4 class="duty-title">{duty.duties}</h4>
                       <ul class="activities-list">
-                        {#each getActivitiesForDuty(duty.id) as activity}
+                        {#each getActivitiesForDuty(duty.id, role.id) as activity}
                           <li>{activity.activity}</li>
                         {/each}
                       </ul>
@@ -356,22 +414,77 @@
   .timeline-legend {
     display: flex;
     gap: 1.5rem;
+    margin-top: 1.5rem;
   }
   
   .legend-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    padding: 0.35rem 1.1rem 0.35rem 0.7rem;
+    border-radius: 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    border: 2px solid transparent;
+    transition: background 0.18s, border 0.18s, color 0.18s, box-shadow 0.18s, opacity 0.18s;
+  }
+  
+  .legend-item:hover, .legend-item:focus {
+    background: rgba(52, 152, 219, 0.08);
+    border-color: var(--color-primary, #9b51e0);
+    box-shadow: 0 2px 8px rgba(155, 81, 224, 0.09);
+    outline: none;
+  }
+  
+  .legend-item.active.consulting {
+    background: linear-gradient(90deg, var(--color-primary, #9b51e0) 60%, var(--color-accent, #f2994a) 100%);
+    color: #fff;
+    border-color: var(--color-primary, #9b51e0);
+    box-shadow: 0 4px 16px rgba(155, 81, 224, 0.13);
+    opacity: 1;
+  }
+  
+  .legend-item.active.corporate {
+    background: linear-gradient(90deg, #3498db 60%, #2ecc71 100%);
+    color: #fff;
+    border-color: #3498db;
+    box-shadow: 0 4px 16px rgba(52, 152, 219, 0.13);
+    opacity: 1;
+  }
+  
+  .legend-item.inactive {
+    background: none;
+    color: #bbb;
+    border-color: #e0e0e0;
+    opacity: 0.55;
+  }
+  
+  .legend-item.inactive.consulting:hover {
+    background: linear-gradient(90deg, var(--color-primary, #9b51e0) 20%, var(--color-accent, #f2994a) 80%);
+    color: #fff;
+    opacity: 0.85;
+  }
+  
+  .legend-item.inactive.corporate:hover {
+    background: linear-gradient(90deg, #3498db 20%, #2ecc71 80%);
+    color: #fff;
+    opacity: 0.85;
   }
   
   .legend-dot {
-    width: 12px;
-    height: 12px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.5rem;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
   }
   
   .legend-dot.consulting {
-    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    background: linear-gradient(135deg, var(--color-primary, #9b51e0), var(--color-accent, #f2994a));
   }
   
   .legend-dot.corporate {

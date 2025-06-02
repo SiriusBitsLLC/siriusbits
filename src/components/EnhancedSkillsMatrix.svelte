@@ -1,21 +1,26 @@
 <script lang="ts">
-  import { get } from 'svelte/store';
+  import { get } from "svelte/store";
   import { onMount } from "svelte";
   import type { Skills, Duties, Activities } from "../data/experience-schema";
   import AnimateOnScroll from "./AnimateOnScroll.svelte";
   // Static Lucide icon imports for categories
-  import IconLayers from '~icons/lucide/layers';
-  import IconDatabase from '~icons/lucide/database';
-  import IconCode from '~icons/lucide/code';
-  import IconUsers from '~icons/lucide/users';
+  import IconLayers from "~icons/lucide/layers";
+  import IconDatabase from "~icons/lucide/database";
+  import IconCode from "~icons/lucide/code";
+  import IconUsers from "~icons/lucide/users";
+  import IconMonitorSmartphone from "~icons/lucide/monitor-smartphone";
   // Map category icon names to components
   const categoryIconMap: Record<string, any> = {
     layers: IconLayers,
     database: IconDatabase,
     code: IconCode,
     users: IconUsers,
+    "monitor-smartphone": IconMonitorSmartphone,
   };
-  import { skillCategories, type SkillCategory } from '../data/skill-categories.ts'; 
+  import {
+    skillCategories,
+    type SkillCategory,
+  } from "../data/skill-categories.ts";
   import {
     skillsMatrixState,
     updateSkillsMatrixState,
@@ -31,7 +36,7 @@
     duties?: Duties[];
     activities?: Activities[];
   };
-  
+
   // Use $props() to get props and set defaults
   const { skills = [], duties = [], activities = [] }: Props = $props();
 
@@ -49,11 +54,13 @@
 
   // Create a local reactive variable initialized with the store's current value
   // and keep it synchronized using an effect below.
-  let currentMatrixState = $state<SkillsMatrixStateType>(get(skillsMatrixState));
+  let currentMatrixState = $state<SkillsMatrixStateType>(
+    get(skillsMatrixState)
+  );
 
   // Use $effect to subscribe to the external store and update the local state
   $effect(() => {
-    const unsubscribe = skillsMatrixState.subscribe(storeValue => {
+    const unsubscribe = skillsMatrixState.subscribe((storeValue) => {
       // Update the local reactive state when the store changes
       currentMatrixState = storeValue;
     });
@@ -63,11 +70,15 @@
       unsubscribe();
     };
   });
-  
+
   // Add initialization effect to ensure we have default values
   $effect(() => {
     // Initialize the component with default values if the store is empty or missing properties
-    if (!currentMatrixState || Object.keys(currentMatrixState).length === 0 || !currentMatrixState.groupedSkills) {
+    if (
+      !currentMatrixState ||
+      Object.keys(currentMatrixState).length === 0 ||
+      !currentMatrixState.groupedSkills
+    ) {
       updateSkillsMatrixState({
         groupedSkills: {},
         activeCategory: "strategy",
@@ -75,7 +86,7 @@
         relatedDuties: [],
         dutyActivitiesMap: {},
         skillsVisible: false,
-        dutiesVisible: false
+        dutiesVisible: false,
       });
     }
   });
@@ -89,41 +100,29 @@
   let skillsVisible = $derived(currentMatrixState.skillsVisible);
   let dutiesVisible = $derived(currentMatrixState.dutiesVisible);
 
-  // Derive grid template columns dynamically using state and effect
-  let gridCols = $state('repeat(6, 1fr)');
-  $effect(() => {
-    const len = groupedSkills?.[activeCategory]?.length ?? 0;
-    gridCols = len <= 3
-      ? Array(len + 2).fill('1fr').join(' ')
-      : len === 4
-        ? '0.25fr 1fr 1fr 1fr 1fr 0.25fr'
-        : len === 5
-          ? Array(5).fill('1fr').join(' ')
-          : 'repeat(6, 1fr)';
-  });
 
   // Process and group skills by category
   function processSkills(): void {
     // Group skills by category
     const newGroupedSkills: Record<string, Skills[]> = {};
-    
+
     // Initialize categories
     skillCategories.forEach((category: SkillCategory) => {
       newGroupedSkills[category.id] = [];
     });
-    
+
     // Group skills by their category - with null checks
     if (skills && skills.length > 0) {
-      skills.forEach(skill => {
+      skills.forEach((skill) => {
         if (skill && skill.category && newGroupedSkills[skill.category]) {
           newGroupedSkills[skill.category].push(skill);
         }
       });
     }
-    
+
     // Update the state using the update function
     updateSkillsMatrixState({
-      groupedSkills: newGroupedSkills
+      groupedSkills: newGroupedSkills,
     });
   }
 
@@ -133,20 +132,20 @@
     updateSkillsMatrixState({
       skillsVisible: false,
       dutiesVisible: false,
-      selectedSkill: null
+      selectedSkill: null,
     });
 
     // Short delay for exit animation
     setTimeout(() => {
       // Update the active category
       updateSkillsMatrixState({
-        activeCategory: categoryId
+        activeCategory: categoryId,
       });
 
       // Trigger entrance animation
       setTimeout(() => {
         updateSkillsMatrixState({
-          skillsVisible: true
+          skillsVisible: true,
         });
       }, 50);
     }, 300);
@@ -158,13 +157,13 @@
     if (selectedSkill && selectedSkill.id === skill.id) {
       // First hide duties with animation
       updateSkillsMatrixState({
-        dutiesVisible: false
+        dutiesVisible: false,
       });
-      
+
       // Then clear selection after animation completes
       setTimeout(() => {
         updateSkillsMatrixState({
-          selectedSkill: null
+          selectedSkill: null,
         });
       }, 300);
       return;
@@ -172,20 +171,20 @@
 
     // Check if duties are already visible
     const isDutiesVisible = dutiesVisible;
-    
+
     // Always hide duties first with animation
     if (isDutiesVisible) {
       updateSkillsMatrixState({
-        dutiesVisible: false
+        dutiesVisible: false,
       });
-      
+
       // After animation completes, update selection and show new duties
       setTimeout(() => {
         // Update selected skill
         updateSkillsMatrixState({
-          selectedSkill: skill
+          selectedSkill: skill,
         });
-        
+
         // Find related duties
         if (skill.id) {
           // Get duties that have this skill in their relevantSkills
@@ -204,17 +203,17 @@
               (activity) => activity.dutyId === duty.id
             );
           });
-          
+
           // Update state with new duties and activities map
           updateSkillsMatrixState({
             relatedDuties: filteredDuties,
-            dutyActivitiesMap: newDutyActivitiesMap
+            dutyActivitiesMap: newDutyActivitiesMap,
           });
-          
+
           // Show new duties with animation
           setTimeout(() => {
             updateSkillsMatrixState({
-              dutiesVisible: true
+              dutiesVisible: true,
             });
           }, 50);
         }
@@ -222,9 +221,9 @@
     } else {
       // If no duties are visible, just update immediately
       updateSkillsMatrixState({
-        selectedSkill: skill
+        selectedSkill: skill,
       });
-      
+
       // Find related duties
       if (skill.id) {
         // Get duties that have this skill in their relevantSkills
@@ -243,32 +242,32 @@
             (activity) => activity.dutyId === duty.id
           );
         });
-        
+
         updateSkillsMatrixState({
           relatedDuties: filteredDuties,
-          dutyActivitiesMap: newDutyActivitiesMap
+          dutyActivitiesMap: newDutyActivitiesMap,
         });
-        
+
         // Show duties with animation delay
         setTimeout(() => {
           updateSkillsMatrixState({
-            dutiesVisible: true
+            dutiesVisible: true,
           });
         }, 300);
       }
     }
   }
-  
+
   // Close duties section
   function closeDuties(): void {
     updateSkillsMatrixState({
-      dutiesVisible: false
+      dutiesVisible: false,
     });
-    
+
     // Short delay before removing selection
     setTimeout(() => {
       updateSkillsMatrixState({
-        selectedSkill: null
+        selectedSkill: null,
       });
     }, 300);
   }
@@ -281,7 +280,7 @@
     // Trigger initial animation
     setTimeout(() => {
       updateSkillsMatrixState({
-        skillsVisible: true
+        skillsVisible: true,
       });
     }, 500);
   });
@@ -300,7 +299,11 @@
             onclick={() => setActiveCategory(category.id)}
             aria-pressed={activeCategory === category.id}
           >
-            <span class="category-icon {activeCategory === category.id ? 'active' : ''}">
+            <span
+              class="category-icon {activeCategory === category.id
+                ? 'active'
+                : ''}"
+            >
               <CategoryIcon width="1.2em" height="1.2em" />
             </span>
             <span class="category-name">{category.name}</span>
@@ -312,17 +315,22 @@
 
   <div class="skills-container">
     <AnimateOnScroll animation="fade-up" duration={800} delay={400}>
-      <div class="skills-grid {skillsVisible ? 'visible' : ''}" style="grid-template-columns: {gridCols}">
+      <div
+        class="skills-grid {skillsVisible ? 'visible' : ''}"
+      >
         {#if groupedSkills && activeCategory && groupedSkills[activeCategory]}
           {#each groupedSkills[activeCategory] as skill, i}
-            <div class="animate-item" style="animation-delay: {400 + i * 100}ms">
+            <div
+              class="animate-item"
+              style="animation-delay: {400 + i * 100}ms"
+            >
               <div
                 class="skill-card {selectedSkill &&
                 selectedSkill.id === skill.id
                   ? 'selected'
                   : ''}"
                 onclick={() => handleSkillClick(skill)}
-                onkeydown={(e) => e.key === 'Enter' && handleSkillClick(skill)}
+                onkeydown={(e) => e.key === "Enter" && handleSkillClick(skill)}
                 tabindex="0"
                 role="button"
                 aria-pressed={selectedSkill && selectedSkill.id === skill.id
@@ -369,13 +377,17 @@
             <span aria-hidden="true">×</span>
           </button>
           <div class="duties-grid">
-            {#each relatedDuties as duty, i}
-              <AnimateOnScroll animation="fade-up" duration={600} delay={300 + i * 100}>
+            {#each relatedDuties.filter(Boolean) as duty, i}
+              <AnimateOnScroll
+                animation="fade-up"
+                duration={600}
+                delay={300 + i * 100}
+              >
                 <div class="duty-card">
                   <div class="duty-header">
                     <h4>{duty.duties}</h4>
                   </div>
-                  
+
                   <p class="duty-summary">{duty.summary}</p>
                 </div>
               </AnimateOnScroll>
@@ -414,10 +426,10 @@
     font-weight: 500;
     color: var(--neutral-dark-gray);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem; /* Spacing between icon and name */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem; /* Spacing between icon and name */
   }
 
   .category-btn:hover {
@@ -426,11 +438,7 @@
   }
 
   .category-btn.active {
-    background: linear-gradient(
-      to bottom right,
-      white,
-      white
-    );
+    background: linear-gradient(to bottom right, white, white);
     border: 2px solid transparent;
     background-origin: border-box;
     background-clip: padding-box, border-box;
@@ -453,34 +461,38 @@
       var(--color-primary),
       var(--color-accent)
     );
-    -webkit-mask: 
-      linear-gradient(#fff 0 0) content-box, 
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
-    mask: 
-      linear-gradient(#fff 0 0) content-box, 
+    mask:
+      linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
   }
 
-.category-icon {
-  width: 44px; /* Adjust size as needed */
-  height: 44px;
-  border-radius: 50%;
-  background-color: var(--neutral-light-gray); /* Inactive background */
-  color: var(--color-primary); /* Inactive icon color */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  flex-shrink: 0; /* Prevent shrinking */
-}
+  .category-icon {
+    width: 44px; /* Adjust size as needed */
+    height: 44px;
+    border-radius: 50%;
+    background-color: var(--neutral-light-gray); /* Inactive background */
+    color: var(--color-primary); /* Inactive icon color */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0; /* Prevent shrinking */
+  }
 
-.category-icon.active {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-  color: white; /* Active icon color */
-  box-shadow: 0 3px 6px rgba(155, 81, 224, 0.15);
-}
+  .category-icon.active {
+    background: linear-gradient(
+      135deg,
+      var(--color-primary),
+      var(--color-accent)
+    );
+    color: white; /* Active icon color */
+    box-shadow: 0 3px 6px rgba(155, 81, 224, 0.15);
+  }
 
   .category-name {
     font-size: 1rem;
@@ -501,11 +513,13 @@
 
   .skills-grid {
     display: grid;
-    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    align-items: stretch;
+    margin-top: 1.5rem;
     opacity: 0;
     transform: translateY(20px);
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    justify-content: center; /* Restored original line */
     width: 100%;
   }
 
@@ -527,22 +541,8 @@
     display: flex;
     flex-direction: column;
     border: 1px solid var(--neutral-light-gray);
-  }
-
-  /* Center orphan items in the 6-column grid */
-  /* 2 orphans: Adjust last item */
-  .skill-card:last-child:nth-child(3n - 1) {
-    grid-column-end: -2; /* Span from start to column 6 */
-  }
-  
-  /* 2 orphans: Adjust second-to-last item */
-  .skill-card:nth-last-child(2):nth-child(3n + 1) {
-    grid-column-end: 4; /* Span from start to column 4 */
-  }
-  
-  /* 1 orphan: Adjust last item */
-  .skill-card:last-child:nth-child(3n - 2) {
-    grid-column-end: 5; /* Span from start to column 5 */
+    min-width: 280px;
+    max-width: 300px;
   }
 
   .skill-card:hover {
@@ -681,7 +681,7 @@
     z-index: 5;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
-  
+
   .close-duties-btn:hover {
     background-color: rgba(155, 81, 224, 0.1);
     opacity: 1;
@@ -701,16 +701,23 @@
 
   .duties-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem;
-    margin-top: 1rem;
+    align-items: stretch;
+    margin-top: 1.5rem;
   }
 
   .duty-card {
-    background-color: var(--neutral-light-gray-background);
-    border-radius: 10px;
-    padding: 1.25rem;
-    transition: all 0.3s ease;
+    background: var(--neutral-white);
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    padding: 1.5rem 1.25rem 1.25rem 1.25rem;
+    transition: box-shadow 0.2s;
+    position: relative;
+    height: 100%; /* Stretch to fill grid cell */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
   }
 
   .duty-card:hover {
@@ -728,7 +735,7 @@
     margin: 0;
     font-weight: 600;
   }
-  
+
   .duty-summary {
     color: var(--neutral-black);
     font-size: 0.95rem;
@@ -738,43 +745,42 @@
     opacity: 0.9;
   }
 
-
   @media (max-width: 992px) {
     .skills-grid {
       grid-template-columns: 1fr 1fr;
     }
-    
+
     .duties-grid {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     }
-    
+
     .duties-container {
       padding: 1.25rem;
     }
   }
-  
+
   @media (max-width: 768px) {
     .skills-grid {
       grid-template-columns: 1fr;
     }
-    
+
     .duties-grid {
       grid-template-columns: 1fr;
     }
-    
+
     .category-btn {
       padding: 0.5rem 1rem;
       font-size: 0.9rem;
     }
-    
+
     .skill-card {
       padding: 1.25rem;
     }
-    
+
     .skill-name {
       font-size: 1rem;
     }
-    
+
     .skill-description {
       font-size: 0.9rem;
     }
@@ -794,7 +800,7 @@
     transform: translateY(20px);
     animation: fadeInUp 0.6s ease forwards;
   }
-  
+
   @keyframes fadeInUp {
     to {
       opacity: 1;
@@ -803,9 +809,7 @@
   }
 
   /* Skip first column to center under nav */
-  .skills-grid .animate-item:first-child {
-    grid-column-start: 2;
-  }
+  
   /* Center cards in each cell */
   .animate-item {
     display: flex;

@@ -3,6 +3,7 @@ export interface Activities {
   // Descriptive task, project, or responsibility for a duty
   activity: string | null;
   dutyId: number;
+  roleId: number; // Now required: the role this activity is for
 }
 
 export interface Companies {
@@ -13,12 +14,14 @@ export interface Companies {
   companyType: string | null;
   // City, State 
   location: string;
+  // Company category: 'corporate' or 'consulting'
+  companyCategory: "corporate" | "consulting";
 }
 
 export interface Duties {
   id: number;
   duties: string | null;
-  roleId: number;
+  roleIds: number[]; // Associated roles
   // Zero or more related comma-separated skill ids
   relevantSkills: string | null;
   // Concise summary of the duty based on related activities

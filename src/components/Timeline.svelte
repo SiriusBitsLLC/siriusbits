@@ -45,7 +45,7 @@
   }));
   
   function getDutiesForRole(roleId: number) {
-    return duties.filter(duty => duty.roleId === roleId);
+    return duties.filter(duty => duty.roleIds && duty.roleIds.includes(roleId));
   }
   
   function getActivitiesForDuty(dutyId: number) {
