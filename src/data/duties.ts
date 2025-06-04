@@ -38,14 +38,14 @@ export const duties: Duties[] = [
   },
   {
     id: 6,
-    duties: 'Data Strategy & Execution Advisor',
+    duties: 'Data Engineering & Execution',
     roleIds: [2],
     relevantSkills: '1,8,9',
     summary: 'Advises on modern data stack tools and develops maturity models to accelerate data access and enhance team capabilities.'
   },
   {
     id: 7,
-    duties: 'Data Strategy & Integration',
+    duties: 'Data Architecture & Integration',
     roleIds: [5],
     relevantSkills: '',
     summary: 'Develops unified data architecture and integration plans that align business goals with scalable data infrastructure and modern analytics platforms.'
@@ -73,14 +73,14 @@ export const duties: Duties[] = [
   },
   {
     id: 11,
-    duties: 'Data Warehouse Digital Transformation',
+    duties: 'Data Modernization & Digital Transformation',
     roleIds: [5],
     relevantSkills: '',
     summary: 'Leads modernization of legacy data infrastructure by implementing cloud-native data warehouses and automating pipeline orchestration for scalable insights.'
   },
   {
     id: 12,
-    duties: 'M&A Systems Integration & Data Migration',
+    duties: 'M&A Systems Consolidation & Data Migration',
     roleIds: [5],
     relevantSkills: '',
     summary: 'Oversees technology consolidation and data migration efforts during mergers and acquisitions, ensuring continuity, integrity, and stakeholder alignment.'
@@ -108,7 +108,7 @@ export const duties: Duties[] = [
   },
   {
     id: 16,
-    duties: 'Technology Planning',
+    duties: 'Technology Strategy & Planning',
     roleIds: [7],
     relevantSkills: '',
     summary: 'Defines and prioritizes technology roadmaps, balancing innovation with risk management to meet both immediate and long-term business needs.'

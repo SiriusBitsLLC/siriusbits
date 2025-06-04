@@ -4,6 +4,8 @@ export interface Activities {
   activity: string | null;
   dutyId: number;
   roleId: number; // Now required: the role this activity is for
+  // Short area of focus label for this activity
+  focus?: string;
 }
 
 export interface Companies {
