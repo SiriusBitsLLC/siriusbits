@@ -86,7 +86,7 @@ export const roles: Roles[] = [
   {
     id: 10,
     title: 'Director of Technology',
-    summary: 'Managed a team of software engineers, front-end developers, Information Architects, QA Analysts, and IT DevOps personnel responsible for $400K in monthly revenue, focusing on efficiency and new business offerings.',
+    summary: 'Managed a team of software engineers, front-end developers, Information Architects, QA Analysts, and IT DevOps personnel responsible for $400K in monthly revenue, focusing on efficiency, execution, client delivery, and new business opportunities.',
     startDate: '2009-11-01',
     endDate: '2011-06-01',
     companyId: 7,
