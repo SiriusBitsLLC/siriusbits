@@ -51,6 +51,8 @@ export interface Skills {
   name: string | null;
   // Skill short description
   description: string | null;
+  // Applied Example of Skill
+  example: string | null;
   // Skill category ID (strategy, data, tech, leadership)
   category?: string;
   // Proficiency level (1-5)

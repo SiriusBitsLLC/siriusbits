@@ -17,14 +17,14 @@ export const skillCategoryMap: Record<number, string> = {
   1: 'strategy', // Global Business Strategy
   2: 'data',     // Data Architecture
   3: 'data',     // Analytics & Insights
-  4: 'strategy', // Project Management
+  4: 'leadership', // Agile Project Management
   5: 'strategy', // Digital Transformation
   6: 'data',     // Data Engineering
   7: 'tech',     // Technology Strategy
   8: 'tech',     // Enterprise Architecture
   9: 'leadership', // Leadership & Talent Development
   10: 'strategy', // Solution Engineering
-  11: 'tech', // Artificial Intelligence
+  11: 'data', // Artificial Intelligence
   12: 'digital', // Search Strategy & Optimization
   13: 'data', // SQL Development & Data Modeling
   14: 'tech', // Web Services & API Development
