@@ -7,7 +7,7 @@ export const skills: Skills[] = [
     id: 1,
     name: 'Global Business Strategy',
     description: 'Team Alignment, Roadmap Development, P&L Budgeting',
-    example: 'Spearheaded a series of high-impact data transformation efforts that significantly improved technology spend efficiency and contributed to over $1 billion in annual revenue by aligning marketing, sales, and customer engagement data into a unified digital ecosystem that continue to serve as foundational accelerators for personalized engagement and measurable growth.', //Hyland
+    example: 'Spearheaded a series of high-impact data transformation efforts that significantly improved technology spend efficiency and contributed to over $1 billion in annual revenue by aligning marketing, sales, and customer engagement data into a unified digital ecosystem that continues to serve as a foundational accelerator for personalized engagement and measurable growth.', //Hyland
     category: skillCategoryMap[1],
     proficiency: 5,
     proficiencyLabel: 'Authority',
@@ -60,6 +60,7 @@ export const skills: Skills[] = [
     example: 'Leveraged middle-ware data pipelines to sync and unify data from multiple marketing automation and CRM systems to support ongoing sales and marketing activities in live, production systems with zero-downtime.',
     category: skillCategoryMap[6],
     proficiency: 4,
+    proficiencyLabel: 'Expert',
     iconName: 'cpu'
   },
   {
@@ -89,6 +90,7 @@ export const skills: Skills[] = [
     example: 'Built and led a team of data and business analyst experts to complete the integration and deployment of a unified data strategy. Recruited top talent and helped team members to expand skill sets, realize opportunities to achieve and present their ideas and accomplishments. Navigated complex and ambiguous business directives from senior leadership to ensure team members could remain focused and productive.', //Nestlé
     category: skillCategoryMap[9],
     proficiency: 5,
+    proficiencyLabel: 'Authority',
     iconName: 'users'
   },
 
@@ -110,6 +112,7 @@ export const skills: Skills[] = [
     example: 'Leveraged principled AI coding and multi-model architect coding patterns to prep and transform millions of rows of semi-structured datasets from nineteen different third-party data sources to conform to a unified schema for automated ingestion into the Nestlé USA Enterprise data lake.', //Nestlé
     category: skillCategoryMap[11], // Tech
     proficiency: 4,
+    proficiencyLabel: 'Expert',
     iconName: 'cpu'
   },
   {
@@ -209,6 +212,7 @@ export const skills: Skills[] = [
     example: 'Built and led a team of data and business analyst experts to complete the integration and deployment of a unified data strategy. Recruited top talent and helped team members to expand skill sets, realize opportunities to achieve and present their ideas and accomplishments. Navigated complex and ambiguous business directives from senior leadership to ensure team members could remain focused and productive.', //Nestlé
     category: skillCategoryMap[22], // Leadership
     proficiency: 5,
+    proficiencyLabel: 'Authority',
     iconName: 'users'
   },
   {

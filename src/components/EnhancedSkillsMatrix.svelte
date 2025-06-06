@@ -1,10 +1,13 @@
 <script lang="ts">
+  // ...existing imports...
+  let hoveredSkillId = $state<number | null>(null);
   import { get } from "svelte/store";
-  import { slide, fade } from 'svelte/transition';
-  import { cubicOut } from 'svelte/easing';
+  import { slide, fade } from "svelte/transition";
+  import { cubicOut } from "svelte/easing";
   import { onMount } from "svelte";
   import type { Skills, Duties, Activities } from "../data/experience-schema";
   import AnimateOnScroll from "./AnimateOnScroll.svelte";
+  import Icon from "~icons/lucide/arrow-right";
   // Static Lucide icon imports for categories
   import IconLayers from "~icons/lucide/layers";
   import IconDatabase from "~icons/lucide/database";
@@ -101,7 +104,6 @@
   let dutyActivitiesMap = $derived(currentMatrixState.dutyActivitiesMap);
   let skillsVisible = $derived(currentMatrixState.skillsVisible);
   let dutiesVisible = $derived(currentMatrixState.dutiesVisible);
-
 
   // Process and group skills by category
   function processSkills(): void {
@@ -324,7 +326,7 @@
         updateSkillsMatrixState({ selectedSkill: null });
       }
     }
-    document.addEventListener('click', handleDocumentClick);
+    document.addEventListener("click", handleDocumentClick);
 
     // IntersectionObserver for scroll-out-of-view
     let observer: IntersectionObserver | null = null;
@@ -342,11 +344,10 @@
     }
 
     return () => {
-      document.removeEventListener('click', handleDocumentClick);
+      document.removeEventListener("click", handleDocumentClick);
       if (observer && skillsMatrixRef) observer.unobserve(skillsMatrixRef);
     };
   });
-
 </script>
 
 <div class="enhanced-skills-matrix" bind:this={skillsMatrixRef}>
@@ -378,18 +379,24 @@
 
   <div class="skills-container">
     <AnimateOnScroll animation="fade-up" duration={800} delay={400}>
-      <div
-        class="skills-grid {skillsVisible ? 'visible' : ''}"
-      >
+      <div class="skills-grid {skillsVisible ? 'visible' : ''}">
         {#if groupedSkills && activeCategory && groupedSkills[activeCategory]}
           {#each groupedSkills[activeCategory] as skill, i}
             <div
-              class="animate-item {selectedSkill && selectedSkill.id === skill.id ? 'selected-parent' : ''}"
+              class="animate-item {selectedSkill &&
+              selectedSkill.id === skill.id
+                ? 'selected-parent'
+                : ''}"
               style="animation-delay: {400 + i * 100}ms"
+              onmouseenter={() => (hoveredSkillId = skill.id)}
+              onmouseleave={() => (hoveredSkillId = null)}
             >
               <div class="skill-card-wrapper">
                 <div
-                  class="skill-card {selectedSkill && selectedSkill.id === skill.id ? 'selected' : ''} animate-item"
+                  class="skill-card {selectedSkill &&
+                  selectedSkill.id === skill.id
+                    ? 'selected'
+                    : ''} animate-item"
                   tabindex="0"
                   role="button"
                   aria-pressed={selectedSkill && selectedSkill.id === skill.id}
@@ -398,27 +405,80 @@
                     handleExampleClick(skill.id);
                   }}
                   onkeydown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
+                    if (e.key === "Enter" || e.key === " ") {
                       handleSkillClick(skill);
                       handleExampleClick(skill.id as number);
                     }
                   }}
                 >
-                  <div class="skill-header">
-                    <span class="skill-name">{skill.name}</span>
+                  <div class="skill-card-header">
+                    <div class="header-icon">
+                      <Icon name="arrow-right" size={20} />
+                    </div>
+                    <div class="header-name">
+                      <span class="skill-name">{skill.name}</span>
+                    </div>
+                    <div class="header-proficiency">
+                      {#if skill.proficiencyLabel}
+                        <span class="proficiency-label-vertical"
+                          >{skill.proficiencyLabel}</span
+                        >
+                      {/if}
+                    </div>
                   </div>
-                  <div class="skill-description">{skill.description}</div>
-                  <div class="proficiency-bar-container">
-                    <div
-                      class="proficiency-bar"
-                      style="width: {skill.proficiency * 20}%"
-                    ></div>
-                  </div>
-                  <div class="skill-proficiency-label">
-                    Proficiency: {typeof skill.proficiency === 'number' ? skill.proficiency : 0}/5
+                  <div
+                    class="proficiency-border"
+                    style="
+                      top: {(() => {
+                      switch (skill.proficiency) {
+                        case 5:
+                          return '12px';
+                        case 4:
+                          return '32px';
+                        case 3:
+                          return '52px';
+                        case 2:
+                          return '72px';
+                        case 1:
+                          return '92px';
+                        default:
+                          return '112px';
+                      }
+                    })()};
+                      height: calc(116px - {(() => {
+                      switch (skill.proficiency) {
+                        case 5:
+                          return '12px';
+                        case 4:
+                          return '32px';
+                        case 3:
+                          return '52px';
+                        case 2:
+                          return '72px';
+                        case 1:
+                          return '92px';
+                        default:
+                          return '112px';
+                      }
+                    })()});
+                    "
+                  ></div>
+                  <div
+                    class="skill-description {hoveredSkillId === skill.id ||
+                    (selectedSkill &&
+                      selectedSkill.id === skill.id &&
+                      openExampleSkillId === skill.id &&
+                      showExampleSkillId === skill.id)
+                      ? 'visible'
+                      : ''}"
+                  >
+                    {skill.description}
                   </div>
                   {#if openExampleSkillId === skill.id && showExampleSkillId === skill.id}
-                    <div class="example-container" transition:slide={{ duration: 350, easing: cubicOut }}>
+                    <div
+                      class="example-container"
+                      transition:slide={{ duration: 350, easing: cubicOut }}
+                    >
                       <strong>Applied Example:</strong>
                       <div class="example-content">{skill.example}</div>
                     </div>
@@ -576,25 +636,26 @@
 
   .skills-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    align-items: stretch;
-    margin-top: 1.5rem;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+    gap: 2.5rem 2rem;
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
+    min-height: 120px;
     width: 100%;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    align-items: start;
+    align-content: start;
   }
 
   .skills-grid.visible {
     opacity: 1;
-    transform: translateY(0);
   }
 
   .skill-card {
     background-color: white;
     border-radius: 12px;
-    padding: 1.5rem;
+    padding: 1.5rem 0.75rem;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
     cursor: pointer;
@@ -604,8 +665,19 @@
     display: flex;
     flex-direction: column;
     border: 1px solid var(--neutral-light-gray);
-    min-width: 280px;
-    max-width: 300px;
+    min-width: 330px;
+    max-width: 330px;
+  }
+
+  .proficiency-border {
+    position: absolute;
+    right: 0;
+    width: 3px;
+    background: var(--color-accent, #9b51e0);
+    border-radius: 2px;
+    z-index: 3;
+    transition: top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* The top and bottom are set inline via style */
   }
 
   .skill-card:hover {
@@ -664,8 +736,10 @@
   .skill-name {
     font-size: 1.1rem;
     color: var(--color-primary);
-    margin: 0 0 1rem 0;
+    margin: 0 0 0 0;
     font-weight: 600;
+    min-height: 3.52rem;
+    align-content: center;
   }
 
   .skill-proficiency {
@@ -692,13 +766,13 @@
     font-size: 0.95rem;
     line-height: 1.5;
     flex-grow: 1;
-    margin: 0 0 1rem 0;
+    margin: 0 0 0 0;
   }
 
   .skill-proficiency-label {
     font-size: 0.8rem;
     font-weight: 600;
-    color: var(--color-primary);
+    color: var(--color-accent);
     text-align: right;
     opacity: 0.8;
   }
@@ -803,7 +877,7 @@
     color: var(--neutral-black);
     font-size: 0.95rem;
     line-height: 1.5;
-    margin: 0 0 1rem 0;
+    margin: 0 0 0 0;
     font-style: italic;
     opacity: 0.9;
   }
@@ -872,69 +946,136 @@
   }
 
   /* Skip first column to center under nav */
-  
+
   /* Center cards in each cell */
   .animate-item {
     display: flex;
     justify-content: center;
   }
   .skill-card {
-    max-width: 300px;
+    min-width: 330px;
+    max-width: 330px;
     width: 100%;
   }
-.skill-card.selected {
-  grid-column: span 2;
-  min-width: 500px;
-  z-index: 2;
-  box-shadow: 0 4px 32px rgba(155, 81, 224, 0.07), 0 1.5px 4px rgba(0,0,0,0.08);
-  background: #fff;
-  position: relative;
-}
-
-@media (max-width: 768px) {
   .skill-card.selected {
-    min-width: unset;
-    width: 100%;
-    grid-column: span 1;
+    grid-column: span 2;
+    min-width: 500px;
+    z-index: 2;
+    box-shadow:
+      0 4px 32px rgba(155, 81, 224, 0.07),
+      0 1.5px 4px rgba(0, 0, 0, 0.08);
+    background: #fff;
+    position: relative;
   }
-}
 
-.example-container {
-  margin-top: 1.25rem;
-  background: var(--neutral-white, #fff);
-  border: 1px solid var(--neutral-light-gray, #eee);
-  border-radius: 10px;
-  box-shadow: 0 2px 12px rgba(155,81,224,0.08);
-  padding: 1.25rem 1rem;
-  z-index: 10;
-  position: relative;
-  font-size: 1rem;
-  color: var(--neutral-black, #222);
-}
+  @media (max-width: 768px) {
+    .skill-card.selected {
+      min-width: unset;
+      width: 100%;
+      grid-column: span 1;
+    }
+  }
 
-.example-content {
-  margin-top: 0.5rem;
-  font-size: 0.97rem;
-  line-height: 1.6;
-  color: var(--neutral-black, #222);
-}
+  .example-container {
+    margin-top: 1.25rem;
+    background: var(--neutral-white, #fff);
+    border: 1px solid var(--neutral-light-gray, #eee);
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(155, 81, 224, 0.08);
+    padding: 1.25rem 1rem;
+    z-index: 10;
+    position: relative;
+    font-size: 1rem;
+    color: var(--neutral-black, #222);
+  }
 
-.skill-card .skill-description {
-  margin-bottom: 0.75rem;
-}
+  .example-content {
+    margin-top: 0.5rem;
+    font-size: 0.97rem;
+    line-height: 1.6;
+    color: var(--neutral-black, #222);
+  }
 
-.skill-card.selected .skill-description {
-  margin-bottom: 0.5rem;
-}
+  .skill-card .skill-description {
+    margin-top: 0.75rem;
+    margin-left: 36px;
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition:
+      opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
 
-/* Remove extra vertical space for selected card */
-.skill-card.selected .proficiency-bar-container {
-  margin-top: 0.25rem;
-}
+  .skill-card .skill-description.visible {
+    opacity: 1;
+    max-height: 120px;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
 
-.animate-item.selected-parent {
-  z-index: 20;
-  position: relative;
-}
+  @media (max-width: 900px) {
+    .skill-card .skill-description {
+      opacity: 1 !important;
+      max-height: 300px !important;
+      transform: none !important;
+      pointer-events: auto !important;
+      transition: none !important;
+    }
+  }
 
+  .skill-card-header {
+    display: grid;
+    grid-template-columns: 36px 1fr 24px;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0;
+  }
+
+  .header-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    width: 36px;
+  }
+
+  .header-name {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .header-proficiency {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 36px;
+    width: 24px;
+    padding-left: 0.25rem;
+  }
+
+  .proficiency-label-vertical {
+    writing-mode: vertical-rl;
+    transform: rotate(-180deg);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    letter-spacing: 0.05em;
+    opacity: 0.82;
+    text-align: center;
+    user-select: none;
+  }
+
+  .skill-card.selected .skill-description {
+    margin-bottom: 0.5rem;
+  }
+
+  .animate-item.selected-parent {
+    z-index: 20;
+    position: relative;
+  }
 </style>
