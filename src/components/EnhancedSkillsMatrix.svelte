@@ -1,5 +1,7 @@
 <script lang="ts">
   import { get } from "svelte/store";
+  import { slide, fade } from 'svelte/transition';
+  import { cubicOut } from 'svelte/easing';
   import { onMount } from "svelte";
   import type { Skills, Duties, Activities } from "../data/experience-schema";
   import AnimateOnScroll from "./AnimateOnScroll.svelte";
@@ -284,9 +286,70 @@
       });
     }, 500);
   });
+
+  // --- Example container logic ---
+  let openExampleSkillId = $state<number | null>(null);
+  let showExampleSkillId = $state<number | null>(null);
+  let exampleTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  function handleExampleClick(skillId: number) {
+    if (openExampleSkillId === skillId) {
+      openExampleSkillId = null;
+      showExampleSkillId = null;
+      if (exampleTimeout) clearTimeout(exampleTimeout);
+    } else {
+      openExampleSkillId = skillId;
+      if (exampleTimeout) clearTimeout(exampleTimeout);
+      exampleTimeout = setTimeout(() => {
+        showExampleSkillId = skillId;
+      }, 350); // Match card expansion duration
+    }
+  }
+
+  $effect(() => {
+    // If openExampleSkillId is cleared externally, also clear showExampleSkillId
+    if (openExampleSkillId === null) {
+      showExampleSkillId = null;
+      if (exampleTimeout) clearTimeout(exampleTimeout);
+    }
+  });
+
+  // Close example and deactivate card if click is outside the Skills Matrix
+  let skillsMatrixRef: HTMLDivElement | null = null;
+  onMount(() => {
+    function handleDocumentClick(e: MouseEvent) {
+      if (!skillsMatrixRef) return;
+      if (!skillsMatrixRef.contains(e.target as Node)) {
+        openExampleSkillId = null;
+        updateSkillsMatrixState({ selectedSkill: null });
+      }
+    }
+    document.addEventListener('click', handleDocumentClick);
+
+    // IntersectionObserver for scroll-out-of-view
+    let observer: IntersectionObserver | null = null;
+    if (skillsMatrixRef) {
+      observer = new window.IntersectionObserver(
+        (entries) => {
+          if (entries[0] && !entries[0].isIntersecting) {
+            openExampleSkillId = null;
+            updateSkillsMatrixState({ selectedSkill: null });
+          }
+        },
+        { threshold: 0 }
+      );
+      observer.observe(skillsMatrixRef);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleDocumentClick);
+      if (observer && skillsMatrixRef) observer.unobserve(skillsMatrixRef);
+    };
+  });
+
 </script>
 
-<div class="enhanced-skills-matrix">
+<div class="enhanced-skills-matrix" bind:this={skillsMatrixRef}>
   <AnimateOnScroll animation="fade-up" duration={800} delay={200}>
     <div class="categories-nav">
       {#each skillCategories as category, i}
@@ -321,61 +384,61 @@
         {#if groupedSkills && activeCategory && groupedSkills[activeCategory]}
           {#each groupedSkills[activeCategory] as skill, i}
             <div
-              class="animate-item"
+              class="animate-item {selectedSkill && selectedSkill.id === skill.id ? 'selected-parent' : ''}"
               style="animation-delay: {400 + i * 100}ms"
             >
-              <div
-                class="skill-card {selectedSkill &&
-                selectedSkill.id === skill.id
-                  ? 'selected'
-                  : ''}"
-                onclick={() => handleSkillClick(skill)}
-                onkeydown={(e) => e.key === "Enter" && handleSkillClick(skill)}
-                tabindex="0"
-                role="button"
-                aria-pressed={selectedSkill && selectedSkill.id === skill.id
-                  ? "true"
-                  : "false"}
-                aria-label="View related duties for {skill.name}"
-              >
-                <div class="skill-card-indicator"></div>
-                <h3 class="skill-name">{skill.name}</h3>
-                <p class="skill-description">{skill.description}</p>
-                <div class="skill-proficiency">
-                  <div
-                    class="proficiency-bar"
-                    style="width: {((skill.proficiency || 0) / 5) * 100}%"
-                  ></div>
-                </div>
-                <div class="skill-proficiency-label">
-                  Proficiency: {skill.proficiency || 0}/5
+              <div class="skill-card-wrapper">
+                <div
+                  class="skill-card {selectedSkill && selectedSkill.id === skill.id ? 'selected' : ''} animate-item"
+                  tabindex="0"
+                  role="button"
+                  aria-pressed={selectedSkill && selectedSkill.id === skill.id}
+                  onclick={() => {
+                    handleSkillClick(skill);
+                    handleExampleClick(skill.id);
+                  }}
+                  onkeydown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      handleSkillClick(skill);
+                      handleExampleClick(skill.id as number);
+                    }
+                  }}
+                >
+                  <div class="skill-header">
+                    <span class="skill-name">{skill.name}</span>
+                  </div>
+                  <div class="skill-description">{skill.description}</div>
+                  <div class="proficiency-bar-container">
+                    <div
+                      class="proficiency-bar"
+                      style="width: {skill.proficiency * 20}%"
+                    ></div>
+                  </div>
+                  <div class="skill-proficiency-label">
+                    Proficiency: {typeof skill.proficiency === 'number' ? skill.proficiency : 0}/5
+                  </div>
+                  {#if openExampleSkillId === skill.id && showExampleSkillId === skill.id}
+                    <div class="example-container" transition:slide={{ duration: 350, easing: cubicOut }}>
+                      <strong>Applied Example:</strong>
+                      <div class="example-content">{skill.example}</div>
+                    </div>
+                  {/if}
                 </div>
               </div>
             </div>
           {/each}
-        {:else}
-          <div class="no-skills-message">
-            <p>No skills found in this category.</p>
-          </div>
         {/if}
       </div>
     </AnimateOnScroll>
   </div>
+</div>
 
+{#if false}
   {#if selectedSkill && relatedDuties && relatedDuties.length > 0}
     <div class="duties-section {dutiesVisible ? 'visible' : ''}">
       <AnimateOnScroll animation="fade-up" duration={800} delay={200}>
-        <div
-          class="duties-container"
-          data-skill="Related to {selectedSkill.name || 'selected skill'}"
-        >
-          <button
-            class="close-duties-btn"
-            onclick={closeDuties}
-            aria-label="Close related duties"
-          >
-            <span aria-hidden="true">×</span>
-          </button>
+        <div class="duties-container" data-skill={selectedSkill?.name}>
+          <!-- Duties content here (deactivated as requested) -->
           <div class="duties-grid">
             {#each relatedDuties.filter(Boolean) as duty, i}
               <AnimateOnScroll
@@ -397,7 +460,7 @@
       </AnimateOnScroll>
     </div>
   {/if}
-</div>
+{/if}
 
 <style>
   .enhanced-skills-matrix {
@@ -819,4 +882,59 @@
     max-width: 300px;
     width: 100%;
   }
+.skill-card.selected {
+  grid-column: span 2;
+  min-width: 500px;
+  z-index: 2;
+  box-shadow: 0 4px 32px rgba(155, 81, 224, 0.07), 0 1.5px 4px rgba(0,0,0,0.08);
+  background: #fff;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .skill-card.selected {
+    min-width: unset;
+    width: 100%;
+    grid-column: span 1;
+  }
+}
+
+.example-container {
+  margin-top: 1.25rem;
+  background: var(--neutral-white, #fff);
+  border: 1px solid var(--neutral-light-gray, #eee);
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(155,81,224,0.08);
+  padding: 1.25rem 1rem;
+  z-index: 10;
+  position: relative;
+  font-size: 1rem;
+  color: var(--neutral-black, #222);
+}
+
+.example-content {
+  margin-top: 0.5rem;
+  font-size: 0.97rem;
+  line-height: 1.6;
+  color: var(--neutral-black, #222);
+}
+
+.skill-card .skill-description {
+  margin-bottom: 0.75rem;
+}
+
+.skill-card.selected .skill-description {
+  margin-bottom: 0.5rem;
+}
+
+/* Remove extra vertical space for selected card */
+.skill-card.selected .proficiency-bar-container {
+  margin-top: 0.25rem;
+}
+
+.animate-item.selected-parent {
+  z-index: 20;
+  position: relative;
+}
+
 </style>

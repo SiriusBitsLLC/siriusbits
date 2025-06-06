@@ -57,6 +57,8 @@ export interface Skills {
   category?: string;
   // Proficiency level (1-5)
   proficiency?: number;
+  // Proficiency label (Emerging, Developing, Professional, Expert, Worldclass)
+  proficiencyLabel?: string;
   // Icon name for dynamic skill nav icons
   iconName?: string;
 }
