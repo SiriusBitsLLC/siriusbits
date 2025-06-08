@@ -390,6 +390,7 @@
               style="animation-delay: {400 + i * 100}ms"
               onmouseenter={() => (hoveredSkillId = skill.id)}
               onmouseleave={() => (hoveredSkillId = null)}
+              role="group"
             >
               <div class="skill-card-wrapper">
                 <div
@@ -690,26 +691,7 @@
     box-shadow: 0 15px 30px rgba(155, 81, 224, 0.15);
   }
 
-  .skill-card-indicator {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%) scale(0);
-    width: 50px;
-    height: 5px;
-    border-radius: 5px 5px 0 0;
-    background: linear-gradient(
-      90deg,
-      var(--color-primary),
-      var(--color-accent)
-    );
-    transition: all 0.3s ease;
-  }
-
-  .skill-card.selected .skill-card-indicator {
-    transform: translateX(-50%) scale(1);
-  }
-
+  
   .skill-card::before {
     content: "";
     position: absolute;
@@ -742,25 +724,7 @@
     align-content: center;
   }
 
-  .skill-proficiency {
-    height: 5px;
-    background-color: var(--neutral-light-gray);
-    border-radius: 10px;
-    margin-top: auto;
-    margin-bottom: 0.5rem;
-    overflow: hidden;
-  }
-
-  .proficiency-bar {
-    height: 100%;
-    border-radius: 10px;
-    background: linear-gradient(
-      135deg,
-      var(--color-primary),
-      var(--color-accent)
-    );
-  }
-
+  
   .skill-description {
     color: var(--neutral-black);
     font-size: 0.95rem;
@@ -769,14 +733,7 @@
     margin: 0 0 0 0;
   }
 
-  .skill-proficiency-label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--color-accent);
-    text-align: right;
-    opacity: 0.8;
-  }
-
+  
   /* Duties section */
   .duties-section {
     margin-top: 0.25rem;
@@ -799,31 +756,7 @@
     border: 1px solid var(--neutral-light-gray);
   }
 
-  .close-duties-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background-color: white;
-    border: 1px solid var(--neutral-light-gray);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    opacity: 0.8;
-    z-index: 5;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-
-  .close-duties-btn:hover {
-    background-color: rgba(155, 81, 224, 0.1);
-    opacity: 1;
-  }
-
+  
   .duties-container::before {
     content: attr(data-skill);
     position: absolute;
@@ -923,13 +856,6 @@
     }
   }
 
-  .no-skills-message {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 2rem;
-    color: var(--neutral-gray);
-    font-style: italic;
-  }
 
   /* Animation styles for animated items */
   .animate-item {
