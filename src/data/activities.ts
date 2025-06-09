@@ -1,6 +1,7 @@
 import type { Activities } from './experience-schema';
 
 export const activities: Activities[] = [
+  // Nestlé Professional Solutions - Sr. Mgr, Data Strategy & Governance
   {
     id: 1,
     activity: 'Led the comprehensive integration of end-to-end sales and finance reporting data migration from a legacy on-prem SQL Server data warehouse to the global Azure Data Lake.',
@@ -64,6 +65,22 @@ export const activities: Activities[] = [
     roleId: 1,
     focus: '',
   },
+  // SiriusBits LLC - Data Strategy & Team Leadership
+  {
+    id: 104,
+    activity: 'Integrated a disparate team of seven remote data analysts, analytics engineers, and data infrastructure managers and hired top talent to fill key roles and leadership in Data Analytics and the Data Analysis and Insights team.',
+    dutyId: 14, // Team Leadership & Development
+    roleId: 1,
+    focus: '',
+  },
+  {
+    id: 105,
+    activity: 'Developed a comprehensive data strategy and activation plan across three phases over eighteen months.',
+    dutyId: 14, // Team Leadership & Development
+    roleId: 1,
+    focus: '',
+  },
+  // Sherwin Williams - Sr. Enterprise Information Architect
   {
     id: 10,
     activity: 'Led architecture initiative to re-platform CRM and B2B E-Commerce for the global performance coatings division.',

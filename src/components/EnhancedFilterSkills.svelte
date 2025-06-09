@@ -1,37 +1,74 @@
 <script lang="ts">
   // Import necessary Svelte functions and types
   import { onMount } from "svelte";
-  import type { Snippet } from 'svelte';
-  import type { Skills as BaseSkill, Duties, Activities } from "../data/experience-schema";
+  import type { Snippet } from "svelte";
+  import type {
+    Skills as BaseSkill,
+    Duties,
+    Activities,
+  } from "../data/experience-schema";
   // Extend base skill type to include iconName for nav
   type Skill = BaseSkill & { iconName: string };
   import AnimateOnScroll from "./AnimateOnScroll.svelte";
   // Static Lucide icon imports
-  import IconGlobe from '~icons/lucide/globe';
-  import IconDatabase from '~icons/lucide/database';
-  import IconBarChart3 from '~icons/lucide/bar-chart-3';
-  import IconClipboardCheck from '~icons/lucide/clipboard-check';
-  import IconRefreshCw from '~icons/lucide/refresh-cw';
-  import IconCpu from '~icons/lucide/cpu';
-  import IconLightbulb from '~icons/lucide/lightbulb';
-  import IconLayoutDashboard from '~icons/lucide/layout-dashboard';
-  import IconUsers from '~icons/lucide/users';
-  import IconLayers from '~icons/lucide/layers';
-  import IconCode from '~icons/lucide/code';
-  import IconMonitorSmartphone from '~icons/lucide/monitor-smartphone';
+  import IconGlobe from "~icons/lucide/globe"; // Global Business Strategy
+  import IconDatabase from "~icons/lucide/database"; // Data
+  import IconBarChart3 from "~icons/lucide/bar-chart-3"; // Analytics & Business Intelligence
+  import IconClipboardCheck from "~icons/lucide/clipboard-check"; // Agile Project Management
+  import IconRefreshCw from "~icons/lucide/refresh-cw"; // Digital Transformation
+  import IconCpu from "~icons/lucide/cpu"; // Data Engineering
+  import IconBrainCircuit from "~icons/lucide/brain-circuit"; // Artifical Intelligence
+  import IconLightbulb from "~icons/lucide/lightbulb"; // Technology Strategy
+  import IconLayoutDashboard from "~icons/lucide/layout-dashboard"; // Enterprise Architecture
+  import IconUsers from "~icons/lucide/users"; // Leadership
+  import IconLayers from "~icons/lucide/layers"; // Data Architecture
+  import IconStrategy from "~icons/ph/strategy"; // Strategy
+  import IconCode from "~icons/lucide/code"; // Technology
+  import IconMonitorSmartphone from "~icons/lucide/monitor-smartphone"; // Digital
+  import IconMonitorCog from "~icons/lucide/monitor-cog"; // Solution Engineering
+  import IconNetwork from "~icons/lucide/network"; // Solution Architecture
+  import IconShare2 from "~icons/lucide/share-2"; // Service-Oriented & API-Driven Architecture
+  import IconLayoutTemplate from "~icons/lucide/layout-template"; // User Experience & Systems Design
+  import IconFileSql from "~icons/ph/file-sql"; // SQL Development & Data Modeling
+  import IconApi from "~icons/ph/webhooks-logo"; // Web Services & API Development
+  import IconShuffle from "~icons/ph/shuffle"; // ETL/ELT Development
+  import IconFileCode2 from "~icons/lucide/file-code-2"; // Software Development
+  import IconBookOpen from "~icons/ph/book-open"; // Learning & Development
+  import IconGraduationCap from "~icons/ph/graduation-cap"; // Learning & Development
+  import IconGoal from "~icons/lucide/goal"; // Team Leadership
+  import IconListChecks from "~icons/ph/list-checks"; // Implementation Execution
+  import IconSearchCode from "~icons/lucide/search-code"; // Search Strategy & Optimization
+  import IconRadioTower from "~icons/lucide/radio-tower"; // Digital Strategy
+
   const iconMap: Record<string, any> = {
     globe: IconGlobe,
     database: IconDatabase,
-    'bar-chart-3': IconBarChart3,
-    'clipboard-check': IconClipboardCheck,
-    'refresh-cw': IconRefreshCw,
+    "bar-chart-3": IconBarChart3,
+    "clipboard-check": IconClipboardCheck,
+    "refresh-cw": IconRefreshCw,
     cpu: IconCpu,
     lightbulb: IconLightbulb,
-    'layout-dashboard': IconLayoutDashboard,
+    "layout-dashboard": IconLayoutDashboard,
     users: IconUsers,
     layers: IconLayers,
     code: IconCode,
-    'monitor-smartphone': IconMonitorSmartphone,
+    "monitor-smartphone": IconMonitorSmartphone,
+    goal: IconGoal,
+    "list-checks": IconListChecks,
+    "book-open": IconBookOpen,
+    "graduation-cap": IconGraduationCap,
+    "brain-circuit": IconBrainCircuit,
+    strategy: IconStrategy,
+    "layout-template": IconLayoutTemplate,
+    "file-sql": IconFileSql,
+    "webhooks-logo": IconApi,
+    shuffle: IconShuffle,
+    "file-code-2": IconFileCode2,
+    "monitor-cog": IconMonitorCog,
+    network: IconNetwork,
+    "share-2": IconShare2,
+    "search-code": IconSearchCode,
+    "radio-tower": IconRadioTower,
   };
 
   // Export the component for compatibility with existing imports
@@ -45,11 +82,11 @@
     duties?: Duties[];
     activities?: Activities[];
   };
-  
+
   // Use $props() to get props and set defaults
   const { skills = [], duties = [], activities = [] }: Props = $props();
 
-  import { skillCategories } from '../data/skill-categories';
+  import { skillCategories } from "../data/skill-categories";
 
   // Group skills by category
   function groupSkillsByCategory(skills: Skill[]) {
@@ -69,7 +106,10 @@
   let expandedCategories = $state<Record<string, boolean>>({});
 
   function toggleCategory(catId: string) {
-    expandedCategories = { ...expandedCategories, [catId]: !expandedCategories[catId] };
+    expandedCategories = {
+      ...expandedCategories,
+      [catId]: !expandedCategories[catId],
+    };
   }
 
   function showAllInCategory(catId: string) {
@@ -87,7 +127,7 @@
     filteredRoles: any[];
     showFilterResults: boolean;
     isFilterVisible: boolean;
-    viewMode: 'detailed' | 'concise';
+    viewMode: "detailed" | "concise";
     resultsVisible: boolean;
   };
 
@@ -101,8 +141,8 @@
     filteredRoles: [] as any[], // Placeholder - TODO: Replace any with Role[] type if defined
     showFilterResults: false,
     isFilterVisible: false,
-    viewMode: 'detailed' as 'detailed' | 'concise',
-    resultsVisible: false
+    viewMode: "detailed" as "detailed" | "concise",
+    resultsVisible: false,
   });
 
   // --- Store Subscription and Initialization Effects Temporarily Disabled ---
@@ -125,7 +165,7 @@
   // --- Computed Properties (Derived) ---
   const allDutiesMap = $derived(() => {
     const map = new Map<number, Duties>();
-    duties.forEach(duty => map.set(duty.id, duty));
+    duties.forEach((duty) => map.set(duty.id, duty));
     return map;
   });
 
@@ -136,7 +176,7 @@
   $effect(() => {
     const map = new Map<number, Activities[]>();
     if (activities && activities.length > 0) {
-      activities.forEach(activity => {
+      activities.forEach((activity) => {
         if (activity && activity.dutyId && !map.has(activity.dutyId)) {
           map.set(activity.dutyId, []);
         }
@@ -155,32 +195,47 @@
   $effect(() => {
     const map = new Map<number, Skill>();
     if (skills && skills.length > 0) {
-      skills.forEach(skill => skill && skill.id && map.set(skill.id, skill));
+      skills.forEach((skill) => skill && skill.id && map.set(skill.id, skill));
     }
     allSkillsMap = map;
   });
 
   // Filtered data based on selected skills
   const filteredDuties = $derived(
-    localFilterState.selectedSkillIds && localFilterState.selectedSkillIds.length > 0 && duties && duties.length > 0
+    localFilterState.selectedSkillIds &&
+      localFilterState.selectedSkillIds.length > 0 &&
+      duties &&
+      duties.length > 0
       ? duties.filter((duty: Duties) => {
           if (!duty || !duty.relevantSkills) return false;
-          const skillIds = duty.relevantSkills.split(",").map(id => parseInt(id.trim()));
-          return localFilterState.selectedSkillIds.some(id => skillIds.includes(id));
+          const skillIds = duty.relevantSkills
+            .split(",")
+            .map((id) => parseInt(id.trim()));
+          return localFilterState.selectedSkillIds.some((id) =>
+            skillIds.includes(id)
+          );
         })
       : duties || []
   );
 
   const filteredActivities = $derived(
-    localFilterState.selectedSkillIds && localFilterState.selectedSkillIds.length > 0 && activities && activities.length > 0
+    localFilterState.selectedSkillIds &&
+      localFilterState.selectedSkillIds.length > 0 &&
+      activities &&
+      activities.length > 0
       ? activities.filter((activity: Activities) => {
           if (!activity || !activity.dutyId) return false;
-          const duty = duties && duties.length > 0
-            ? duties.find((d: Duties) => d && d.id === activity.dutyId)
-            : undefined;
+          const duty =
+            duties && duties.length > 0
+              ? duties.find((d: Duties) => d && d.id === activity.dutyId)
+              : undefined;
           if (!duty || !duty.relevantSkills) return false;
-          const skillIds = duty.relevantSkills.split(",").map(id => parseInt(id.trim()));
-          return localFilterState.selectedSkillIds.some(id => skillIds.includes(id));
+          const skillIds = duty.relevantSkills
+            .split(",")
+            .map((id) => parseInt(id.trim()));
+          return localFilterState.selectedSkillIds.some((id) =>
+            skillIds.includes(id)
+          );
         })
       : activities || []
   );
@@ -189,7 +244,7 @@
   function toggleSkill(skillId: number) {
     const currentIds = localFilterState.selectedSkillIds; // Use the renamed reactive state
     const newSelectedSkillIds = currentIds.includes(skillId)
-      ? currentIds.filter(id => id !== skillId)
+      ? currentIds.filter((id) => id !== skillId)
       : [...currentIds, skillId];
 
     // Animate out results before changing
@@ -216,19 +271,27 @@
 
   // This function calculates filtered roles/duties based on selected skills
   function calculateFilteredRoles(selectedIds: number[]): any[] {
-    if (!selectedIds || selectedIds.length === 0 || !duties || duties.length === 0) return [];
+    if (
+      !selectedIds ||
+      selectedIds.length === 0 ||
+      !duties ||
+      duties.length === 0
+    )
+      return [];
 
     // Using duties as a placeholder for roles/experience entries
-    return duties.filter(duty => {
+    return duties.filter((duty) => {
       if (!duty || !duty.relevantSkills) return false;
-      const skillIds = duty.relevantSkills.split(',').map(id => parseInt(id.trim()));
-      return selectedIds.some(id => skillIds.includes(id));
+      const skillIds = duty.relevantSkills
+        .split(",")
+        .map((id) => parseInt(id.trim()));
+      return selectedIds.some((id) => skillIds.includes(id));
     });
   }
 
   function toggleViewMode(mode: "detailed" | "concise") {
     if (localFilterState.viewMode === mode) return; // Access directly from renamed state
-    
+
     // Animate out results before changing
     // updateFilterSkillsState({ resultsVisible: false }); // Disabled
     localFilterState.resultsVisible = false; // Direct assignment for $state
@@ -268,8 +331,8 @@
 
   // --- Helper Functions ---
   function getSkillName(skillId: number): string {
-    if (!allSkillsMap) return 'Unknown Skill';
-    return allSkillsMap.get(skillId)?.name ?? 'Unknown Skill';
+    if (!allSkillsMap) return "Unknown Skill";
+    return allSkillsMap.get(skillId)?.name ?? "Unknown Skill";
   }
 
   function getActivitiesForDuty(dutyId: number): Activities[] {
@@ -289,14 +352,14 @@
     //   resultsVisible: false
     // });
     // Local state is already initialized with defaults
-    
+
     // Process initial data
     if (skills && skills.length > 0) {
       const map = new Map<number, Skill>();
-      skills.forEach(skill => skill && skill.id && map.set(skill.id, skill));
+      skills.forEach((skill) => skill && skill.id && map.set(skill.id, skill));
       allSkillsMap = map;
     }
-    
+
     // Trigger initial animation after a delay
     setTimeout(() => {
       // updateFilterSkillsState({ resultsVisible: true }); // Store update disabled onMount
@@ -350,7 +413,11 @@
             {#if allSkillsMap.get(skillId)}
               <span class="selected-skill-chip">
                 {allSkillsMap.get(skillId)?.name}
-                <button class="remove-skill-btn" aria-label={`Remove ${allSkillsMap.get(skillId)?.name}`} onclick={() => toggleSkill(skillId)}>
+                <button
+                  class="remove-skill-btn"
+                  aria-label={`Remove ${allSkillsMap.get(skillId)?.name}`}
+                  onclick={() => toggleSkill(skillId)}
+                >
                   ×
                 </button>
               </span>
@@ -362,7 +429,12 @@
       <div class="skills-grouped-list">
         {#each skillCategories as category}
           <div class="skill-category-block">
-            <button type="button" class="skill-category-header" onclick={() => toggleCategory(category.id)} aria-expanded={!!expandedCategories[category.id]}>
+            <button
+              type="button"
+              class="skill-category-header"
+              onclick={() => toggleCategory(category.id)}
+              aria-expanded={!!expandedCategories[category.id]}
+            >
               <span class="category-icon">
                 {#if iconMap[category.iconName]}
                   {@const CatIcon = iconMap[category.iconName]}
@@ -370,15 +442,27 @@
                 {/if}
               </span>
               <span class="category-name">{category.name}</span>
-              <span class="category-toggle">{expandedCategories[category.id] ? '▲' : '▼'}</span>
+              <span class="category-toggle"
+                >{expandedCategories[category.id] ? "▲" : "▼"}</span
+              >
             </button>
-            <div class="category-skills-list {expandedCategories[category.id] ? 'expanded' : ''}">
+            <div
+              class="category-skills-list {expandedCategories[category.id]
+                ? 'expanded'
+                : ''}"
+            >
               {#each (groupedSkills()[category.id] || []).filter((skill: Skill) => !localFilterState.selectedSkillIds.includes(skill.id)) as skill: Skill, i (skill.id)}
                 {#if expandedCategories[category.id] || i < 3}
                   {@const IconComponent = iconMap[skill.iconName]}
                   <button
                     class="skill-btn"
-                    onclick={() => toggleSkill(skill.id)}
+                    onclick={() => {
+                      if (!expandedCategories[category.id]) {
+                        showAllInCategory(category.id);
+                      } else {
+                        toggleSkill(skill.id);
+                      }
+                    }}
                     aria-pressed="false"
                   >
                     <span class="skill-icon">
@@ -390,9 +474,25 @@
               {/each}
               {#if (groupedSkills()[category.id] || []).filter((skill: Skill) => !localFilterState.selectedSkillIds.includes(skill.id)).length > 3}
                 {#if !expandedCategories[category.id]}
-                  <button class="show-more-btn" onclick={e => { e.stopPropagation(); showAllInCategory(category.id); }} aria-label={`Show all skills in ${category.name}`}>More…</button>
+                  <button
+                    class="show-more-btn"
+                    onclick={(e) => {
+                      e.stopPropagation();
+                      showAllInCategory(category.id);
+                    }}
+                    aria-label={`Show all skills in ${category.name}`}
+                    >More…</button
+                  >
                 {:else}
-                  <button class="show-more-btn" onclick={e => { e.stopPropagation(); showLessInCategory(category.id); }} aria-label={`Show fewer skills in ${category.name}`}>Show Less</button>
+                  <button
+                    class="show-more-btn"
+                    onclick={(e) => {
+                      e.stopPropagation();
+                      showLessInCategory(category.id);
+                    }}
+                    aria-label={`Show fewer skills in ${category.name}`}
+                    >Show Less</button
+                  >
                 {/if}
               {/if}
             </div>
@@ -439,7 +539,11 @@
         </div>
       </div>
 
-      <div class="results-container {localFilterState.resultsVisible ? 'visible' : ''}">
+      <div
+        class="results-container {localFilterState.resultsVisible
+          ? 'visible'
+          : ''}"
+      >
         {#if !localFilterState.selectedSkillIds || localFilterState.selectedSkillIds.length === 0}
           <div class="instruction-card">
             <svg
@@ -481,14 +585,13 @@
             </button>
           </div>
         {:else}
-          <div class="duties-grid"
-               class:detailed={localFilterState.viewMode === 'detailed'}
-               class:concise={localFilterState.viewMode === 'concise'}>
+          <div
+            class="duties-grid"
+            class:detailed={localFilterState.viewMode === "detailed"}
+            class:concise={localFilterState.viewMode === "concise"}
+          >
             {#each filteredDuties as duty, i (duty.id)}
-              <div
-                class="duty-card"
-                style="--delay: {i * 0.05}s"
-              >
+              <div class="duty-card" style="--delay: {i * 0.05}s">
                 <h4>{duty.duties}</h4>
                 <div class="content-container">
                   {#if localFilterState.viewMode === "detailed"}
@@ -503,27 +606,34 @@
                     </div>
                     {#if duty.relevantSkills}
                       <div class="related-skills">
-                        <span class="related-skills-label">Related Skills:</span>
+                        <span class="related-skills-label">Related Skills:</span
+                        >
                         <div class="skill-tags">
-                          {#each duty.relevantSkills.split(',') as skillIdStr}
+                          {#each duty.relevantSkills.split(",") as skillIdStr}
                             {@const skillId = parseInt(skillIdStr.trim())}
                             {#if !isNaN(skillId)}
-                              <span class="skill-tag">{getSkillName(skillId)}</span>
+                              <span class="skill-tag"
+                                >{getSkillName(skillId)}</span
+                              >
                             {/if}
                           {/each}
                         </div>
                       </div>
                     {/if}
                   {:else}
-                    <p>{duty.summary ?? "Details available in detailed view."}</p>
+                    <p>
+                      {duty.summary ?? "Details available in detailed view."}
+                    </p>
                     {#if duty.relevantSkills}
                       <div class="related-skills">
                         <span class="related-skills-label">Skills:</span>
                         <div class="skill-tags">
-                          {#each duty.relevantSkills.split(',') as skillIdStr}
+                          {#each duty.relevantSkills.split(",") as skillIdStr}
                             {@const skillId = parseInt(skillIdStr.trim())}
                             {#if !isNaN(skillId)}
-                              <span class="skill-tag">{getSkillName(skillId)}</span>
+                              <span class="skill-tag"
+                                >{getSkillName(skillId)}</span
+                              >
                             {/if}
                           {/each}
                         </div>
@@ -629,7 +739,7 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding: 0.75rem 1rem;
+    padding: 0.5rem;
     background-color: #f9f9f9;
     border: 1px solid #eee;
     border-radius: 8px;
@@ -940,112 +1050,115 @@
       display: block;
     }
   }
-.skills-grouped-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  margin-bottom: 1rem;
-}
-.skill-category-block {
-  background: #fafbfc;
-  border-radius: 10px;
-  padding: 0.5rem 0.75rem 0.75rem 0.75rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-}
-.skill-category-header {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-weight: 600;
-  font-size: 1.05rem;
-  color: var(--color-primary);
-  cursor: pointer;
-  user-select: none;
-  margin-bottom: 0.5rem;
-  outline: none;
-  width: 100%;
-  border: none;
-  background: none;
-}
-.skill-category-header:focus {
-  box-shadow: 0 0 0 2px var(--color-primary-light);
-}
-.category-icon {
-  display: flex;
-  align-items: center;
-}
-.category-name {
-  flex: 1;
-  text-align: left;
-}
-.category-toggle {
-  font-size: 0.9em;
-  color: #aaa;
-  margin-left: 0.5em;
-}
-.category-skills-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  transition: max-height 0.3s cubic-bezier(0.4,0,0.2,1);
-  max-height: 2.5em;
-  overflow: hidden;
-}
-.category-skills-list.expanded {
-  max-height: 1000px;
-  overflow: visible;
-}
-.show-more-btn {
-  background: none;
-  border: none;
-  color: var(--color-primary);
-  font-size: 0.9em;
-  margin-left: 0.25em;
-  cursor: pointer;
-  padding: 0.1em 0.5em;
-  border-radius: 6px;
-  transition: background 0.15s;
-}
-.show-more-btn:hover,
-.show-more-btn:focus {
-  background: rgba(155, 81, 224, 0.08);
-  outline: none;
-}
+  .skills-grouped-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .skill-category-block {
+    background: #fafbfc;
+    border-radius: 10px;
+    padding: 0.5rem 0.75rem 0.75rem 0.75rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  }
+  .skill-category-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--color-primary);
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 0.5rem;
+    outline: none;
+    width: 100%;
+    border: none;
+    background: none;
+  }
+  .skill-category-header:focus {
+    box-shadow: 0 0 0 2px var(--color-primary-light);
+  }
+  .category-icon {
+    display: flex;
+    align-items: center;
+  }
+  .category-name {
+    flex: 1;
+    text-align: left;
+  }
+  .category-toggle {
+    font-size: 0.9em;
+    color: #aaa;
+    margin-left: 0.5em;
+  }
+  .category-skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 5em;
+    overflow: hidden;
+  }
+  .category-skills-list.expanded {
+    max-height: 1000px;
+    overflow: visible;
+  }
+  .show-more-btn {
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    font-size: 0.9em;
+    margin-left: 0.25em;
+    cursor: pointer;
+    padding: 0.1em 0.5em;
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+  .show-more-btn:hover,
+  .show-more-btn:focus {
+    background: rgba(155, 81, 224, 0.08);
+    outline: none;
+  }
 
-.selected-skills-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  margin-top: 0.5rem;
-}
-.selected-skill-chip {
-  display: flex;
-  align-items: center;
-  background: linear-gradient(135deg, rgba(155, 81, 224, 0.14) 0%, rgba(52, 152, 219, 0.14) 100%);
-  color: var(--color-primary);
-  border-radius: 20px;
-  font-weight: 500;
-  font-size: 0.82rem;
-  padding: 0.25rem 0.75rem 0.25rem 0.75rem;
-  margin-right: 0.15rem;
-}
-.remove-skill-btn {
-  background: none;
-  border: none;
-  color: var(--color-error);
-  font-size: 1.1em;
-  margin-left: 0.4em;
-  cursor: pointer;
-  line-height: 1;
-  padding: 0 0.1em;
-  border-radius: 50%;
-  transition: background 0.15s;
-}
-.remove-skill-btn:hover,
-.remove-skill-btn:focus {
-  background: rgba(155, 81, 224, 0.08);
-  outline: none;
-}
-
+  .selected-skills-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    margin-top: 0.5rem;
+  }
+  .selected-skill-chip {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(
+      135deg,
+      rgba(155, 81, 224, 0.14) 0%,
+      rgba(52, 152, 219, 0.14) 100%
+    );
+    color: var(--color-primary);
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.82rem;
+    padding: 0.25rem 0.75rem 0.25rem 0.75rem;
+    margin-right: 0.15rem;
+  }
+  .remove-skill-btn {
+    background: none;
+    border: none;
+    color: var(--color-error);
+    font-size: 1.1em;
+    margin-left: 0.4em;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 0.1em;
+    border-radius: 50%;
+    transition: background 0.15s;
+  }
+  .remove-skill-btn:hover,
+  .remove-skill-btn:focus {
+    background: rgba(155, 81, 224, 0.08);
+    outline: none;
+  }
 </style>

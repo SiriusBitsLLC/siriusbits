@@ -5,7 +5,7 @@ export interface SkillCategory {
 }
 
 export const skillCategories: SkillCategory[] = [
-  { id: 'strategy', name: 'Strategy', iconName: 'layers' },
+  { id: 'strategy', name: 'Strategy', iconName: 'strategy' },
   { id: 'data', name: 'Data', iconName: 'database' },
   { id: 'tech', name: 'Technology', iconName: 'code' },
   { id: 'leadership', name: 'Leadership', iconName: 'users' },

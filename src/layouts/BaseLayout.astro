@@ -1,7 +1,7 @@
 ---
-import '../styles/global.css';
-import EnhancedHeader from '../components/EnhancedHeader.astro';
-import EnhancedFooter from '../components/EnhancedFooter.astro';
+import "../styles/global.css";
+import EnhancedHeader from "../components/EnhancedHeader.astro";
+import EnhancedFooter from "../components/EnhancedFooter.astro";
 
 interface Props {
   title: string;
@@ -10,11 +10,11 @@ interface Props {
   canonicalURL?: string;
 }
 
-const { 
-  title, 
-  description = 'SiriusBits Consulting - Strategic data and technology consulting services', 
-  image = '/siriusbits-og-image.png',
-  canonicalURL
+const {
+  title,
+  description = "SiriusBits Consulting - Strategic data and technology consulting services",
+  image = "/siriusbits-og-image.png",
+  canonicalURL,
 } = Astro.props;
 
 // Get the current URL for canonical link and OG tags
@@ -36,7 +36,7 @@ try {
 }
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <!-- Basic Meta Tags -->
@@ -44,21 +44,21 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <title>{title} | SiriusBits</title>
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    
+
     <!-- Canonical URL -->
     <link rel="canonical" href={pageURL} />
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={pageURL} />
     <meta property="og:title" content={`${title} | SiriusBits`} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={image} />
-    
+
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content={pageURL} />
@@ -81,7 +81,7 @@ try {
       main {
         min-height: calc(100vh - 160px);
         padding: 2rem 0;
-        margin-top: 70px; /* Add margin to account for fixed header */
+        margin-top: 42px; /* Add margin to account for fixed header */
       }
 
       footer {
@@ -90,8 +90,6 @@ try {
         text-align: center;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
       }
-
-
     </style>
   </body>
 </html>

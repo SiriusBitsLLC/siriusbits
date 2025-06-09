@@ -21,7 +21,7 @@ export const skills: Skills[] = [
     category: skillCategoryMap[2],
     proficiency: 5,
     proficiencyLabel: 'Authority',
-    iconName: 'database'
+    iconName: 'layers'
   },
   {
     id: 3,
@@ -91,7 +91,7 @@ export const skills: Skills[] = [
     category: skillCategoryMap[9],
     proficiency: 5,
     proficiencyLabel: 'Authority',
-    iconName: 'users'
+    iconName: 'graduation-cap'
   },
 
   // Newly described items 10–24
@@ -103,7 +103,7 @@ export const skills: Skills[] = [
     category: skillCategoryMap[10], // Strategy
     proficiency: 4,
     proficiencyLabel: 'Expert',
-    iconName: 'settings'
+    iconName: 'monitor-cog'
   },
   {
     id: 11,
@@ -113,7 +113,7 @@ export const skills: Skills[] = [
     category: skillCategoryMap[11], // Tech
     proficiency: 4,
     proficiencyLabel: 'Expert',
-    iconName: 'cpu'
+    iconName: 'brain-circuit'
   },
   {
     id: 12,
@@ -123,7 +123,7 @@ export const skills: Skills[] = [
     category: skillCategoryMap[12], // Digital
     proficiency: 5,
     proficiencyLabel: 'Authority',
-    iconName: 'search'
+    iconName: 'search-code'
   },
   {
     id: 13,
@@ -133,7 +133,7 @@ export const skills: Skills[] = [
     category: skillCategoryMap[13], // Data
     proficiency: 4,
     proficiencyLabel: 'Expert',
-    iconName: 'database'
+    iconName: 'file-sql'
   },
   {
     id: 14,
@@ -143,7 +143,7 @@ export const skills: Skills[] = [
     category: skillCategoryMap[14], // Tech
     proficiency: 4,
     proficiencyLabel: 'Expert',
-    iconName: 'api'
+    iconName: 'webhooks-logo'
   },
   {
     id: 15,
@@ -163,7 +163,7 @@ export const skills: Skills[] = [
     category: skillCategoryMap[16], // Tech
     proficiency: 4,
     proficiencyLabel: 'Expert',
-    iconName: 'code'
+    iconName: 'file-code-2'
   },
   {
     id: 17,
@@ -173,7 +173,7 @@ export const skills: Skills[] = [
     category: skillCategoryMap[17], // Strategy
     proficiency: 5,
     proficiencyLabel: 'Authority',
-    iconName: 'layers'
+    iconName: 'network'
   },
   {
     id: 19,
@@ -183,7 +183,7 @@ export const skills: Skills[] = [
     category: skillCategoryMap[19], // Digital
     proficiency: 4,
     proficiencyLabel: 'Expert',
-    iconName: 'monitor-smartphone'
+    iconName: 'layout-template'
   },
   {
     id: 20,
@@ -203,7 +203,7 @@ export const skills: Skills[] = [
     category: skillCategoryMap[21], // Digital
     proficiency: 5,
     proficiencyLabel: 'Authority',
-    iconName: 'monitor-smartphone'
+    iconName: 'radio-tower'
   },
   {
     id: 22,
@@ -213,7 +213,7 @@ export const skills: Skills[] = [
     category: skillCategoryMap[22], // Leadership
     proficiency: 5,
     proficiencyLabel: 'Authority',
-    iconName: 'users'
+    iconName: 'goal'
   },
   {
     id: 23,
@@ -223,7 +223,7 @@ export const skills: Skills[] = [
     category: skillCategoryMap[23], // Leadership
     proficiency: 4,
     proficiencyLabel: 'Expert',
-    iconName: 'check-circle'
+    iconName: 'list-checks'
   },
   {
     id: 24,

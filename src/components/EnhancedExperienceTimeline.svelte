@@ -314,7 +314,7 @@
       <AnimateOnScroll
         animation="fade-left"
         duration={800}
-        delay={300 + index * 150}
+        delay={300 + Math.floor(index * 80 * Math.exp(-index / 8))}
       >
         <div class="timeline-item">
           <div class="timeline-row">

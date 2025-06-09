@@ -9,18 +9,66 @@
   import AnimateOnScroll from "./AnimateOnScroll.svelte";
   import Icon from "~icons/lucide/arrow-right";
   // Static Lucide icon imports for categories
-  import IconLayers from "~icons/lucide/layers";
+  import IconStrategy from "~icons/ph/strategy";
   import IconDatabase from "~icons/lucide/database";
   import IconCode from "~icons/lucide/code";
   import IconUsers from "~icons/lucide/users";
   import IconMonitorSmartphone from "~icons/lucide/monitor-smartphone";
+  // Static icon imports for skills
+  import IconGlobe from "~icons/lucide/globe"; // Global Business Strategy
+  import IconBarChart3 from "~icons/lucide/bar-chart-3"; // Analytics & Business Intelligence
+  import IconClipboardCheck from "~icons/lucide/clipboard-check"; // Agile Project Management
+  import IconRefreshCw from "~icons/lucide/refresh-cw"; // Digital Transformation
+  import IconCpu from "~icons/lucide/cpu"; // Data Engineering
+  import IconBrainCircuit from "~icons/lucide/brain-circuit"; // Artifical Intelligence
+  import IconLightbulb from "~icons/lucide/lightbulb"; // Technology Strategy
+  import IconLayoutDashboard from "~icons/lucide/layout-dashboard"; // Enterprise Architecture
+  import IconLayers from "~icons/lucide/layers"; // Data Architecture
+  import IconMonitorCog from "~icons/lucide/monitor-cog"; // Solution Engineering
+  import IconNetwork from "~icons/lucide/network"; // Solution Architecture
+  import IconShare2 from "~icons/lucide/share-2"; // Service-Oriented & API-Driven Architecture
+  import IconLayoutTemplate from "~icons/lucide/layout-template"; // User Experience & Systems Design
+  import IconFileSql from "~icons/ph/file-sql"; // SQL Development & Data Modeling
+  import IconApi from "~icons/ph/webhooks-logo"; // Web Services & API Development
+  import IconShuffle from "~icons/ph/shuffle"; // ETL/ELT Development
+  import IconFileCode2 from "~icons/lucide/file-code-2"; // Software Development
+  import IconBookOpen from "~icons/ph/book-open"; // Learning & Development
+  import IconGraduationCap from "~icons/ph/graduation-cap"; // Learning & Development
+  import IconGoal from "~icons/lucide/goal"; // Team Leadership
+  import IconListChecks from "~icons/ph/list-checks"; // Implementation Execution
+  import IconSearchCode from "~icons/lucide/search-code"; // Search Strategy & Optimization
+  import IconRadioTower from "~icons/lucide/radio-tower"; // Digital Strategy
+
   // Map category icon names to components
   const categoryIconMap: Record<string, any> = {
-    layers: IconLayers,
+    strategy: IconStrategy,
     database: IconDatabase,
     code: IconCode,
     users: IconUsers,
     "monitor-smartphone": IconMonitorSmartphone,
+    globe: IconGlobe,
+    "bar-chart-3": IconBarChart3,
+    "clipboard-check": IconClipboardCheck,
+    "refresh-cw": IconRefreshCw,
+    cpu: IconCpu,
+    lightbulb: IconLightbulb,
+    "layout-dashboard": IconLayoutDashboard,
+    layers: IconLayers,
+    goal: IconGoal,
+    "list-checks": IconListChecks,
+    "book-open": IconBookOpen,
+    "graduation-cap": IconGraduationCap,
+    "brain-circuit": IconBrainCircuit,
+    "layout-template": IconLayoutTemplate,
+    "file-sql": IconFileSql,
+    "webhooks-logo": IconApi,
+    shuffle: IconShuffle,
+    "file-code-2": IconFileCode2,
+    "monitor-cog": IconMonitorCog,
+    network: IconNetwork,
+    "share-2": IconShare2,
+    "search-code": IconSearchCode,
+    "radio-tower": IconRadioTower,
   };
   import {
     skillCategories,
@@ -382,6 +430,7 @@
       <div class="skills-grid {skillsVisible ? 'visible' : ''}">
         {#if groupedSkills && activeCategory && groupedSkills[activeCategory]}
           {#each groupedSkills[activeCategory] as skill, i}
+            {@const SkillIcon = categoryIconMap[(skill.iconName || skill.category) ?? '']}
             <div
               class="animate-item {selectedSkill &&
               selectedSkill.id === skill.id
@@ -414,7 +463,9 @@
                 >
                   <div class="skill-card-header">
                     <div class="header-icon">
-                      <Icon name="arrow-right" size={20} />
+                      {#if SkillIcon}
+                        <SkillIcon width="1.2em" height="1.2em" />
+                      {/if}
                     </div>
                     <div class="header-name">
                       <span class="skill-name">{skill.name}</span>
@@ -691,7 +742,6 @@
     box-shadow: 0 15px 30px rgba(155, 81, 224, 0.15);
   }
 
-  
   .skill-card::before {
     content: "";
     position: absolute;
@@ -724,7 +774,6 @@
     align-content: center;
   }
 
-  
   .skill-description {
     color: var(--neutral-black);
     font-size: 0.95rem;
@@ -733,7 +782,6 @@
     margin: 0 0 0 0;
   }
 
-  
   /* Duties section */
   .duties-section {
     margin-top: 0.25rem;
@@ -756,7 +804,6 @@
     border: 1px solid var(--neutral-light-gray);
   }
 
-  
   .duties-container::before {
     content: attr(data-skill);
     position: absolute;
@@ -855,7 +902,6 @@
       font-size: 0.9rem;
     }
   }
-
 
   /* Animation styles for animated items */
   .animate-item {

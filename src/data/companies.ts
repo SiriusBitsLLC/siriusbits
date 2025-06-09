@@ -19,42 +19,42 @@ export const companies: Companies[] = [
     id: 3,
     company: 'AMP42',
     companyType: 'Strategic Data Consulting Firm',
-    location: 'Avon, Ohio, United States',
+    location: 'Avon, OH',
     companyCategory: 'consulting'
   },
   {
     id: 4,
     company: 'SiriusBits LLC',
     companyType: 'Technology, Web and ML Engineering Consulting Firm',
-    location: 'Avon, Ohio, United States',
+    location: 'Avon, OH',
     companyCategory: 'consulting'
   },
   {
     id: 5,
     company: 'Hyland Software',
     companyType: 'Enterprise Software Company',
-    location: 'Westlake, Ohio, United States',
+    location: 'Westlake, OH',
     companyCategory: 'corporate'
   },
   {
     id: 6,
     company: 'Falls Digital',
     companyType: 'Digital Agency',
-    location: 'Cleveland, Ohio, United States',
+    location: 'Cleveland, OH',
     companyCategory: 'consulting'
   },
   {
     id: 7,
     company: 'Optiem, LLC',
     companyType: 'Web & Interactive Agency',
-    location: 'Cleveland, Ohio, United States',
+    location: 'Cleveland, OH',
     companyCategory: 'consulting'
   },
   {
     id: 8,
     company: 'The Dana Corporation',
     companyType: 'Tier-1 Auto Parts Supplier',
-    location: 'Ottawa Lake, Michigan, United States',
+    location: 'Ottawa Lake, MI',
     companyCategory: 'corporate'
   }
 ];
