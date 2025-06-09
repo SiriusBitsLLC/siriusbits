@@ -1,6 +1,7 @@
 ---
 // EnhancedHeader.astro - Modern header with improved navigation
 import Icon from './Icon.astro';
+import IconKanban from "~icons/ph/kanban";
 
 // Get the current URL to determine active link
 const currentPath = Astro.url.pathname;
@@ -69,25 +70,25 @@ function isActive(path: string) {
           <ul class="dropdown-menu">
             <li>
               <a href="/resources/projects" class={`dropdown-item ${isActive('/resources/projects') ? 'active' : ''}`}>
-                <Icon name="folder" size={16} class="dropdown-icon" />
+                <IconKanban class="dropdown-icon" />
                 <span>Projects</span>
               </a>
             </li>
             <li>
               <a href="/resources/blog" class={`dropdown-item ${isActive('/resources/blog') ? 'active' : ''}`}>
-                <Icon name="edit" size={16} class="dropdown-icon" />
+                <Icon name="newspaper" set="lucide" size={16} class="dropdown-icon" />
                 <span>Blog</span>
               </a>
             </li>
             <li>
               <a href="/resources/guides" class={`dropdown-item ${isActive('/resources/guides') ? 'active' : ''}`}>
-                <Icon name="book" size={16} class="dropdown-icon" />
+                <Icon name="glasses" set="lucide" size={16} class="dropdown-icon" />
                 <span>Guides</span>
               </a>
             </li>
             <li>
               <a href="/resources/talks" class={`dropdown-item ${isActive('/resources/talks') ? 'active' : ''}`}>
-                <Icon name="mic" size={16} class="dropdown-icon" />
+                <Icon name="speech" set="lucide" size={16} class="dropdown-icon" />
                 <span>Talks</span>
               </a>
             </li>
@@ -423,7 +424,7 @@ function isActive(path: string) {
   }
   
   .dropdown-icon {
-    color: var(--color-primary);
+    color: var(--neutral-black);
     opacity: 0.7;
     transition: all 0.2s ease;
   }
@@ -434,6 +435,7 @@ function isActive(path: string) {
   }
   
   .dropdown-item:hover .dropdown-icon {
+    color: var(--color-primary);
     opacity: 1;
   }
   
@@ -443,6 +445,7 @@ function isActive(path: string) {
   }
   
   .dropdown-item.active .dropdown-icon {
+    color: var(--color-primary);
     opacity: 1;
   }
   

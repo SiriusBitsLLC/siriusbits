@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ConsultingServices from '../components/ConsultingServices.astro';
+---
+
+<BaseLayout title="Services">
+  <section class="services-intro-section">
+    <div class="container">
+      <h1>Our Consulting Services</h1>
+      <p class="section-intro">
+        SiriusBits offers a comprehensive suite of consulting services spanning IT strategy, data governance, AI/ML, digital transformation, and more. We help organizations unlock value, drive innovation, and achieve their business goals through technology and data expertise.
+      </p>
+    </div>
+  </section>
+
+  <section class="services-list-section">
+    <div class="container">
+      <ConsultingServices />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .services-intro-section {
+    background: #f9f9f9;
+    padding: 4rem 0 2rem 0;
+    text-align: center;
+  }
+  .services-intro-section h1 {
+    font-size: 2.4rem;
+    color: var(--primary-purple);
+    margin-bottom: 1rem;
+  }
+  .section-intro {
+    max-width: 700px;
+    margin: 0 auto;
+    font-size: 1.15rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+  .services-list-section {
+    padding: 2rem 0 5rem 0;
+    background: #fff;
+  }
+  @media (max-width: 768px) {
+    .services-intro-section {
+      padding: 2rem 0 1rem 0;
+    }
+    .services-intro-section h1 {
+      font-size: 1.6rem;
+    }
+    .section-intro {
+      font-size: 1rem;
+    }
+    .services-list-section {
+      padding: 1rem 0 2rem 0;
+    }
+  }
+</style>

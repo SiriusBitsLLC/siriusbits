@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroSection from '../components/HeroSection.astro';
-import ConsultingServices from '../components/ConsultingServices.astro';
+import FeaturedServices from '../components/FeaturedServices.astro';
 import FeaturedProjects from '../components/FeaturedProjects.astro';
 import FeaturedArticles from '../components/FeaturedArticles.astro';
 import Button from '../components/Button.astro';
@@ -16,7 +16,7 @@ import '../styles/home.css';
     <div class="container">
       <h2>Consulting Services</h2>
       <p class="section-intro">Our expertise spans across various domains of data and technology consulting, helping businesses transform their operations and achieve strategic goals.</p>
-      <ConsultingServices />
+      <FeaturedServices />
       <div class="section-cta">
         <Button href="/services" variant="secondary" size="medium">
           View All Services <Icon name="arrow-right" size={16} />

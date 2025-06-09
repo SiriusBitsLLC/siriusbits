@@ -1,0 +1,76 @@
+---
+import Icon from './Icon.astro';
+---
+<div class="services-grid">
+  <div class="service-card">
+    <div class="service-icon">
+      <Icon name="data-governance" size={32} />
+    </div>
+    <h3>Data Strategy & Governance</h3>
+    <p>Develop a flexible framework to improve the effectiveness of data assets without disrupting your business operations.</p>
+  </div>
+  <div class="service-card">
+    <div class="service-icon">
+      <Icon name="ai-ml" size={32} />
+    </div>
+    <h3>AI/ML Ops Planning</h3>
+    <p>Enhance DataOps practices by combining Business Intelligence and Machine Learning Operations with purpose-specific AI solutions. Optimize decision-making, intelligent automation, and proactive insights.</p>
+  </div>
+  <div class="service-card">
+    <div class="service-icon">
+      <Icon name="web-dev" size={32} />
+    </div>
+    <h3>Web Development Services</h3>
+    <p>Modernize and enhance your website with responsive design, user-friendly interfaces, and fast performance.</p>
+  </div>
+</div>
+
+<style>
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  .service-card {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    border: 1px solid transparent;
+    opacity: 1;
+    transform: none;
+    overflow: hidden;
+  }
+  .service-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    color: white;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+  }
+  .service-card h3 {
+    color: var(--color-primary);
+    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+  }
+  .service-card p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  @media (max-width: 768px) {
+    .services-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

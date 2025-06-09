@@ -5,9 +5,10 @@ interface Props {
   name: string;
   size?: number;
   class?: string;
+  set?: 'phosphor' | 'lucide';
 }
 
-const { name, size = 24, class: className = '' } = Astro.props;
+const { name, size = 24, class: className = '', set = undefined } = Astro.props;
 
 // Icon paths mapping
 type IconName = 
@@ -15,7 +16,8 @@ type IconName =
   | 'strategy' | 'data-governance' | 'vendor' | 'ai-ml' | 'data-unification'
   | 'workshop' | 'digital-transformation' | 'web-dev' | 'data-management' | 'marketing'
   | 'project' | 'article' | 'calendar' | 'user' | 'company'
-  | 'email' | 'phone' | 'location' | 'twitter' | 'linkedin' | 'github';
+  | 'email' | 'phone' | 'location' | 'twitter' | 'linkedin' | 'github'
+  | 'projector-screen-chart' | 'newspaper' | 'book-open-check' | 'speech';
 
 const icons: Record<IconName, string> = {
   // Navigation & UI icons
@@ -53,7 +55,26 @@ const icons: Record<IconName, string> = {
   'github': '<path stroke-linecap="round" stroke-linejoin="round" d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22" />'
 };
 
-const iconPath = (icons as Record<string, string>)[name] || '';
+// Phosphor: projector-screen-chart
+const phosphorIcons: Record<string, string> = {
+  'projector-screen-chart': '<path d="M3 3.5A1.5 1.5 0 0 1 4.5 2h15A1.5 1.5 0 0 1 21 3.5v10a1.5 1.5 0 0 1-1.5 1.5h-6.25v2.05a3.5 3.5 0 1 1-1.5 0V15H4.5A1.5 1.5 0 0 1 3 13.5v-10Zm1.5-.5a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h15a.5.5 0 0 0 .5-.5v-10a.5.5 0 0 0-.5-.5h-15Zm7.5 15a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM6 6.5A1 1 0 1 1 8 6.5 1 1 0 0 1 6 6.5Zm2 2.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm2-2.5A1 1 0 1 1 12 6.5 1 1 0 0 1 10 6.5Zm2 2.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm2-2.5A1 1 0 1 1 16 6.5 1 1 0 0 1 14 6.5Zm2 2.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>',
+  'kanban': '<rect width="256" height="256" fill="none"/><path d="M40,56H216V176a8,8,0,0,1-8,8H168a8,8,0,0,1-8-8V152H96v56a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="96" y1="120" x2="40" y2="120" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="96" y1="56" x2="96" y2="152" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="160" y1="120" x2="216" y2="120" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="160" y1="56" x2="160" y2="152" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>'
+};
+// Lucide: newspaper, book-open-check, speech
+const lucideIcons: Record<string, string> = {
+  'newspaper': '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="M6 8h8M6 12h8M6 16h8"/>',
+  'glasses': '<circle cx="6" cy="15" r="4"/><circle cx="18" cy="15" r="4"/><path d="M14 15a2 2 0 0 0-2-2 2 2 0 0 0-2 2"/><path d="M2.5 13 5 7c.7-1.3 1.4-2 3-2"/><path d="M21.5 13 19 7c-.7-1.3-1.5-2-3-2"/>',
+  'speech': '<path d="M8.8 20v-4.1l1.9.2a2.3 2.3 0 0 0 2.164-2.1V8.3A5.37 5.37 0 0 0 2 8.25c0 2.8.656 3.054 1 4.55a5.77 5.77 0 0 1 .029 2.758L2 20"/><path d="M19.8 17.8a7.5 7.5 0 0 0 .003-10.603"/><path d="M17 15a3.5 3.5 0 0 0-.025-4.975"/>'
+};
+
+let iconPath = '';
+if (set === 'phosphor' && phosphorIcons[name]) {
+  iconPath = phosphorIcons[name];
+} else if (set === 'lucide' && lucideIcons[name]) {
+  iconPath = lucideIcons[name];
+} else {
+  iconPath = (icons as Record<string, string>)[name] || '';
+}
 ---
 
 {iconPath && (
