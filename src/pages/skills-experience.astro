@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import TypewriterSubtitle from "../components/TypewriterSubtitle.svelte";
 import EnhancedSkillsMatrix from "../components/EnhancedSkillsMatrix.svelte";
 import EnhancedFilterSkills from "../components/EnhancedFilterSkills.svelte";
 import Button from "../components/Button.astro";
@@ -16,9 +17,9 @@ import TabbedExperience from "../components/TabbedExperience.svelte";
   <div class="skills-experience-container">
     <section class="page-header">
       <div class="header-content container">
-        <h1>Skills & Experience</h1>
-        <!-- <p class="subtitle">Expertise across business strategy, data architecture, and technology leadership</p>
-        <div class="header-actions">
+        <h1>Hi, I’m Ben Bykowski.</h1>
+        <TypewriterSubtitle client:load />
+        <!-- <div class="header-actions">
           <Button href="/contact" variant="primary">Discuss Your Project</Button>
           <Button href="/portfolio" variant="outline">View Portfolio</Button>
         </div> -->
@@ -47,20 +48,22 @@ import TabbedExperience from "../components/TabbedExperience.svelte";
           </div>
           <div class="summary-content">
             <p>
-              With over two decades of experience in enterprise data strategy,
+              I'm Ben, a passionate technologist, strategist, and builder. With
+              over two decades of experience in enterprise data strategy,
               digital transformation, and technology leadership, I help
-              organizations unlock the full value of their data and systems to
-              drive growth, innovation, and operational excellence.
+              organizations unlock the power of their data, modernize their
+              systems, and build scalable solutions that fuel growth.
             </p>
             <p>
-              I specialize in data governance, analytics and insights,
-              enterprise architecture, applied AI/ML, and modern web and
-              platform development. I’ve led cross-functional teams through
-              large-scale system integrations, replatforming efforts, and the
-              implementation of secure, scalable cloud data ecosystems. My work
-              spans industries and includes driving adoption of modern data
-              stacks, activating customer insights, and enabling business users
-              through improved data access, literacy, and tooling.
+              I specialize in data strategy & governance, analytics & insights,
+              enterprise architecture, applied AI/ML, and modern web & platform
+              development. I've led cross-functional teams through large-scale
+              system integrations, replatforming efforts, and the implementation
+              of secure, scalable cloud data ecosystems. My work spans
+              industries and includes building user-centered web and software
+              solutions driving adoption of modern data stacks, activating
+              customer insights, and enabling business users through improved
+              data access, literacy, and tooling.
             </p>
           </div>
         </div>

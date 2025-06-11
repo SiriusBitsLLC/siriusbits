@@ -772,11 +772,6 @@
     background: linear-gradient(135deg, #3498db, #2ecc71);
   }
 
-  .timeline-content {
-    display: flex;
-    flex-direction: column;
-  }
-
   .timeline-card {
     background: white;
     border-radius: 12px;
