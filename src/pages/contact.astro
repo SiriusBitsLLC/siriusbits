@@ -8,7 +8,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <p class="subtitle">Let's discuss how SiriusBits can help with your next project</p>
     
     <div class="contact-form">
-      <form>
+      <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/contact-success">
+        <input type="hidden" name="form-name" value="contact" />
+        <p class="hidden">
+          <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
+        </p>
+        <div class="form-group">
+          <label for="purpose">Nature of Request</label>
+          <select id="purpose" name="purpose" required>
+            <option value="">Select one...</option>
+            <option>Request for Services</option>
+            <option>Hire Me</option>
+            <option>Set Up a Meeting</option>
+            <option>Need Help with a Project</option>
+            <option>General Inquiry</option>
+          </select>
+        </div>
         <div class="form-group">
           <label for="name">Name</label>
           <input type="text" id="name" name="name" required />
@@ -18,10 +33,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <label for="email">Email</label>
           <input type="email" id="email" name="email" required />
         </div>
+        <div class="form-group">
+          <label for="phone">Phone (optional)</label>
+          <input type="tel" id="phone" name="phone" />
+        </div>
+        <div class="form-group">
+          <label for="company">Company/Organization (optional)</label>
+          <input type="text" id="company" name="company" />
+        </div>
         
+        <div class="form-group">
+          <label for="description">Project/Request Description (optional)</label>
+          <textarea id="description" name="description" rows="3"></textarea>
+        </div>
         <div class="form-group">
           <label for="message">Message</label>
           <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="hear">How did you hear about us? (optional)</label>
+          <input type="text" id="hear" name="hear" />
+        </div>
+        <div class="form-group">
+          <label for="preferred-contact">Preferred Contact Method</label>
+          <select id="preferred-contact" name="preferred-contact" required>
+            <option value="email">Email</option>
+            <option value="phone">Phone</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="consent">
+            <input type="checkbox" name="consent" required />
+            I consent to SiriusBits storing my submitted information for the purpose of responding to my inquiry (see <a href="/privacy" target="_blank">privacy policy</a>).
+          </label>
         </div>
         
         <button type="submit" class="submit-button">Send Message</button>
