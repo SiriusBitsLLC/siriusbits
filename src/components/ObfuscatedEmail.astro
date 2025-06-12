@@ -1,0 +1,18 @@
+---
+const username = 'contact';
+const domain = 'siriusbits.com';
+---
+<span class="obfuscated-email">
+  <a href="#" onclick="window.location.href='mailto:' + this.dataset.user + '@' + this.dataset.domain; return false;" data-user={username} data-domain={domain} aria-label="Email SiriusBits">
+    {username}[at]{domain}
+  </a>
+</span>
+
+<style>
+.obfuscated-email a {
+  unicode-bidi: bidi-override;
+  direction: ltr;
+  letter-spacing: 0.03em;
+  word-break: break-all;
+}
+</style>

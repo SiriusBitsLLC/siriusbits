@@ -1,76 +1,196 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Icon from "../components/Icon.astro";
+import ObfuscatedEmail from "../components/ObfuscatedEmail.astro";
 ---
+
+<head>
+  <script
+    src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+    async
+    defer></script>
+</head>
 
 <BaseLayout title="Contact">
   <div class="container">
-    <h1>Get in Touch</h1>
-    <p class="subtitle">Let's discuss how SiriusBits can help with your next project</p>
-    
-    <div class="contact-form">
-      <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/contact-success">
-        <input type="hidden" name="form-name" value="contact" />
-        <p class="hidden">
-          <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
-        </p>
-        <div class="form-group">
-          <label for="purpose">Nature of Request</label>
-          <select id="purpose" name="purpose" required>
-            <option value="">Select one...</option>
-            <option>Request for Services</option>
-            <option>Hire Me</option>
-            <option>Set Up a Meeting</option>
-            <option>Need Help with a Project</option>
-            <option>General Inquiry</option>
-          </select>
+    <h1>Let's Connect</h1>
+    <p class="subtitle">
+      Got a question, an idea, or a challenge you're looking to solve? Reach out
+      anytime. <br />I'm always happy to connect, whether you're ready to dive
+      into a project or just want to talk shop.
+    </p>
+
+    <section class="contact-methods-grid">
+      <div class="contact-card">
+        <div class="icon-circle">
+          <Icon name="calendar" size={32} class="icon-white" />
         </div>
-        <div class="form-group">
-          <label for="name">Name</label>
-          <input type="text" id="name" name="name" required />
+        <h2>Book a Meeting</h2>
+        <a
+          href="https://tidycal.com/siriusbits"
+          target="_blank"
+          rel="noopener"
+          class="contact-cta">Schedule via TidyCal</a
+        >
+      </div>
+      <div class="contact-card">
+        <div class="icon-circle">
+          <Icon name="email" size={32} class="icon-white" />
         </div>
-        
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" required />
+        <h2>Email</h2>
+        <ObfuscatedEmail />
+      </div>
+      <div class="contact-card">
+        <div class="icon-circle">
+          <Icon name="phone" size={32} class="icon-white" />
         </div>
-        <div class="form-group">
-          <label for="phone">Phone (optional)</label>
-          <input type="tel" id="phone" name="phone" />
-        </div>
-        <div class="form-group">
-          <label for="company">Company/Organization (optional)</label>
-          <input type="text" id="company" name="company" />
-        </div>
-        
-        <div class="form-group">
-          <label for="description">Project/Request Description (optional)</label>
-          <textarea id="description" name="description" rows="3"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="message">Message</label>
-          <textarea id="message" name="message" rows="5" required></textarea>
-        </div>
-        <div class="form-group">
-          <label for="hear">How did you hear about us? (optional)</label>
-          <input type="text" id="hear" name="hear" />
-        </div>
-        <div class="form-group">
-          <label for="preferred-contact">Preferred Contact Method</label>
-          <select id="preferred-contact" name="preferred-contact" required>
-            <option value="email">Email</option>
-            <option value="phone">Phone</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="consent">
-            <input type="checkbox" name="consent" required />
-            I consent to SiriusBits storing my submitted information for the purpose of responding to my inquiry (see <a href="/privacy" target="_blank">privacy policy</a>).
-          </label>
-        </div>
-        
-        <button type="submit" class="submit-button">Send Message</button>
-      </form>
-    </div>
+        <h2>Phone</h2>
+        <button
+          id="reveal-phone"
+          class="contact-cta"
+          onclick="const e=this; e.innerText='(216) 202-4618'; e.disabled=true;"
+          aria-label="Reveal phone number">Click to reveal phone number</button
+        >
+      </div>
+    </section>
+
+    <section class="contact-form-section">
+      <p class="form-note">
+        Have something specific in mind? Tell me a bit more below so I can be
+        ready when I reach out.
+      </p>
+      <div class="contact-form">
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("contactForm");
+            const statusDiv = document.getElementById("form-status");
+            const submitBtn = document.getElementById("submitBtn");
+            let submitting = false;
+            if (!form || !statusDiv || !submitBtn) return;
+            form.addEventListener("submit", async function (event) {
+              event.preventDefault();
+              if (submitting) return;
+              submitting = true;
+              statusDiv.style.display = "none";
+              statusDiv.textContent = "";
+              if (submitBtn instanceof HTMLButtonElement)
+                submitBtn.disabled = true;
+              const htmlForm = form instanceof HTMLFormElement ? form : null;
+              const formData = htmlForm
+                ? new FormData(htmlForm)
+                : new FormData();
+              try {
+                const response = await fetch(
+                  htmlForm ? htmlForm.action : "/api/validate-turnstile",
+                  {
+                    method: "POST",
+                    body: formData,
+                  }
+                );
+                const data = await response.json();
+                if (data.success) {
+                  statusDiv.textContent = "Message sent successfully!";
+                  statusDiv.style.color = "green";
+                } else {
+                  statusDiv.textContent =
+                    data.error || "There was a problem sending your message.";
+                  statusDiv.style.color = "red";
+                }
+              } catch (e) {
+                statusDiv.textContent = "An unexpected error occurred.";
+                statusDiv.style.color = "red";
+              } finally {
+                statusDiv.style.display = "block";
+                submitBtn instanceof HTMLButtonElement &&
+                  (submitBtn.disabled = false);
+                submitting = false;
+              }
+            });
+          });
+        </script>
+        <form
+          id="contactForm"
+          name="contact"
+          method="POST"
+          action="/api/validate-turnstile"
+        >
+          <input type="hidden" name="form-name" value="contact" />
+          <div id="form-status" class="form-status" style="display:none;"></div>
+          <div class="form-group">
+            <label for="purpose">Nature of Request</label>
+            <select id="purpose" name="purpose" required>
+              <option value="">Select one...</option>
+              <option>Request for Services</option>
+              <option>Hire Me</option>
+              <option>Set Up a Meeting</option>
+              <option>Need Help with a Project</option>
+              <option>General Inquiry</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone (optional)</label>
+            <input type="tel" id="phone" name="phone" />
+          </div>
+          <div class="form-group">
+            <label for="company">Company/Organization (optional)</label>
+            <input type="text" id="company" name="company" />
+          </div>
+          <div class="form-group">
+            <label for="description"
+              >Project/Request Description (optional)</label
+            >
+            <textarea id="description" name="description" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="hear">How did you hear about us? (optional)</label>
+            <input type="text" id="hear" name="hear" />
+          </div>
+          <div class="form-group">
+            <label for="preferred-contact">Preferred Contact Method</label>
+            <select id="preferred-contact" name="preferred-contact" required>
+              <option value="email">Email</option>
+              <option value="phone">Phone</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="consent">
+              <input type="checkbox" name="consent" required />
+              <span class="consent-text">
+                I consent to SiriusBits storing my submitted information for the
+                purpose of responding to my inquiry (see <a
+                  href="/privacy"
+                  target="_blank">privacy policy</a
+                >).
+              </span>
+            </label>
+          </div>
+          <div class="cf-turnstile-message" style="margin-top:1.5em;">
+            Just a quick check before you send!
+          </div>
+          <div
+            class="cf-turnstile"
+            data-sitekey="0x4AAAAAABgzcUbEhneVn1l6"
+            style="margin-bottom:1.2em;"
+          >
+          </div>
+          <button id="submitBtn" type="submit" class="submit-button"
+            >Send Message</button
+          >
+        </form>
+      </div>
+    </section>
   </div>
 </BaseLayout>
 
@@ -102,13 +222,69 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     font-weight: 500;
   }
 
-  input, textarea {
+  input,
+  textarea,
+  select {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-family: inherit;
     font-size: 1rem;
+    background: #fff;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+  }
+  select:focus,
+  input:focus,
+  textarea:focus {
+    border-color: var(--primary-purple, #9b51e0);
+    outline: none;
+  }
+
+  /* Style dropdown arrow for select (optional, modern browsers) */
+  select {
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%239b51e0" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.25em;
+    padding-right: 2.2em;
+    cursor: pointer;
+  }
+
+  /* Consent checkbox alignment */
+  .form-group .consent {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-weight: 400;
+    font-size: 0.98rem;
+    margin-bottom: 0;
+  }
+  .form-group .consent input[type="checkbox"] {
+    width: 1.1em;
+    height: 1.1em;
+    margin: 0 0.5em 0 0;
+    accent-color: var(--primary-purple, #9b51e0);
+    flex-shrink: 0;
+    vertical-align: middle;
+  }
+  .form-group .consent-text {
+    display: inline;
+    word-break: normal;
+    max-width: 100%;
+  }
+  @media (max-width: 600px) {
+    .form-group .consent {
+      align-items: flex-start;
+    }
+    .form-group .consent-text {
+      display: block;
+      margin-top: 0.1em;
+    }
   }
 
   .submit-button {
@@ -124,6 +300,108 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .submit-button:hover {
-    background-color: #8A41D0;
+    background-color: #8a41d0;
+  }
+  /* Card-based contact method grid */
+  .contact-methods-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin: 3rem 0 2.5rem 0;
+    justify-items: center;
+  }
+  .contact-card {
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 2px 16px rgba(80, 40, 120, 0.08);
+    padding: 2.5rem 1.5rem 2rem 1.5rem;
+    text-align: center;
+    transition:
+      transform 0.2s,
+      box-shadow 0.2s;
+    min-width: 0;
+    max-width: 340px;
+    width: 100%;
+    border: 1px solid #f0f0f0;
+    position: relative;
+  }
+  .contact-card:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 6px 28px rgba(80, 40, 120, 0.13);
+    border-color: var(--primary-purple, #9b51e0);
+  }
+  .icon-circle {
+    background: var(--primary-purple, #9b51e0);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem auto;
+    box-shadow: 0 2px 8px rgba(155, 81, 224, 0.1);
+    color: #fff;
+  }
+  .icon-circle svg {
+    color: #fff;
+    stroke: #fff;
+    fill: none;
+  }
+  .icon-white svg {
+    color: #fff;
+    stroke: #fff;
+  }
+  .form-note {
+    font-size: 1.05rem;
+    color: var(--color-text-secondary, #6e6e6e);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    background: #f6f3fa;
+    border-radius: 0.5rem;
+    padding: 0.8rem 1rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .contact-card h2 {
+    font-size: 1.25rem;
+    margin: 0.5rem 0 1rem 0;
+    color: var(--primary-purple);
+    font-weight: 600;
+  }
+  .contact-cta {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.6rem 1.5rem;
+    background: var(--primary-purple, #9b51e0);
+    color: #fff;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 1rem;
+  }
+  .contact-cta:hover,
+  .contact-cta:focus {
+    background: #7a3fd3;
+  }
+  .contact-form-section {
+    background: #faf8fd;
+    border-radius: 1rem;
+    box-shadow: 0 2px 14px rgba(80, 40, 120, 0.06);
+    padding: 2.5rem 1.5rem 2rem 1.5rem;
+    margin: 0 auto 2.5rem auto;
+    max-width: 650px;
+  }
+  @media (max-width: 900px) {
+    .contact-methods-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    .contact-card {
+      max-width: 100%;
+    }
   }
 </style>
