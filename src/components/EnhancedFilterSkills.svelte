@@ -141,7 +141,7 @@
     filteredRoles: [] as any[], // Placeholder - TODO: Replace any with Role[] type if defined
     showFilterResults: false,
     isFilterVisible: false,
-    viewMode: "detailed" as "detailed" | "concise",
+    viewMode: "concise" as "detailed" | "concise",
     resultsVisible: false,
   });
 
@@ -532,24 +532,24 @@
           {/if}
         </h3>
 
-        <div class="view-mode-toggle">
+        <div class="view-mode-toggle" role="radiogroup" aria-label="View Mode">
           <button
-            class="view-mode-btn {localFilterState.viewMode === 'detailed'
-              ? 'active'
-              : ''}"
-            onclick={() => toggleViewMode("detailed")}
-            aria-pressed={localFilterState.viewMode === "detailed"}
-          >
-            Detailed
-          </button>
-          <button
-            class="view-mode-btn {localFilterState.viewMode === 'concise'
-              ? 'active'
-              : ''}"
-            onclick={() => toggleViewMode("concise")}
-            aria-pressed={localFilterState.viewMode === "concise"}
+            type="button"
+            class="view-mode-btn {localFilterState.viewMode === 'concise' ? 'active' : ''}"
+            aria-checked={localFilterState.viewMode === 'concise'}
+            onclick={() => toggleViewMode('concise')}
+            role="radio"
           >
             Concise
+          </button>
+          <button
+            type="button"
+            class="view-mode-btn {localFilterState.viewMode === 'detailed' ? 'active' : ''}"
+            aria-checked={localFilterState.viewMode === 'detailed'}
+            onclick={() => toggleViewMode('detailed')}
+            role="radio"
+          >
+            Detailed
           </button>
         </div>
       </div>

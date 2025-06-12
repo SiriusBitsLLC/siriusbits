@@ -1,6 +1,6 @@
 ---
 // EnhancedHeader.astro - Modern header with improved navigation
-import Icon from './Icon.astro';
+import Icon from "./Icon.astro";
 import IconKanban from "~icons/ph/kanban";
 
 // Get the current URL to determine active link
@@ -8,10 +8,10 @@ const currentPath = Astro.url.pathname;
 
 // Function to check if a link is active
 function isActive(path: string) {
-  if (path === '/' && currentPath === '/') {
+  if (path === "/" && currentPath === "/") {
     return true;
   }
-  if (path !== '/' && currentPath.startsWith(path)) {
+  if (path !== "/" && currentPath.startsWith(path)) {
     return true;
   }
   return false;
@@ -22,19 +22,27 @@ function isActive(path: string) {
   <div class="header-container container">
     <div class="logo">
       <a href="/" aria-label="SiriusBits Home">
-        <img src="/siriusbits-logo-name.png" alt="SiriusBits" class="logo-full" />
-        <img src="/siriusbits-brand-mark.png" alt="SiriusBits" class="logo-mark" />
+        <img
+          src="/siriusbits-logo-name.png"
+          alt="SiriusBits"
+          class="logo-full"
+        />
+        <img
+          src="/siriusbits-brand-mark.png"
+          alt="SiriusBits"
+          class="logo-mark"
+        />
       </a>
     </div>
-    
+
     <button class="mobile-menu-toggle" aria-label="Toggle menu">
       <span class="hamburger-icon"></span>
     </button>
-    
+
     <nav class="main-nav">
       <ul class="nav-links">
         <li class="mobile-only">
-          <a href="/" class={`nav-item ${isActive('/') ? 'active' : ''}`}>
+          <a href="/" class={`nav-item ${isActive("/") ? "active" : ""}`}>
             <span class="nav-icon-wrapper">
               <Icon name="home" size={18} class="nav-icon" />
             </span>
@@ -42,7 +50,10 @@ function isActive(path: string) {
           </a>
         </li>
         <li>
-          <a href="/skills-experience" class={`nav-item ${isActive('/skills-experience') ? 'active' : ''}`}>
+          <a
+            href="/skills-experience"
+            class={`nav-item ${isActive("/skills-experience") ? "active" : ""}`}
+          >
             <span class="nav-icon-wrapper">
               <Icon name="data-management" size={18} class="nav-icon" />
             </span>
@@ -50,7 +61,10 @@ function isActive(path: string) {
           </a>
         </li>
         <li>
-          <a href="/services" class={`nav-item ${isActive('/services') ? 'active' : ''}`}>
+          <a
+            href="/services"
+            class={`nav-item ${isActive("/services") ? "active" : ""}`}
+          >
             <span class="nav-icon-wrapper">
               <Icon name="strategy" size={18} class="nav-icon" />
             </span>
@@ -58,7 +72,10 @@ function isActive(path: string) {
           </a>
         </li>
         <li class="has-dropdown">
-          <a href="/resources" class={`nav-item ${isActive('/resources') ? 'active' : ''}`}>
+          <a
+            href="/resources"
+            class={`nav-item ${isActive("/resources") ? "active" : ""}`}
+          >
             <span class="nav-icon-wrapper">
               <Icon name="article" size={18} class="nav-icon" />
             </span>
@@ -69,31 +86,61 @@ function isActive(path: string) {
           </a>
           <ul class="dropdown-menu">
             <li>
-              <a href="/resources/projects" class={`dropdown-item ${isActive('/resources/projects') ? 'active' : ''}`}>
+              <a
+                href="/resources/projects"
+                class={`dropdown-item ${isActive("/resources/projects") ? "active" : ""}`}
+              >
                 <IconKanban class="dropdown-icon" />
                 <span>Projects</span>
               </a>
             </li>
             <li>
-              <a href="/resources/blog" class={`dropdown-item ${isActive('/resources/blog') ? 'active' : ''}`}>
-                <Icon name="newspaper" set="lucide" size={16} class="dropdown-icon" />
+              <a
+                href="/resources/blog"
+                class={`dropdown-item ${isActive("/resources/blog") ? "active" : ""}`}
+              >
+                <Icon
+                  name="newspaper"
+                  set="lucide"
+                  size={16}
+                  class="dropdown-icon"
+                />
                 <span>Blog</span>
               </a>
             </li>
             <li>
-              <a href="/resources/guides" class={`dropdown-item ${isActive('/resources/guides') ? 'active' : ''}`}>
-                <Icon name="glasses" set="lucide" size={16} class="dropdown-icon" />
+              <a
+                href="/resources/guides"
+                class={`dropdown-item ${isActive("/resources/guides") ? "active" : ""}`}
+              >
+                <Icon
+                  name="glasses"
+                  set="lucide"
+                  size={16}
+                  class="dropdown-icon"
+                />
                 <span>Guides</span>
               </a>
             </li>
             <li>
-              <a href="/resources/talks" class={`dropdown-item ${isActive('/resources/talks') ? 'active' : ''}`}>
-                <Icon name="speech" set="lucide" size={16} class="dropdown-icon" />
+              <a
+                href="/resources/talks"
+                class={`dropdown-item ${isActive("/resources/talks") ? "active" : ""}`}
+              >
+                <Icon
+                  name="speech"
+                  set="lucide"
+                  size={16}
+                  class="dropdown-icon"
+                />
                 <span>Talks</span>
               </a>
             </li>
             <li>
-              <a href="/resources/uses" class={`dropdown-item ${isActive('/resources/uses') ? 'active' : ''}`}>
+              <a
+                href="/resources/uses"
+                class={`dropdown-item ${isActive("/resources/uses") ? "active" : ""}`}
+              >
                 <Icon name="web-dev" size={16} class="dropdown-icon" />
                 <span>Uses</span>
               </a>
@@ -101,7 +148,10 @@ function isActive(path: string) {
           </ul>
         </li>
         <li>
-          <a href="/contact" class={`nav-item ${isActive('/contact') ? 'active' : ''}`}>
+          <a
+            href="/contact"
+            class={`nav-item ${isActive("/contact") ? "active" : ""}`}
+          >
             <span class="nav-icon-wrapper">
               <Icon name="email" size={18} class="nav-icon" />
             </span>
@@ -115,74 +165,77 @@ function isActive(path: string) {
 
 <script>
   // Mobile menu toggle functionality
-  document.addEventListener('DOMContentLoaded', () => {
-    const menuToggle = document.querySelector('.mobile-menu-toggle');
-    const mainNav = document.querySelector('.main-nav');
-    const header = document.querySelector('.enhanced-header');
-    const dropdownItems = document.querySelectorAll('.has-dropdown');
-    
+  document.addEventListener("DOMContentLoaded", () => {
+    const menuToggle = document.querySelector(".mobile-menu-toggle");
+    const mainNav = document.querySelector(".main-nav");
+    const header = document.querySelector(".enhanced-header");
+    const dropdownItems = document.querySelectorAll(".has-dropdown");
+
     // Mobile menu toggle
     if (menuToggle && mainNav) {
-      menuToggle.addEventListener('click', () => {
-        mainNav.classList.toggle('active');
-        menuToggle.classList.toggle('active');
-        document.body.classList.toggle('menu-open');
+      menuToggle.addEventListener("click", () => {
+        mainNav.classList.toggle("active");
+        menuToggle.classList.toggle("active");
+        document.body.classList.toggle("menu-open");
       });
     }
-    
+
     // Dropdown toggle for mobile
-    dropdownItems.forEach(item => {
-      const link = item.querySelector('a');
-      link?.addEventListener('click', (e) => {
+    dropdownItems.forEach((item) => {
+      const link = item.querySelector("a");
+      link?.addEventListener("click", (e) => {
         // Only handle dropdown toggle on mobile
         if (window.innerWidth <= 768) {
           e.preventDefault();
-          item.classList.toggle('active');
-          
+          item.classList.toggle("active");
+
           // Close other open dropdowns
-          dropdownItems.forEach(otherItem => {
+          dropdownItems.forEach((otherItem) => {
             if (otherItem !== item) {
-              otherItem.classList.remove('active');
+              otherItem.classList.remove("active");
             }
           });
         }
       });
     });
-    
+
     // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
+    document.addEventListener("click", (e) => {
       const target = e.target as HTMLElement;
-      if (mainNav?.classList.contains('active') && 
-          !target.closest('.main-nav') && 
-          !target.closest('.mobile-menu-toggle')) {
-        mainNav.classList.remove('active');
-        menuToggle?.classList.remove('active');
-        document.body.classList.remove('menu-open');
+      if (
+        mainNav?.classList.contains("active") &&
+        !target.closest(".main-nav") &&
+        !target.closest(".mobile-menu-toggle")
+      ) {
+        mainNav.classList.remove("active");
+        menuToggle?.classList.remove("active");
+        document.body.classList.remove("menu-open");
       }
     });
-    
+
     // Sticky header on scroll
     if (header) {
       let lastScrollTop = 0;
       const scrollThreshold = 100;
-      
-      window.addEventListener('scroll', () => {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
+
+      window.addEventListener("scroll", () => {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+
         if (scrollTop > scrollThreshold) {
-          header.classList.add('sticky');
-          
+          header.classList.add("sticky");
+
           // Hide header when scrolling down, show when scrolling up
           if (scrollTop > lastScrollTop && scrollTop > 200) {
-            header.classList.add('hidden');
+            header.classList.add("hidden");
           } else {
-            header.classList.remove('hidden');
+            header.classList.remove("hidden");
           }
         } else {
-          header.classList.remove('sticky');
-          header.classList.remove('hidden');
+          header.classList.remove("sticky");
+          header.classList.remove("hidden");
         }
-        
+
         lastScrollTop = scrollTop;
       });
     }
@@ -202,54 +255,54 @@ function isActive(path: string) {
     transition: all 0.3s ease;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   }
-  
+
   .enhanced-header.sticky {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   }
-  
+
   .enhanced-header.hidden {
     transform: translateY(-100%);
   }
-  
+
   .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 0;
+    padding: 1rem;
     transition: padding 0.3s ease;
   }
-  
+
   .sticky .header-container {
-    padding: 0.75rem 0;
+    padding: 0.75rem 1rem;
   }
-  
+
   .logo a {
     display: flex;
     align-items: center;
     text-decoration: none;
   }
-  
+
   .logo-full {
-    height: 40px;
+    height: 36px;
     width: auto;
     transition: height 0.3s ease;
   }
-  
+
   .sticky .logo-full {
     height: 35px;
   }
-  
+
   .logo-mark {
     display: none;
     height: 40px;
     width: auto;
     transition: height 0.3s ease;
   }
-  
+
   .sticky .logo-mark {
     height: 35px;
   }
-  
+
   .mobile-menu-toggle {
     display: none;
     background: none;
@@ -260,7 +313,7 @@ function isActive(path: string) {
     position: relative;
     z-index: 1001;
   }
-  
+
   .hamburger-icon,
   .hamburger-icon::before,
   .hamburger-icon::after {
@@ -272,43 +325,43 @@ function isActive(path: string) {
     border-radius: 2px;
     transition: all 0.3s ease;
   }
-  
+
   .hamburger-icon {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
   }
-  
+
   .hamburger-icon::before {
-    content: '';
+    content: "";
     top: -10px;
     left: 0;
   }
-  
+
   .hamburger-icon::after {
-    content: '';
+    content: "";
     bottom: -10px;
     left: 0;
   }
-  
+
   .mobile-menu-toggle.active .hamburger-icon {
     background-color: transparent;
   }
-  
+
   .mobile-menu-toggle.active .hamburger-icon::before {
     top: 0;
     transform: rotate(45deg);
   }
-  
+
   .mobile-menu-toggle.active .hamburger-icon::after {
     bottom: 0;
     transform: rotate(-45deg);
   }
-  
+
   .main-nav {
     transition: all 0.3s ease;
   }
-  
+
   .nav-links {
     display: flex;
     list-style: none;
@@ -316,7 +369,7 @@ function isActive(path: string) {
     margin: 0;
     padding: 0;
   }
-  
+
   .nav-item {
     position: relative;
     display: flex;
@@ -328,7 +381,7 @@ function isActive(path: string) {
     border-radius: 30px;
     transition: all 0.3s ease;
   }
-  
+
   .nav-icon-wrapper {
     display: flex;
     align-items: center;
@@ -339,27 +392,27 @@ function isActive(path: string) {
     border-radius: 50%;
     transition: all 0.3s ease;
   }
-  
+
   .nav-icon {
     color: var(--color-primary);
     opacity: 0.7;
     transition: all 0.3s ease;
   }
-  
+
   .nav-item:hover,
   .nav-item.active {
     color: var(--color-primary);
     background-color: rgba(155, 81, 224, 0.1);
   }
-  
+
   .nav-item:hover .nav-icon,
   .nav-item.active .nav-icon {
     opacity: 1;
     transform: scale(1.1);
   }
-  
+
   .nav-item.active::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -3px;
     left: 50%;
@@ -369,26 +422,26 @@ function isActive(path: string) {
     border-radius: 50%;
     background: var(--color-primary);
   }
-  
+
   /* Hide mobile-only items in desktop view */
   .mobile-only {
     display: none;
   }
-  
+
   /* Dropdown menu styles */
   .has-dropdown {
     position: relative;
   }
-  
+
   .dropdown-indicator {
     margin-left: 0.25rem;
     transition: transform 0.3s ease;
   }
-  
+
   .has-dropdown:hover .dropdown-indicator {
     transform: rotate(180deg);
   }
-  
+
   .dropdown-menu {
     position: absolute;
     top: 100%;
@@ -406,13 +459,13 @@ function isActive(path: string) {
     list-style: none;
     margin: 0;
   }
-  
+
   .has-dropdown:hover .dropdown-menu {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
   }
-  
+
   .dropdown-item {
     display: flex;
     align-items: center;
@@ -422,56 +475,54 @@ function isActive(path: string) {
     text-decoration: none;
     transition: all 0.2s ease;
   }
-  
+
   .dropdown-icon {
     color: var(--neutral-black);
     opacity: 0.7;
     transition: all 0.2s ease;
   }
-  
+
   .dropdown-item:hover {
     background-color: rgba(155, 81, 224, 0.05);
     color: var(--color-primary);
   }
-  
+
   .dropdown-item:hover .dropdown-icon {
     color: var(--color-primary);
     opacity: 1;
   }
-  
+
   .dropdown-item.active {
     background-color: rgba(155, 81, 224, 0.1);
     color: var(--color-primary);
   }
-  
+
   .dropdown-item.active .dropdown-icon {
     color: var(--color-primary);
     opacity: 1;
   }
-  
+
   @media (max-width: 992px) {
     .nav-links {
       gap: 1rem;
     }
-    
+
     .nav-item {
       padding: 0.5rem;
     }
   }
-  
-  @media (max-width: 768px) {
+
+  @media (max-width: 842px) {
     .logo-full {
+      display: block;
+      height: 36px; /* 10% smaller than original 40px */
+    }
+    .logo-mark {
       display: none;
     }
-    
-    .logo-mark {
-      display: block;
-    }
-    
     .mobile-menu-toggle {
       display: block;
     }
-    
     .main-nav {
       position: fixed;
       top: 0;
@@ -485,30 +536,24 @@ function isActive(path: string) {
       z-index: 1000;
       overflow-y: auto;
     }
-    
     .main-nav.active {
       right: 0;
     }
-    
     .nav-links {
       flex-direction: column;
       gap: 1.5rem;
     }
-    
     .nav-item {
       width: 100%;
       padding: 0.75rem 1rem;
     }
-    
     .nav-item.active::after {
       display: none;
     }
-    
     /* Show mobile-only items in mobile view */
     .mobile-only {
       display: block;
     }
-    
     /* Mobile dropdown handling */
     .dropdown-menu {
       position: static;
@@ -521,21 +566,17 @@ function isActive(path: string) {
       margin-top: 0.5rem;
       display: none;
     }
-    
     .has-dropdown.active .dropdown-menu {
       display: block;
     }
-    
     .dropdown-item {
       padding: 0.5rem 0;
     }
-    
     /* Add toggle functionality for mobile dropdowns */
     .dropdown-indicator {
       position: absolute;
       right: 1rem;
     }
-    
     body.menu-open {
       overflow: hidden;
     }
