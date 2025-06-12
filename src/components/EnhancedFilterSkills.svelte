@@ -366,6 +366,10 @@
       localFilterState.resultsVisible = true; // Update local state instead
     }, 500);
   });
+  // Close the sidebar (mobile)
+  function closeSidebar() {
+    localFilterState.isFilterVisible = false;
+  }
 </script>
 
 <div class="enhanced-filter-skills">
@@ -400,10 +404,21 @@
     >
       <div class="sidebar-header">
         <h3>Skills</h3>
-        {#if localFilterState.selectedSkillIds.length > 0}
-          <button class="clear-all-btn" onclick={clearFilters}>
-            Clear All
-          </button>
+
+        <div class="sidebar-header-center">
+          {#if localFilterState.selectedSkillIds.length > 0}
+            <button class="clear-all-btn" onclick={clearFilters}>
+              Clear All ×
+            </button>
+          {/if}
+        </div>
+        {#if localFilterState.isFilterVisible}
+          <button
+            type="button"
+            class="view-selection-link"
+            onclick={closeSidebar}
+            tabindex="0">View Selection</button
+          >
         {/if}
       </div>
 
@@ -713,6 +728,29 @@
     justify-content: space-between;
     align-items: center;
     margin: 1.25rem 0;
+  }
+
+  .sidebar-header-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .view-selection-link {
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    font-size: 0.95rem;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s;
+  }
+  .view-selection-link:hover,
+  .view-selection-link:focus {
+    color: var(--color-accent);
+    outline: none;
   }
 
   .sidebar-header h3 {

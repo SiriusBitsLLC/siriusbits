@@ -1,10 +1,23 @@
 <script lang="ts">
   // ...existing imports...
+  import { onMount } from "svelte";
+  let openAccordionSkillId = $state<number | null>(null);
   let hoveredSkillId = $state<number | null>(null);
+  let isMobile = $state(false);
+
+  onMount(() => {
+    const checkMobile = () => {
+      isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
+    };
+    checkMobile();
+    window?.addEventListener("resize", checkMobile);
+    return () => window?.removeEventListener("resize", checkMobile);
+  });
+
   import { get } from "svelte/store";
   import { slide, fade } from "svelte/transition";
   import { cubicOut } from "svelte/easing";
-  import { onMount } from "svelte";
+
   import type { Skills, Duties, Activities } from "../data/experience-schema";
   import AnimateOnScroll from "./AnimateOnScroll.svelte";
   import Icon from "~icons/lucide/arrow-right";
@@ -426,43 +439,24 @@
   </AnimateOnScroll>
 
   <div class="skills-container">
-    <AnimateOnScroll animation="fade-up" duration={800} delay={400}>
-      <div class="skills-grid {skillsVisible ? 'visible' : ''}">
+    {#if isMobile}
+      <div class="skills-accordion-mobile">
         {#if groupedSkills && activeCategory && groupedSkills[activeCategory]}
           {#each groupedSkills[activeCategory] as skill, i}
-            {@const SkillIcon =
-              categoryIconMap[(skill.iconName || skill.category) ?? ""]}
-            <div
-              class="animate-item {selectedSkill &&
-              selectedSkill.id === skill.id
-                ? 'selected-parent'
-                : ''}"
-              style="animation-delay: {400 + i * 100}ms"
-              onmouseenter={() => (hoveredSkillId = skill.id)}
-              onmouseleave={() => (hoveredSkillId = null)}
-              role="group"
-            >
-              <div class="skill-card-wrapper">
-                <div
-                  class="skill-card {selectedSkill &&
-                  selectedSkill.id === skill.id
-                    ? 'selected'
-                    : ''} animate-item"
-                  tabindex="0"
-                  role="button"
-                  aria-pressed={selectedSkill && selectedSkill.id === skill.id}
-                  onclick={() => {
-                    handleSkillClick(skill);
-                    handleExampleClick(skill.id);
-                  }}
-                  onkeydown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      handleSkillClick(skill);
-                      handleExampleClick(skill.id as number);
-                    }
-                  }}
+            {#if skill && skill.name}
+              {@const SkillIcon =
+                categoryIconMap[(skill.iconName || skill.category) ?? ""]}
+              <div class="skill-accordion-item-mobile">
+                <button
+                  class="skill-card-header-mobile"
+                  aria-expanded={openAccordionSkillId === skill.id}
+                  onclick={() =>
+                    (openAccordionSkillId =
+                      openAccordionSkillId === skill.id ? null : skill.id)}
+                  type="button"
+                  style="position: relative; display: flex; flex-direction: column; align-items: stretch;"
                 >
-                  <div class="skill-card-header">
+                  <div style="display: flex; align-items: center; width: 100%;">
                     <div class="header-icon">
                       {#if SkillIcon}
                         <SkillIcon width="1.2em" height="1.2em" />
@@ -480,69 +474,202 @@
                     </div>
                   </div>
                   <div
-                    class="proficiency-border"
-                    style="
-                      top: {(() => {
-                      switch (skill.proficiency) {
-                        case 5:
-                          return '12px';
-                        case 4:
-                          return '32px';
-                        case 3:
-                          return '52px';
-                        case 2:
-                          return '72px';
-                        case 1:
-                          return '92px';
-                        default:
-                          return '112px';
-                      }
-                    })()};
-                      height: calc(116px - {(() => {
-                      switch (skill.proficiency) {
-                        case 5:
-                          return '12px';
-                        case 4:
-                          return '32px';
-                        case 3:
-                          return '52px';
-                        case 2:
-                          return '72px';
-                        case 1:
-                          return '92px';
-                        default:
-                          return '112px';
-                      }
-                    })()});
-                    "
-                  ></div>
-                  <div
-                    class="skill-description {hoveredSkillId === skill.id ||
-                    (selectedSkill &&
-                      selectedSkill.id === skill.id &&
-                      openExampleSkillId === skill.id &&
-                      showExampleSkillId === skill.id)
-                      ? 'visible'
+                    class="accordion-arrow {openAccordionSkillId === skill.id
+                      ? 'open'
                       : ''}"
                   >
+                    <svg
+                      width="38"
+                      height="16"
+                      viewBox="0 0 38 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      style="display: block; margin: 0 auto; transform: rotate({openAccordionSkillId ===
+                      skill.id
+                        ? 180
+                        : 0}deg); transition: transform 0.3s;"
+                    >
+                      <path
+                        d="M2 2L19 14L36 2"
+                        stroke="var(--color-accent)"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </button>
+                <div
+                  class="proficiency-border-mobile"
+                  style="
+    top: 0;
+    right: 0;
+    height: {(() => {
+                    switch (skill.proficiency) {
+                      case 5:
+                        return '76px';
+                      case 4:
+                        return '64px';
+                      case 3:
+                        return '52px';
+                      case 2:
+                        return '40px';
+                      case 1:
+                        return '28px';
+                      case 0:
+                        return '16px';
+                      default:
+                        return '16px';
+                    }
+                  })()};
+    background: var(--color-accent);
+    opacity: 0.62;
+    position: absolute;
+    width: 6px;
+    border-radius: 0 0 6px 6px;
+    transition: height 0.3s;
+  "
+                  aria-hidden="true"
+                ></div>
+                <div
+                  class="accordion-panel-mobile"
+                  style="display: {openAccordionSkillId === skill.id
+                    ? 'block'
+                    : 'none'}"
+                >
+                  <div class="skill-description-mobile">
                     {skill.description}
                   </div>
-                  {#if openExampleSkillId === skill.id && showExampleSkillId === skill.id}
-                    <div
-                      class="example-container"
-                      transition:slide={{ duration: 350, easing: cubicOut }}
-                    >
-                      <strong>Applied Example:</strong>
-                      <div class="example-content">{skill.example}</div>
-                    </div>
-                  {/if}
+                  <div class="example-container-mobile">
+                    <strong>Applied Example:</strong>
+                    <div class="example-content">{skill.example}</div>
+                  </div>
                 </div>
               </div>
-            </div>
+            {/if}
           {/each}
         {/if}
       </div>
-    </AnimateOnScroll>
+    {:else}
+      <AnimateOnScroll animation="fade-up" duration={800} delay={400}>
+        <div class="skills-grid {skillsVisible ? 'visible' : ''}">
+          {#if groupedSkills && activeCategory && groupedSkills[activeCategory]}
+            {#each groupedSkills[activeCategory] as skill, i}
+              {@const SkillIcon =
+                categoryIconMap[(skill.iconName || skill.category) ?? ""]}
+              <div
+                class="animate-item {selectedSkill &&
+                selectedSkill.id === skill.id
+                  ? 'selected-parent'
+                  : ''}"
+                style="animation-delay: {400 + i * 100}ms"
+                onmouseenter={() => (hoveredSkillId = skill.id)}
+                onmouseleave={() => (hoveredSkillId = null)}
+                role="group"
+              >
+                <div class="skill-card-wrapper">
+                  <div
+                    class="skill-card {selectedSkill &&
+                    selectedSkill.id === skill.id
+                      ? 'selected'
+                      : ''} animate-item"
+                    tabindex="0"
+                    role="button"
+                    aria-pressed={selectedSkill &&
+                      selectedSkill.id === skill.id}
+                    onclick={() => {
+                      handleSkillClick(skill);
+                      handleExampleClick(skill.id);
+                    }}
+                    onkeydown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        handleSkillClick(skill);
+                        handleExampleClick(skill.id as number);
+                      }
+                    }}
+                  >
+                    <div class="skill-card-header">
+                      <div class="header-icon">
+                        {#if SkillIcon}
+                          <SkillIcon width="1.2em" height="1.2em" />
+                        {/if}
+                      </div>
+                      <div class="header-name">
+                        <span class="skill-name">{skill.name}</span>
+                      </div>
+                      <div class="header-proficiency">
+                        {#if skill.proficiencyLabel}
+                          <span class="proficiency-label-vertical"
+                            >{skill.proficiencyLabel}</span
+                          >
+                        {/if}
+                      </div>
+                    </div>
+                    <div
+                      class="proficiency-border"
+                      style="
+                        top: {(() => {
+                        switch (skill.proficiency) {
+                          case 5:
+                            return '12px';
+                          case 4:
+                            return '32px';
+                          case 3:
+                            return '52px';
+                          case 2:
+                            return '72px';
+                          case 1:
+                            return '92px';
+                          default:
+                            return '112px';
+                        }
+                      })()};
+                        height: calc(116px - {(() => {
+                        switch (skill.proficiency) {
+                          case 5:
+                            return '12px';
+                          case 4:
+                            return '32px';
+                          case 3:
+                            return '52px';
+                          case 2:
+                            return '72px';
+                          case 1:
+                            return '92px';
+                          default:
+                            return '112px';
+                        }
+                      })()});
+                      "
+                    ></div>
+                    <div
+                      class="skill-description {hoveredSkillId === skill.id ||
+                      (selectedSkill &&
+                        selectedSkill.id === skill.id &&
+                        openExampleSkillId === skill.id &&
+                        showExampleSkillId === skill.id)
+                        ? 'visible'
+                        : ''}"
+                    >
+                      {skill.description}
+                    </div>
+                    {#if openExampleSkillId === skill.id && showExampleSkillId === skill.id}
+                      <div
+                        class="example-container"
+                        transition:slide={{ duration: 350, easing: cubicOut }}
+                      >
+                        <strong>Applied Example:</strong>
+                        <div class="example-content">{skill.example}</div>
+                      </div>
+                    {/if}
+                  </div>
+                </div>
+              </div>
+            {/each}
+          {/if}
+        </div>
+      </AnimateOnScroll>
+    {/if}
   </div>
 </div>
 
@@ -1059,5 +1186,149 @@
   .animate-item.selected-parent {
     z-index: 20;
     position: relative;
+  }
+  .skills-accordion-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 1.5rem 0 0 0;
+  }
+  .skill-accordion-item-mobile {
+    background: #fff;
+    border-radius: 0;
+    box-shadow: 0 2px 12px rgba(155, 81, 224, 0.08);
+    border: 1px solid var(--neutral-light-gray, #eee);
+    overflow: hidden;
+    transition: box-shadow 0.18s;
+    position: relative;
+    /* for proficiency-border-mobile */
+  }
+  .proficiency-border-mobile {
+    position: absolute;
+    right: 0;
+    top: 12px;
+    width: 6px;
+    border-radius: 6px;
+    background: var(--color-accent);
+    opacity: 0.62;
+    transition: height 0.3s;
+    z-index: 2;
+  }
+
+  .skill-card-header-mobile .header-icon {
+    margin-right: 0.3rem;
+  }
+
+  .skill-accordion-item-mobile:active,
+  .skill-accordion-item-mobile:focus-within {
+    box-shadow: 0 4px 20px rgba(155, 81, 224, 0.16);
+    border-color: var(--color-accent, #9b51e0);
+  }
+  .skill-card-header-mobile {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 1.1rem 1rem 0.3rem 0.9rem;
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    gap: 0.7rem;
+    font: inherit;
+    border-radius: 1.1rem 1.1rem 0 0;
+    transition: background 0.12s;
+  }
+  .skill-card-header-mobile:active,
+  .skill-card-header-mobile:focus {
+    background: rgba(155, 81, 224, 0.06);
+  }
+  .header-icon {
+    flex: 0 0 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .header-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-weight: 600;
+    font-size: 1.08rem;
+    color: var(--neutral-black, #222);
+    letter-spacing: 0.01em;
+    text-align: left;
+  }
+  .header-proficiency {
+    margin-left: 0.3rem;
+    margin-right: 0.2rem;
+    display: flex;
+    align-items: center;
+  }
+  .proficiency-label-vertical {
+    writing-mode: vertical-rl;
+    transform: rotate(-180deg);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    letter-spacing: 0.05em;
+    opacity: 0.82;
+    text-align: center;
+    user-select: none;
+  }
+  .accordion-arrow {
+    margin-left: 0.6rem;
+    font-size: 1.3rem;
+    color: var(--color-accent);
+    user-select: none;
+    transition: transform 0.2s;
+    display: flex;
+    align-items: center;
+  }
+  .skill-card-header-mobile[aria-expanded="true"] .accordion-arrow {
+    transform: rotate(180deg);
+  }
+  .accordion-panel-mobile {
+    padding: 0.6rem 1.1rem 1.1rem 1.1rem;
+    background: #faf8ff;
+    border-top: 1px solid var(--neutral-light-gray, #eee);
+    animation: accordionFadeIn 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes accordionFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .skill-description-mobile {
+    font-size: 0.98rem;
+    color: var(--neutral-black, #222);
+    margin-bottom: 0.7rem;
+    line-height: 1.6;
+    word-break: break-word;
+  }
+  .example-container-mobile {
+    background: #fff;
+    border-radius: 0.6rem;
+    border: 1px solid var(--neutral-light-gray, #eee);
+    box-shadow: 0 1px 6px rgba(155, 81, 224, 0.07);
+    padding: 0.85rem 0.8rem 0.7rem 0.8rem;
+    margin-top: 0.2rem;
+    font-size: 0.96rem;
+    color: var(--neutral-black, #222);
+  }
+  .example-container-mobile strong {
+    color: var(--color-accent);
+    font-size: 0.98rem;
+    font-weight: 600;
+  }
+  .example-content {
+    margin-top: 0.45rem;
+    font-size: 0.96rem;
+    line-height: 1.55;
+    color: var(--neutral-black, #222);
   }
 </style>
