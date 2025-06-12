@@ -133,6 +133,12 @@ import TabbedExperience from "../components/TabbedExperience.svelte";
     padding: 0 1rem 4rem;
   }
 
+  @media (max-width: 768px) {
+    .skills-experience-container {
+      padding: 0 0 4rem;
+    }
+  }
+
   .page-header {
     position: relative;
     padding: 6rem 0 4rem;
@@ -253,6 +259,11 @@ import TabbedExperience from "../components/TabbedExperience.svelte";
     padding: 2rem 0 2rem;
   }
 
+  @media (max-width: 768px) {
+    .intro-section {
+      padding: 0;
+    }
+  }
   .intro-content-wrapper {
     display: flex;
     align-items: center;
@@ -326,6 +337,12 @@ import TabbedExperience from "../components/TabbedExperience.svelte";
     padding: 2rem 0;
   }
 
+  @media (max-width: 768px) {
+    .skills-section {
+      padding: 0;
+    }
+  }
+
   .cta-section {
     background: white;
     border-radius: 20px;
@@ -375,7 +392,7 @@ import TabbedExperience from "../components/TabbedExperience.svelte";
   @media (max-width: 768px) {
     .page-header {
       padding: 4rem 0 3rem;
-      margin-bottom: 3rem;
+      margin: 0 1rem 1rem;
     }
 
     h1 {
@@ -406,6 +423,10 @@ import TabbedExperience from "../components/TabbedExperience.svelte";
       flex-direction: column;
       gap: 2rem;
       text-align: center;
+    }
+
+    .intro-content-wrapper p {
+      text-align: left !important;
     }
 
     .profile-image-container {

@@ -430,7 +430,8 @@
       <div class="skills-grid {skillsVisible ? 'visible' : ''}">
         {#if groupedSkills && activeCategory && groupedSkills[activeCategory]}
           {#each groupedSkills[activeCategory] as skill, i}
-            {@const SkillIcon = categoryIconMap[(skill.iconName || skill.category) ?? '']}
+            {@const SkillIcon =
+              categoryIconMap[(skill.iconName || skill.category) ?? ""]}
             <div
               class="animate-item {selectedSkill &&
               selectedSkill.id === skill.id
@@ -586,6 +587,15 @@
     justify-content: center;
     gap: 1rem;
     flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .categories-nav {
+      gap: 0.5rem;
+    }
+  }
+
+  @media (max-width: 768px) {
   }
 
   .category-btn {

@@ -1,7 +1,7 @@
 ---
 // HeroSection.astro - Enhanced hero section with animations and gradient background
-import Button from './Button.astro';
-import Icon from './Icon.astro';
+import Button from "./Button.astro";
+import Icon from "./Icon.astro";
 ---
 
 <section class="hero">
@@ -14,10 +14,14 @@ import Icon from './Icon.astro';
       <div class="shape shape-4"></div>
     </div>
   </div>
-  
+
   <div class="container hero-content">
     <h1 class="hero-title">Welcome to SiriusBits Consulting</h1>
-    <p class="subtitle">Strategic data and technology consulting services to help organizations leverage their data assets and technology investments for maximum business value.</p>
+    <p class="subtitle">
+      Strategic data and technology consulting services to help organizations
+      leverage their data assets and technology investments for maximum business
+      value.
+    </p>
     <div class="hero-cta">
       <Button href="/services" variant="primary" size="large">
         <Icon name="strategy" size={18} /> Our Services
@@ -31,29 +35,31 @@ import Icon from './Icon.astro';
 
 <script>
   // Add animation to hero elements when page loads
-  document.addEventListener('DOMContentLoaded', () => {
-    const heroElements = document.querySelectorAll('.hero-title, .subtitle, .hero-cta');
-    
+  document.addEventListener("DOMContentLoaded", () => {
+    const heroElements = document.querySelectorAll(
+      ".hero-title, .subtitle, .hero-cta"
+    );
+
     // Add staggered animations to hero elements
     heroElements.forEach((element, index) => {
       setTimeout(() => {
-        element.classList.add('animate-in');
+        element.classList.add("animate-in");
       }, index * 200); // 200ms stagger
     });
-    
+
     // Add parallax effect to shapes on mouse move
-    const shapes = document.querySelectorAll('.shape');
-    const hero = document.querySelector('.hero');
-    
+    const shapes = document.querySelectorAll(".shape");
+    const hero = document.querySelector(".hero");
+
     if (hero instanceof HTMLElement) {
-      hero.addEventListener('mousemove', (e: MouseEvent) => {
+      hero.addEventListener("mousemove", (e: MouseEvent) => {
         const { clientX, clientY } = e;
         const { width, height } = hero.getBoundingClientRect();
-        
+
         // Calculate mouse position as percentage of hero section
         const x = clientX / width - 0.5;
         const y = clientY / height - 0.5;
-        
+
         // Apply different movement amounts to each shape for parallax effect
         shapes.forEach((shape, index) => {
           const factor = (index + 1) * 10;
@@ -73,7 +79,7 @@ import Icon from './Icon.astro';
     overflow: hidden;
     text-align: center;
   }
-  
+
   .hero-background {
     position: absolute;
     top: 0;
@@ -82,16 +88,20 @@ import Icon from './Icon.astro';
     height: 100%;
     z-index: -1;
   }
-  
+
   .gradient-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(155, 81, 224, 0.15) 0%, rgba(52, 152, 219, 0.15) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(155, 81, 224, 0.15) 0%,
+      rgba(52, 152, 219, 0.15) 100%
+    );
   }
-  
+
   .animated-shapes {
     position: absolute;
     top: 0;
@@ -100,15 +110,19 @@ import Icon from './Icon.astro';
     height: 100%;
     overflow: hidden;
   }
-  
+
   .shape {
     position: absolute;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    background: linear-gradient(
+      135deg,
+      var(--color-primary),
+      var(--color-accent)
+    );
     opacity: 0.1;
     transition: transform 0.3s ease-out;
   }
-  
+
   .shape-1 {
     width: 300px;
     height: 300px;
@@ -116,7 +130,7 @@ import Icon from './Icon.astro';
     left: -100px;
     animation: float 20s infinite alternate ease-in-out;
   }
-  
+
   .shape-2 {
     width: 200px;
     height: 200px;
@@ -124,7 +138,7 @@ import Icon from './Icon.astro';
     right: -50px;
     animation: float 15s infinite alternate-reverse ease-in-out;
   }
-  
+
   .shape-3 {
     width: 150px;
     height: 150px;
@@ -132,7 +146,7 @@ import Icon from './Icon.astro';
     left: 20%;
     animation: float 18s infinite alternate ease-in-out;
   }
-  
+
   .shape-4 {
     width: 100px;
     height: 100px;
@@ -140,7 +154,7 @@ import Icon from './Icon.astro';
     right: 20%;
     animation: float 12s infinite alternate-reverse ease-in-out;
   }
-  
+
   @keyframes float {
     0% {
       transform: translate(0, 0) rotate(0deg);
@@ -149,17 +163,21 @@ import Icon from './Icon.astro';
       transform: translate(30px, 30px) rotate(10deg);
     }
   }
-  
+
   .hero-content {
     position: relative;
     z-index: 1;
   }
-  
+
   .hero-title {
     font-size: 3.5rem;
     font-weight: 800;
     margin-bottom: 1.5rem;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    background: linear-gradient(
+      135deg,
+      var(--color-primary),
+      var(--color-accent)
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -168,7 +186,7 @@ import Icon from './Icon.astro';
     transform: translateY(20px);
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
-  
+
   .subtitle {
     font-size: 1.25rem;
     color: var(--neutral-black);
@@ -179,7 +197,7 @@ import Icon from './Icon.astro';
     transform: translateY(20px);
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
-  
+
   .hero-cta {
     display: flex;
     gap: 1rem;
@@ -188,7 +206,7 @@ import Icon from './Icon.astro';
     transform: translateY(20px);
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
-  
+
   /* Animation classes added by JavaScript */
   .hero-title.animate-in,
   .subtitle.animate-in,
@@ -196,27 +214,23 @@ import Icon from './Icon.astro';
     opacity: 1;
     transform: translateY(0);
   }
-  
 
-  
   @media (max-width: 768px) {
     .hero {
       padding: 6rem 0 4rem;
     }
-    
+
     .hero-title {
       font-size: 2.5rem;
     }
-    
+
     .subtitle {
       font-size: 1.1rem;
     }
-    
+
     .hero-cta {
       flex-direction: column;
       align-items: center;
     }
-    
-
   }
 </style>

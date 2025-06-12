@@ -73,7 +73,7 @@
     size="1.2em"
     color="var(--color-primary, #9b51e0)"
   />
-  I'm {getArticle(roles[currentRoleIdx].role)}
+  I'm {getArticle(roles[currentRoleIdx].role)}<br class="mobile-only" />
   <span>{displayText}</span><span class="cursor">|</span>
 </span>
 
@@ -84,6 +84,19 @@
     font-size: 2.25rem;
     color: var(--color-accent, #3498db);
     position: relative;
+  }
+  .mobile-only {
+    display: none;
+  }
+  @media (max-width: 600px) {
+    .typewriter {
+      min-height: 8.5rem;
+      font-size: 1.75rem;
+    }
+    .mobile-only {
+      display: inline;
+    }
+    /* If h1 is styled elsewhere, recommend user to set h1 { font-size: 1.75rem; } in mobile */
   }
   .typewriter .cursor {
     display: inline-block;

@@ -712,7 +712,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.25rem;
+    margin: 1.25rem 0;
   }
 
   .sidebar-header h3 {
@@ -1011,8 +1011,19 @@
   }
 
   @media (max-width: 768px) {
+    .enhanced-filter-skills {
+      padding: 1rem;
+    }
+    .sidebar-header {
+      padding: 1.25rem;
+      margin-top: 0;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background-color: white;
+    }
     .filter-header h2 {
-      font-size: 1.5rem;
+      font-size: 1.2rem;
     }
 
     .mobile-filter-toggle {
@@ -1025,6 +1036,10 @@
       align-items: flex-start;
     }
 
+    .results-header h3 {
+      font-size: 1rem;
+    }
+
     .filter-skills-container {
       grid-template-columns: 1fr;
     }
@@ -1035,11 +1050,14 @@
       left: 0;
       right: 0;
       bottom: 0;
-      z-index: 100;
+      z-index: 1001; /* Ensure it's above other content */
       border-radius: 0;
       transform: translateX(-100%);
       transition: transform 0.3s ease;
       overflow-y: auto;
+      padding: 0 0 1.25rem;
+      max-height: 100vh;
+      overscroll-behavior-y: contain;
     }
 
     .skills-sidebar.visible {
@@ -1048,6 +1066,18 @@
 
     .close-filter-mobile {
       display: block;
+    }
+    .skills-grouped-list,
+    .selected-skills-bar,
+    .close-filter-mobile {
+      margin: 1.25rem;
+    }
+
+    .duties-grid.concise {
+      grid-template-columns: 1fr;
+    }
+    .duty-card {
+      padding: 1rem 0.5rem 1rem 1rem;
     }
   }
   .skills-grouped-list {
