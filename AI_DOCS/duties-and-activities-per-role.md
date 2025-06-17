@@ -41,8 +41,8 @@
 
 ### IT Consulting & Planning
 
-- Worked with local financial services clients to upgrade and stablize tax preparation and payroll services.
-- Advised large B2B clients on improving hosting and maintenace, reducing costs and improving security.
+- Worked with local financial services clients to upgrade and stabilize tax preparation and payroll services.
+- Advised large B2B clients on improving hosting and maintenance, reducing costs and improving security.
 
 ### Technology & Business Enablement
 
@@ -53,7 +53,7 @@
 
 - Led the migration of multiple corporate websites to a modern and secure managed service controlled by the client's internal IT team.
 - Designed and developed inbound marketing page templates to meet the needs of senior leadership's mission to grow awareness and drive lead volume.
-- Led a comprehensive redesign and development of the corporate websites with an expansive architecture designed to adddress the gaps in digital presense and customer success.
+- Led a comprehensive redesign and development of the corporate websites with an expansive architecture designed to address the gaps in digital presence and customer success.
 
 ## AMP42 - Founding Partner, Data Strategy & Activation
 
@@ -66,7 +66,7 @@
 
 - Led the migration of multiple corporate websites to a modern and secure managed service controlled by the client's internal IT team.
 - Designed and developed inbound marketing page templates to meet the needs of senior leadership's mission to grow awareness and drive lead volume.
-- Led a comprehensive redesign and development of the corporate websites with an expansive architecture designed to adddress the gaps in digital presense and customer success.
+- Led a comprehensive redesign and development of the corporate websites with an expansive architecture designed to address the gaps in digital presence and customer success.
 
 ## Hyland Software - Director of Technology
 
