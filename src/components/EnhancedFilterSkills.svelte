@@ -17,7 +17,7 @@
   import IconClipboardCheck from "~icons/lucide/clipboard-check"; // Agile Project Management
   import IconRefreshCw from "~icons/lucide/refresh-cw"; // Digital Transformation
   import IconCpu from "~icons/lucide/cpu"; // Data Engineering
-  import IconBrainCircuit from "~icons/lucide/brain-circuit"; // Artifical Intelligence
+  import IconBrainCircuit from "~icons/lucide/brain-circuit"; // Artificial Intelligence
   import IconLightbulb from "~icons/lucide/lightbulb"; // Technology Strategy
   import IconLayoutDashboard from "~icons/lucide/layout-dashboard"; // Enterprise Architecture
   import IconUsers from "~icons/lucide/users"; // Leadership

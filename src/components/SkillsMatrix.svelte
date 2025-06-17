@@ -5,12 +5,16 @@
 </script>
 
 <div class="skills-matrix">
-  {#each skills as skill}
-    <div class="skill-tile">
-      <h3>{skill.name}</h3>
-      <p>{skill.description}</p>
-    </div>
-  {/each}
+  {#if skills.length === 0}
+    <p class="empty-state">No skills available</p>
+  {:else}
+    {#each skills as skill}
+      <div class="skill-tile">
+        <h3>{skill.name}</h3>
+        <p>{skill.description}</p>
+      </div>
+    {/each}
+  {/if}
 </div>
 
 <style>
@@ -48,5 +52,11 @@
     font-size: 0.9rem;
     line-height: 1.5;
     flex-grow: 1;
+  }
+
+  .empty-state {
+    grid-column: 1/-1;
+    text-align: center;
+    color: var(--neutral-black);
   }
 </style>
