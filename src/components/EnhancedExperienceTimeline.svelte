@@ -633,6 +633,13 @@
     max-width: 100%;
   }
 
+  @media (max-width: 768px) {
+    .experience-timeline {
+      padding-left: 1.5rem;
+      padding-right: 0;
+    }
+  }
+
   .timeline-line {
     position: absolute;
     top: 0;
@@ -662,6 +669,12 @@
   .timeline-item {
     position: relative;
     margin-bottom: 2.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .timeline-item {
+      margin-bottom: 0;
+    }
   }
 
   .timeline-row {
@@ -760,6 +773,19 @@
     }
   }
 
+  @media (max-width: 768px) {
+    .timeline-date.in-card {
+      flex-wrap: wrap;
+    }
+
+    .timeline-date .duration {
+      margin-left: 0;
+    }
+    .timeline-dot {
+      left: -1.5rem;
+    }
+  }
+
   .timeline-dot.consulting {
     background: linear-gradient(
       135deg,
@@ -772,11 +798,6 @@
     background: linear-gradient(135deg, #3498db, #2ecc71);
   }
 
-  .timeline-content {
-    display: flex;
-    flex-direction: column;
-  }
-
   .timeline-card {
     background: white;
     border-radius: 12px;
@@ -787,6 +808,14 @@
     position: relative;
     width: 100%;
     box-sizing: border-box;
+  }
+
+  @media (max-width: 768px) {
+    .timeline-card {
+      padding: 1.25rem;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
   }
 
   .timeline-card:hover {
@@ -953,7 +982,13 @@
     }
 
     .timeline-card-right {
-      align-items: flex-start;
+      align-items: center;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    .timeline-location {
+      flex-basis: 100%;
     }
 
     .timeline-details-content {

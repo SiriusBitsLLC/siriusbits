@@ -1,10 +1,43 @@
 <script lang="ts">
-  import EnhancedExperienceTimeline from './EnhancedExperienceTimeline.svelte';
-  import EnhancedFilterSkills from './EnhancedFilterSkills.svelte';
-  import { fade } from 'svelte/transition';
+  import EnhancedExperienceTimeline from "./EnhancedExperienceTimeline.svelte";
+  import EnhancedFilterSkills from "./EnhancedFilterSkills.svelte";
+  import { fade } from "svelte/transition";
   let { roles, companies, duties, activities, skills } = $props();
   let selectedTab = $state(1);
 </script>
+
+<div class="tabs">
+  <button
+    class="tab-button"
+    class:active={selectedTab === 1}
+    onclick={() => (selectedTab = 1)}
+  >
+    Professional Journey
+  </button>
+  <button
+    class="tab-button"
+    class:active={selectedTab === 2}
+    onclick={() => (selectedTab = 2)}
+  >
+    Experience Explorer
+  </button>
+</div>
+<p class="tab-subheading">
+  {selectedTab === 1
+    ? "Career highlights and key roles across consulting and corporate environments"
+    : "Filter professional experience by specific skills to see relevant projects and responsibilities"}
+</p>
+<div class="tab-content">
+  {#if selectedTab === 1}
+    <div transition:fade>
+      <EnhancedExperienceTimeline {roles} {companies} {duties} {activities} />
+    </div>
+  {:else}
+    <div transition:fade>
+      <EnhancedFilterSkills {skills} {duties} {activities} />
+    </div>
+  {/if}
+</div>
 
 <style>
   .tabs {
@@ -56,37 +89,12 @@
     background: var(--neutral-white);
     min-height: 200px;
   }
+  @media (max-width: 768px) {
+    .tab-content {
+      padding: 1rem 0;
+    }
+    .tab-subheading {
+      text-align: left;
+    }
+  }
 </style>
-
-<div class="tabs">
-  <button class="tab-button" class:active={selectedTab === 1} onclick={() => selectedTab = 1}>
-    Professional Journey
-  </button>
-  <button class="tab-button" class:active={selectedTab === 2} onclick={() => selectedTab = 2}>
-    Experience Explorer
-  </button>
-</div>
-<p class="tab-subheading">{selectedTab === 1
-  ? 'Career highlights and key roles across consulting and corporate environments'
-  : 'Filter professional experience by specific skills to see relevant projects and responsibilities'
-}</p>
-<div class="tab-content">
-  {#if selectedTab === 1}
-    <div transition:fade>
-      <EnhancedExperienceTimeline
-        {roles}
-        {companies}
-        {duties}
-        {activities}
-      />
-    </div>
-  {:else}
-    <div transition:fade>
-      <EnhancedFilterSkills
-        {skills}
-        {duties}
-        {activities}
-      />
-    </div>
-  {/if}
-</div>
