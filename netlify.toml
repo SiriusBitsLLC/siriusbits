@@ -4,10 +4,42 @@
 
 [dev]
   command = "pnpm run dev"
+  publish = "dist"
+  targetPort = 4321
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_VERSION = "9"
+  PNPM_VERSION = "8"
 
 [functions]
   directory = "netlify/functions"
-
-[functions."*" ]
   node_bundler = "esbuild"
 
+# Primary domain redirect (siriusbits.com → www.siriusbits.com)
+[[redirects]]
+  from = "http://siriusbits.com/*"
+  to = "https://www.siriusbits.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://siriusbits.com/*"
+  to = "https://www.siriusbits.com/:splat"
+  status = 301
+  force = true
+
+# Handle all other requests
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Force HTTPS
+[[redirects]]
+  from = "http://www.siriusbits.com/*"
+  to = "https://www.siriusbits.com/:splat"
+  status = 301
+  force = true
+
+# Netlify Forms will work automatically with the static site
