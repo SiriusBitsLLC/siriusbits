@@ -1,154 +1,442 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import HeroSection from '../components/HeroSection.astro';
-import FeaturedServices from '../components/FeaturedServices.astro';
-import FeaturedProjects from '../components/FeaturedProjects.astro';
-import FeaturedArticles from '../components/FeaturedArticles.astro';
-import Button from '../components/Button.astro';
-import Icon from '../components/Icon.astro';
-import '../styles/home.css';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TypewriterSubtitle from "../components/TypewriterSubtitle.svelte";
+import EnhancedSkillsMatrix from "../components/EnhancedSkillsMatrix.svelte";
+import EnhancedFilterSkills from "../components/EnhancedFilterSkills.svelte";
+import Button from "../components/Button.astro";
+import Icon from "../components/Icon.astro";
+import { skills } from "../data/skills";
+import { duties } from "../data/duties";
+import { activities } from "../data/activities";
+import { roles } from "../data/roles";
+import { companies } from "../data/companies";
+import TabbedExperience from "../components/TabbedExperience.svelte";
 ---
 
-<BaseLayout title="Home">
-  <HeroSection />
-
-  <section class="services-section">
-    <div class="container">
-      <h2>Consulting Services</h2>
-      <p class="section-intro">Our expertise spans across various domains of data and technology consulting, helping businesses transform their operations and achieve strategic goals.</p>
-      <FeaturedServices />
-      <div class="section-cta">
-        <Button href="/services" variant="secondary" size="medium">
-          View All Services <Icon name="arrow-right" size={16} />
-        </Button>
+<BaseLayout title="Skills & Experience | SiriusBits Consulting">
+  <div class="skills-experience-container">
+    <section class="page-header">
+      <div class="header-content container">
+        <h1>Hi, I’m Ben Bykowski.</h1>
+        <TypewriterSubtitle client:load />
+        <!-- <div class="header-actions">
+          <Button href="/contact" variant="primary">Discuss Your Project</Button>
+          <Button href="/portfolio" variant="outline">View Portfolio</Button>
+        </div> -->
       </div>
-    </div>
-  </section>
-
-  <section class="featured-projects">
-    <div class="container">
-      <h2>Featured Projects</h2>
-      <p class="section-intro">Explore some of our recent projects and success stories that showcase our expertise and approach.</p>
-      <FeaturedProjects />
-      <div class="section-cta">
-        <Button href="/projects" variant="secondary" size="medium">
-          View All Projects <Icon name="arrow-right" size={16} />
-        </Button>
+      <div class="header-background">
+        <div class="gradient-overlay"></div>
+        <div class="animated-shapes">
+          <div class="shape shape-1"></div>
+          <div class="shape shape-2"></div>
+          <div class="shape shape-3"></div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="featured-articles">
-    <div class="container">
-      <h2>Featured Articles</h2>
-      <p class="section-intro">Stay updated with our latest insights, guides, and thought leadership on data strategy and technology trends.</p>
-      <FeaturedArticles />
-      <div class="section-cta">
-        <Button href="/blog" variant="secondary" size="medium">
-          View All Articles <Icon name="arrow-right" size={16} />
-        </Button>
+    <section class="intro-section">
+      <div class="container">
+        <div class="intro-content-wrapper">
+          <div class="profile-image-container">
+            <div class="profile-image-wrapper">
+              <img
+                src="/images/ben-willis-tower.jpeg"
+                alt="Ben at Willis Tower"
+                class="profile-image"
+              />
+            </div>
+          </div>
+          <div class="summary-content">
+            <p>
+              I'm Ben, a passionate technologist, strategist, and builder. With
+              over two decades of experience in enterprise data strategy,
+              digital transformation, and technology leadership, I help
+              organizations unlock the power of their data, modernize their
+              systems, and build scalable solutions that fuel growth.
+            </p>
+            <p>
+              I specialize in data strategy & governance, analytics & insights,
+              enterprise architecture, applied AI/ML, and modern web & platform
+              development. I've led cross-functional teams through large-scale
+              system integrations, replatforming efforts, and the implementation
+              of secure, scalable cloud data ecosystems. My work spans
+              industries and includes building user-centered web and software
+              solutions driving adoption of modern data stacks, activating
+              customer insights, and enabling business users through improved
+              data access, literacy, and tooling.
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="contact-cta">
-    <div class="container">
-      <h2>Get in Touch</h2>
-      <p>Ready to transform your data strategy? Let's discuss how SiriusBits can help with your next project.</p>
-      <Button href="/contact" variant="primary" size="large">
-        <Icon name="email" size={18} /> Contact Now
-      </Button>
-    </div>
-  </section>
+    <section class="skills-section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Core Skills & Proficiency</h2>
+          <p class="section-description">
+            Specialized expertise developed over years of consulting and
+            enterprise experience
+          </p>
+        </div>
+        <EnhancedSkillsMatrix
+          client:load
+          skills={skills}
+          duties={duties}
+          activities={activities}
+        />
+      </div>
+    </section>
+
+    <section class="tabs-section">
+      <div class="container">
+        <TabbedExperience
+          client:load
+          roles={roles}
+          companies={companies}
+          duties={duties}
+          activities={activities}
+          skills={skills}
+        />
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-content">
+          <h2>Ready to collaborate?</h2>
+          <p>
+            Let's discuss how my skills and experience can help your
+            organization achieve its goals.
+          </p>
+          <div class="cta-buttons">
+            <Button href="/contact" variant="primary">Contact Me</Button>
+            <Button href="/services" variant="secondary">View Services</Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 </BaseLayout>
 
 <style>
-  .hero {
-    text-align: center;
-    padding: 5rem 0;
-    background-color: #f9f9f9;
+  :root {
+    --color-primary: var(--primary-purple, #9b51e0);
+    --color-accent: var(--accent-color, #3498db);
+    --neutral-black: #333;
+    --neutral-gray: #666;
   }
 
-  h1 {
-    font-size: 2.8rem;
-    color: var(--primary-purple);
-    margin-bottom: 1.5rem;
-    line-height: 1.2;
-  }
-
-  .subtitle {
-    font-size: 1.25rem;
-    color: var(--neutral-black);
-    max-width: 800px;
+  .skills-experience-container {
+    max-width: 1200px;
     margin: 0 auto;
-    line-height: 1.6;
-  }
-
-  section {
-    margin-bottom: 5rem;
-    padding: 2rem 0;
-  }
-
-  h2 {
-    font-size: 2.2rem;
-    margin-bottom: 1rem;
-    color: var(--primary-purple);
-  }
-
-  .section-intro {
-    font-size: 1.1rem;
-    color: var(--color-text-secondary);
-    max-width: 800px;
-    margin-bottom: 2rem;
-    line-height: 1.6;
-  }
-
-  .section-cta {
-    margin-top: 2rem;
-    text-align: center;
-  }
-
-  .section-cta {
-    margin-top: 2rem;
-    text-align: center;
-  }
-
-  .contact-cta {
-    text-align: center;
-    padding: 4rem;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-  }
-
-
-
-  .services-section {
-    background-color: white;
-  }
-
-  .featured-projects {
-    background-color: #f9f9f9;
-  }
-
-  .featured-articles {
-    background-color: white;
+    padding: 0 1rem 4rem;
   }
 
   @media (max-width: 768px) {
+    .skills-experience-container {
+      padding: 0 0 4rem;
+    }
+  }
+
+  .page-header {
+    position: relative;
+    padding: 6rem 0 4rem;
+    margin-bottom: 4rem;
+    overflow: hidden;
+    border-radius: 0 0 30px 30px;
+  }
+
+  .header-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .header-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    background-color: #f9f9f9;
+  }
+
+  .gradient-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(155, 81, 224, 0.1) 0%,
+      rgba(52, 152, 219, 0.1) 100%
+    );
+  }
+
+  .animated-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+  }
+
+  .shape {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(
+      135deg,
+      rgba(155, 81, 224, 0.2),
+      rgba(52, 152, 219, 0.2)
+    );
+    animation: float 15s infinite ease-in-out;
+  }
+
+  .shape-1 {
+    width: 300px;
+    height: 300px;
+    top: -150px;
+    right: -100px;
+    animation-delay: 0s;
+  }
+
+  .shape-2 {
+    width: 200px;
+    height: 200px;
+    bottom: -100px;
+    left: -50px;
+    animation-delay: 5s;
+  }
+
+  .shape-3 {
+    width: 150px;
+    height: 150px;
+    bottom: 50px;
+    right: 30%;
+    animation-delay: 2s;
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-20px) rotate(5deg);
+    }
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+  }
+
+  h1 {
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+    font-size: 3rem;
+    font-weight: 700;
+  }
+
+  .subtitle {
+    color: var(--neutral-gray);
+    font-size: 1.25rem;
+    line-height: 1.5;
+    margin-bottom: 2rem;
+  }
+
+  .header-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .intro-section {
+    padding: 2rem 0 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .intro-section {
+      padding: 0;
+    }
+  }
+  .intro-content-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .profile-image-container {
+    flex: 0 0 300px;
+  }
+
+  .profile-image-wrapper {
+    width: 300px;
+    height: 350px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+
+  .profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 20%; /* Adjust vertical position to focus on face */
+    transition: transform 0.5s ease;
+  }
+
+  .profile-image-wrapper:hover .profile-image {
+    transform: scale(1.05);
+  }
+
+  .summary-content {
+    flex: 1;
+    line-height: 1.8;
+  }
+
+  .summary-content p {
+    margin-bottom: 1.5rem;
+    color: var(--neutral-black);
+    font-size: 1.1rem;
+  }
+
+  section {
+    margin-bottom: 2rem;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  h2 {
+    color: var(--color-primary);
+    margin-bottom: 0.75rem;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .section-description {
+    color: var(--neutral-gray);
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .skills-section,
+  .experience-section,
+  .filter-section {
+    padding: 2rem 0;
+  }
+
+  @media (max-width: 768px) {
+    .skills-section {
+      padding: 0;
+    }
+  }
+
+  .cta-section {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(
+      90deg,
+      var(--color-primary),
+      var(--color-accent)
+    );
+  }
+
+  .cta-content {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .cta-section h2 {
+    margin-bottom: 1rem;
+  }
+
+  .cta-section p {
+    color: var(--neutral-gray);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .page-header {
+      padding: 4rem 0 3rem;
+      margin: 0 1rem 1rem;
+    }
+
     h1 {
-      font-size: 2.2rem;
+      font-size: 2.25rem;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+    }
+
+    section {
+      margin-bottom: 3rem;
     }
 
     h2 {
-      font-size: 1.8rem;
+      font-size: 1.75rem;
     }
 
-    .section-intro {
+    .section-description {
       font-size: 1rem;
     }
 
-    .hero {
-      padding: 3rem 0;
+    .cta-section {
+      padding: 2rem 1.5rem;
+    }
+
+    .intro-content-wrapper {
+      flex-direction: column;
+      gap: 2rem;
+      text-align: center;
+    }
+
+    .intro-content-wrapper p {
+      text-align: left !important;
+    }
+
+    .profile-image-container {
+      flex: 0 0 auto;
+    }
+
+    .profile-image-wrapper {
+      width: 250px;
+      height: 300px;
+      margin: 0 auto;
     }
   }
 </style>
